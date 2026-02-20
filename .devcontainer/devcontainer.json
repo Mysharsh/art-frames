@@ -16,9 +16,10 @@
     }
   },
   "remoteEnv": {
-    "PATH": "/home/node/.local/bin:${containerEnv:PATH}"
+    "PATH": "/home/node/.local/bin:${containerEnv:PATH}",
+    "NEXT_PUBLIC_SUPABASE_URL": "${localEnv:NEXT_PUBLIC_SUPABASE_URL}",
+    "NEXT_PUBLIC_SUPABASE_ANON_KEY": "${localEnv:NEXT_PUBLIC_SUPABASE_ANON_KEY}"
   },
   "onCreateCommand": "mkdir -p /home/node/.local/bin && corepack enable --install-directory /home/node/.local/bin && corepack prepare pnpm@latest --activate",
-  "postCreateCommand": "pnpm install",
-  "postStartCommand": "pnpm dev"
+  "postCreateCommand": "pnpm install"
 }
