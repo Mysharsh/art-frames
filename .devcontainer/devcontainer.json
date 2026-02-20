@@ -1,9 +1,6 @@
 {
   "name": "art-frames",
   "image": "mcr.microsoft.com/devcontainers/javascript-node:20",
-  "features": {
-    "ghcr.io/devcontainers/features/pnpm:1": {}
-  },
   "customizations": {
     "vscode": {
       "settings": {
@@ -18,6 +15,7 @@
       "onAutoForward": "openPreview"
     }
   },
+  "onCreateCommand": "corepack enable pnpm",
   "postCreateCommand": "pnpm install",
   "postStartCommand": "pnpm dev"
 }
