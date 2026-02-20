@@ -8,6 +8,7 @@ import type { Product } from "@/lib/products"
 import { getRelatedProducts } from "@/lib/products"
 import { useAppStore } from "@/lib/store"
 import { ProductCard } from "@/components/product-card"
+import { useToast } from "@/hooks/use-toast"
 import {
   Carousel,
   CarouselContent,
@@ -27,6 +28,9 @@ export function ProductDetail({ product }: ProductDetailProps) {
     ) ?? product.materials[0]
   )
   const openWaitlistModal = useAppStore((s) => s.openWaitlistModal)
+  const toggleWishlist = useAppStore((s) => s.toggleWishlist)
+  const isInWishlist = useAppStore((s) => s.isInWishlist)
+  const { toast } = useToast()
   const [carouselApi, setCarouselApi] = useState<CarouselApi | null>(null)
   const [activeSlide, setActiveSlide] = useState(0)
 
@@ -36,6 +40,53 @@ export function ProductDetail({ product }: ProductDetailProps) {
       : [product.image]
 
   const related = getRelatedProducts(product)
+  const inWishlist = isInWishlist(product.id)
+
+  const handleShare = async () => {
+    const shareData = {
+      title: product.title,
+      text: `Check out ${product.title} by ${product.artist}`,
+      url: window.location.href,
+    }
+
+    // Try native Web Share API first
+    if (navigator.share) {
+      try {
+        await navigator.share(shareData)
+      } catch (err) {
+        // User cancelled or error occurred
+        if (err instanceof Error && err.name !== "AbortError") {
+          console.error("Share failed:", err)
+        }
+      }
+    } else {
+      // Fallback to clipboard
+      try {
+        await navigator.clipboard.writeText(window.location.href)
+        toast({
+          title: "Link copied!",
+          description: "Product link copied to clipboard",
+        })
+      } catch (err) {
+        console.error("Copy failed:", err)
+        toast({
+          title: "Failed to copy",
+          description: "Please copy the URL manually",
+          variant: "destructive",
+        })
+      }
+    }
+  }
+
+  const handleWishlistToggle = () => {
+    toggleWishlist(product)
+    toast({
+      title: inWishlist ? "Removed from wishlist" : "Added to wishlist",
+      description: inWishlist
+        ? `${product.title} removed from your wishlist`
+        : `${product.title} added to your wishlist`,
+    })
+  }
 
   useEffect(() => {
     if (!carouselApi) return
@@ -67,20 +118,23 @@ export function ProductDetail({ product }: ProductDetailProps) {
         </Link>
         <div className="flex items-center gap-2">
           <button
+            onClick={handleShare}
             className="flex h-10 w-10 items-center justify-center rounded-full bg-secondary text-foreground transition-colors hover:bg-secondary/80"
             aria-label="Share"
           >
             <Share2 className="h-5 w-5" />
           </button>
           <button
+            onClick={handleWishlistToggle}
             className="flex h-10 w-10 items-center justify-center rounded-full bg-secondary text-foreground transition-colors hover:bg-secondary/80"
             aria-label="Wishlist"
           >
-            <Heart className="h-5 w-5" />
+            <Heart className={`h-5 w-5 ${inWishlist ? "fill-red-500 text-red-500" : ""}`} />
           </button>
           <button
             className="flex h-10 w-10 items-center justify-center rounded-full bg-secondary text-foreground transition-colors hover:bg-secondary/80"
             aria-label="Bag"
+            onClick={() => toast({ title: "Coming soon", description: "Shopping cart feature is under development" })}
           >
             <ShoppingBag className="h-5 w-5" />
           </button>

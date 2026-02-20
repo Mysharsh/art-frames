@@ -16,6 +16,26 @@ export function SearchOverlay() {
     inputRef.current?.focus()
   }, [])
 
+  // Close search on ESC key
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === "Escape") {
+        closeSearch()
+      }
+    }
+
+    document.addEventListener("keydown", handleKeyDown)
+    return () => document.removeEventListener("keydown", handleKeyDown)
+  }, [closeSearch])
+
+  // Lock body scroll when search is open
+  useEffect(() => {
+    document.body.style.overflow = "hidden"
+    return () => {
+      document.body.style.overflow = ""
+    }
+  }, [])
+
   const filtered = query.length >= 2
     ? products.filter(
       (p) =>

@@ -14,7 +14,7 @@ const primaryNav = [
 ]
 
 export function SiteHeader() {
-  const waitlistCount = useAppStore((s) => s.waitlistCount)
+  const waitlistItems = useAppStore((s) => s.waitlistItems)
   const isMobileMenuOpen = useAppStore((s) => s.isMobileMenuOpen)
   const isSearchOpen = useAppStore((s) => s.isSearchOpen)
   const toggleMobileMenu = useAppStore((s) => s.toggleMobileMenu)
@@ -71,9 +71,9 @@ export function SiteHeader() {
               aria-label="Waitlist"
             >
               <ShoppingBag className="h-5 w-5" />
-              {waitlistCount > 0 && (
+              {waitlistItems.length > 0 && (
                 <span className="absolute -right-0.5 -top-0.5 flex h-4 w-4 items-center justify-center rounded-full bg-primary text-[10px] font-bold text-primary-foreground">
-                  {waitlistCount}
+                  {waitlistItems.length}
                 </span>
               )}
             </Link>

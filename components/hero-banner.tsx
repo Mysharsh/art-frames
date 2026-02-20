@@ -28,19 +28,19 @@ export function HeroBanner() {
 
           {/* Subheading */}
           <p className="mt-3 max-w-xl text-sm text-muted-foreground md:text-base">
-            India's premier metal print store. Premium artwork meets unmatched quality.
+            India&apos;s premier metal print store. Premium artwork meets unmatched quality.
           </p>
 
           {/* CTA buttons */}
           <div className="mt-6 flex flex-wrap items-center gap-3">
             <Link
-              href="/?category=All"
+              href="/#products"
               className="inline-flex items-center rounded-full bg-primary px-6 py-3 text-sm font-bold uppercase tracking-widest text-primary-foreground transition-transform hover:scale-105 active:scale-95"
             >
               Shop Now
             </Link>
             <Link
-              href="/?section=explore"
+              href="/?section=about"
               className="inline-flex items-center rounded-full border-2 border-primary bg-transparent px-6 py-3 text-sm font-bold uppercase tracking-widest text-primary transition-colors hover:bg-primary/10"
             >
               Explore More

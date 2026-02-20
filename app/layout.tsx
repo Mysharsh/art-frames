@@ -1,5 +1,6 @@
 import type { Metadata, Viewport } from "next"
 import { Bebas_Neue, Space_Grotesk } from "next/font/google"
+import { Toaster } from "@/components/ui/toaster"
 import "./globals.css"
 
 const _spaceGrotesk = Space_Grotesk({
@@ -34,7 +35,10 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" className={`${_spaceGrotesk.variable} ${_bebasNeue.variable}`} suppressHydrationWarning>
-      <body className="font-sans antialiased" suppressHydrationWarning>{children}</body>
+      <body className="font-sans antialiased" suppressHydrationWarning>
+        {children}
+        <Toaster />
+      </body>
     </html>
   )
 }

@@ -1,4 +1,5 @@
 import { create } from "zustand"
+import type { Product } from "@/lib/products"
 
 interface WaitlistItem {
   productId: string
@@ -9,6 +10,7 @@ interface WaitlistItem {
 interface AppState {
   waitlistCount: number
   waitlistItems: WaitlistItem[]
+  wishlistItems: Product[]
   isWaitlistModalOpen: boolean
   selectedProductId: string | null
   selectedProductTitle: string | null
@@ -23,11 +25,14 @@ interface AppState {
   closeMobileMenu: () => void
   toggleSearch: () => void
   closeSearch: () => void
+  toggleWishlist: (product: Product) => void
+  isInWishlist: (productId: string) => boolean
 }
 
-export const useAppStore = create<AppState>((set) => ({
+export const useAppStore = create<AppState>((set, get) => ({
   waitlistCount: 0,
   waitlistItems: [],
+  wishlistItems: [],
   isWaitlistModalOpen: false,
   selectedProductId: null,
   selectedProductTitle: null,
@@ -51,8 +56,32 @@ export const useAppStore = create<AppState>((set) => ({
       selectedProductTitle: null,
     }),
   toggleMobileMenu: () =>
-    set((state) => ({ isMobileMenuOpen: !state.isMobileMenuOpen })),
+    set((state) => ({ 
+      isMobileMenuOpen: !state.isMobileMenuOpen,
+      isSearchOpen: false // Close search when opening menu
+    })),
   closeMobileMenu: () => set({ isMobileMenuOpen: false }),
-  toggleSearch: () => set((state) => ({ isSearchOpen: !state.isSearchOpen })),
+  toggleSearch: () => 
+    set((state) => ({ 
+      isSearchOpen: !state.isSearchOpen,
+      isMobileMenuOpen: false // Close menu when opening search
+    })),
   closeSearch: () => set({ isSearchOpen: false }),
+  toggleWishlist: (product) =>
+    set((state) => {
+      const exists = state.wishlistItems.some((item) => item.id === product.id)
+      if (exists) {
+        return {
+          wishlistItems: state.wishlistItems.filter((item) => item.id !== product.id),
+        }
+      } else {
+        return {
+          wishlistItems: [...state.wishlistItems, product],
+        }
+      }
+    }),
+  isInWishlist: (productId) => {
+    const state = get()
+    return state.wishlistItems.some((item) => item.id === productId)
+  },
 }))
