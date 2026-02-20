@@ -15,7 +15,10 @@
       "onAutoForward": "openPreview"
     }
   },
-  "onCreateCommand": "corepack enable pnpm",
+  "remoteEnv": {
+    "PATH": "/home/node/.local/bin:${containerEnv:PATH}"
+  },
+  "onCreateCommand": "mkdir -p /home/node/.local/bin && corepack enable --install-directory /home/node/.local/bin && corepack prepare pnpm@latest --activate",
   "postCreateCommand": "pnpm install",
   "postStartCommand": "pnpm dev"
 }
