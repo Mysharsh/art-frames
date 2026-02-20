@@ -1,0 +1,23 @@
+{
+  "name": "art-frames",
+  "image": "mcr.microsoft.com/devcontainers/javascript-node:20",
+  "features": {
+    "ghcr.io/devcontainers/features/pnpm:1": {}
+  },
+  "customizations": {
+    "vscode": {
+      "settings": {
+        "terminal.integrated.defaultProfile.windows": "PowerShell"
+      }
+    }
+  },
+  "forwardPorts": [3000],
+  "portsAttributes": {
+    "3000": {
+      "label": "Next.js Dev Server",
+      "onAutoForward": "openPreview"
+    }
+  },
+  "postCreateCommand": "pnpm install",
+  "postStartCommand": "pnpm dev"
+}
