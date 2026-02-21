@@ -1,24 +1,42 @@
 import { NextResponse } from "next/server"
 import { createClient } from "@/lib/supabase/server"
+import { waitlistLimiter, countLimiter, getClientIp } from "@/lib/rate-limit"
+import { safeParseWaitlistEntry } from "@/lib/validations"
 
 export async function POST(request: Request) {
+  // Rate limiting: 10 requests per minute per IP
+  const clientIp = getClientIp(request)
+  const rateLimitResult = waitlistLimiter.isAllowed(clientIp)
+
+  if (!rateLimitResult.allowed) {
+    return NextResponse.json(
+      { error: "Too many requests. Please try again later." },
+      {
+        status: 429,
+        headers: {
+          "Retry-After": String(rateLimitResult.retryAfter || 60),
+        },
+      }
+    )
+  }
+
   try {
-    const { email, productId, productTitle } = await request.json()
+    const body = await request.json()
 
-    if (!email || !productId) {
+    // Validate input using Zod schema
+    const parseResult = await safeParseWaitlistEntry(body)
+
+    if (!parseResult.success) {
+      const errors = parseResult.error.errors
+        .map((err) => `${err.path.join(".")}: ${err.message}`)
+        .join("; ")
       return NextResponse.json(
-        { error: "Email and product ID are required" },
+        { error: "Validation failed", details: errors },
         { status: 400 }
       )
     }
 
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
-    if (!emailRegex.test(email)) {
-      return NextResponse.json(
-        { error: "Please enter a valid email" },
-        { status: 400 }
-      )
-    }
+    const { email, productId, productTitle } = parseResult.data
 
     const supabase = await createClient()
 
@@ -44,14 +62,18 @@ export async function POST(request: Request) {
     })
 
     if (error) {
+      // Log error for debugging (in production, this would go to Sentry)
+      console.error("Waitlist insert error:", error)
       return NextResponse.json(
-        { error: "Failed to join waitlist" },
+        { error: "Failed to join waitlist. Please try again later." },
         { status: 500 }
       )
     }
 
     return NextResponse.json({ success: true })
-  } catch {
+  } catch (error) {
+    // Log error for debugging (in production, this would go to Sentry)
+    console.error("Waitlist API error:", error)
     return NextResponse.json(
       { error: "Internal server error" },
       { status: 500 }
@@ -59,7 +81,23 @@ export async function POST(request: Request) {
   }
 }
 
-export async function GET() {
+export async function GET(request: Request) {
+  // Rate limiting: 5 requests per minute per IP
+  const clientIp = getClientIp(request)
+  const rateLimitResult = countLimiter.isAllowed(clientIp)
+
+  if (!rateLimitResult.allowed) {
+    return NextResponse.json(
+      { error: "Too many requests. Please try again later." },
+      {
+        status: 429,
+        headers: {
+          "Retry-After": String(rateLimitResult.retryAfter || 60),
+        },
+      }
+    )
+  }
+
   try {
     const supabase = await createClient()
 

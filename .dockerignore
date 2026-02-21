@@ -1,0 +1,60 @@
+# Dependencies
+node_modules
+npm-debug.log
+pnpm-debug.log
+
+# Build outputs
+.next
+out
+dist
+build
+
+# Testing
+__tests__
+tests
+*.test.ts
+*.test.tsx
+*.spec.ts
+*.spec.tsx
+.coverage
+coverage
+
+# Git
+.git
+.gitignore
+.github
+
+# Development
+.env*.local
+.vscode
+.idea
+.DS_Store
+*.swp
+*.swo
+
+# Documentation
+README.md
+*.md
+!README.md
+
+# Config files
+.eslintignore
+.prettierignore
+tsconfig.json
+next.config.mjs
+vitest.config.ts
+playwright.config.ts
+
+# CI/CD
+.gitlab-ci.yml
+.circleci
+travis.yml
+.drone.yml
+
+# Package managers
+.npmrc
+.yarnrc
+
+# Misc
+LICENSE
+CHANGELOG.md
