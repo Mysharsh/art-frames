@@ -19,13 +19,13 @@
 
 ### **Official Sentry Wizard Applied**
 ```bash
-npx @sentry/wizard@latest -i nextjs --saas --org self-tz6 --project art-frames
+npx @sentry/wizard@latest -i nextjs --saas --org <your-org> --project <your-project>
 ```
 
 **Wizard Actions:**
 - ✅ Updated @sentry/nextjs to version 10
-- ✅ Authenticated with Sentry account (self-tz6)
-- ✅ Linked to art-frames project
+- ✅ Authenticated with Sentry account (<your-org>)
+- ✅ Linked to <your-project> project
 - ✅ Verified Next.js integration
 - ✅ Confirmed environment variables
 
@@ -64,7 +64,7 @@ http://localhost:3000/test-sentry
 
 ### **Step 3: Verify in Sentry Dashboard**
 1. Go to https://sentry.io
-2. Navigate to **self-tz6 / art-frames** project
+2. Navigate to **<your-org> / <your-project>** project
 3. Click **Issues** tab
 4. You'll see test errors within 5-10 seconds!
 
@@ -175,13 +175,13 @@ import { SentryErrorBoundary } from '@/components/sentry-error-boundary'
 
 ## 📋 Your Sentry Organization
 
-**Organization:** `self-tz6`  
-**Project:** `art-frames`  
+**Organization:** `<your-org>`  
+**Project:** `<your-project>`  
 **DSN:** ✅ Configured  
 **Auth Token:** ✅ Configured  
 **Version:** @sentry/nextjs@^10
 
-**Sentry Dashboard:** https://sentry.io/organizations/self-tz6/issues/?project=4510962970918992
+**Sentry Dashboard:** https://sentry.io/organizations/<your-org>/issues/?project=<your-project-id>
 
 ---
 
@@ -218,8 +218,8 @@ import { SentryErrorBoundary } from '@/components/sentry-error-boundary'
 
 **Your Sentry Resources:**
 - Dashboard: https://sentry.io
-- Organization: self-tz6
-- Project: art-frames
+- Organization: <your-org>
+- Project: <your-project>
 
 ---
 

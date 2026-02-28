@@ -35,8 +35,8 @@ services:
       - "3001:3000"
       - "54321:54321"
     environment:
-      POSTGRES_PASSWORD: postgres
-      JWT_SECRET: super-secret-jwt-token-with-at-least-32-characters-long
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-postgres}
+      JWT_SECRET: ${JWT_SECRET:?JWT_SECRET environment variable is required}
       JWT_EXPIRY: 3600
     restart: unless-stopped
     networks:

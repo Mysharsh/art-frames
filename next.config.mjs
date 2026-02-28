@@ -35,7 +35,7 @@ const nextConfig = {
           },
           {
             key: "Content-Security-Policy",
-            value: "default-src 'self'; img-src 'self' https://images.unsplash.com https:; script-src 'self' 'unsafe-inline' 'unsafe-eval'; style-src 'self' 'unsafe-inline'; font-src 'self'; connect-src 'self' https://tdaxjixsgrnuhsqoosdj.supabase.co https:; frame-ancestors 'none';",
+            value: `default-src 'self'; img-src 'self' https://images.unsplash.com https:; script-src 'self' 'unsafe-inline' 'unsafe-eval'; style-src 'self' 'unsafe-inline'; font-src 'self'; connect-src 'self' ${process.env.NEXT_PUBLIC_SUPABASE_URL || 'https://*.supabase.co'} https:; frame-ancestors 'none';`,
           },
         ],
       },
