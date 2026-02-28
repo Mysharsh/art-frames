@@ -1,5 +1,6 @@
 'use client'
 
+import Link from 'next/link'
 import { captureException, captureMessage, setUserContext, addBreadcrumb } from '@/lib/sentry'
 import { Button } from '@/components/ui/button'
 import { useState } from 'react'
@@ -248,23 +249,23 @@ export default function SentryTestPage() {
                             Use server-side tests to simulate real production errors. These API routes trigger errors that would occur in a live environment.
                         </p>
                         <div className="bg-white rounded p-3 text-xs font-mono text-orange-900 border border-orange-100">
-                            GET /api/test-error?type=database<br/>
-                            GET /api/test-error?type=validation<br/>
+                            GET /api/test-error?type=database<br />
+                            GET /api/test-error?type=validation<br />
                             POST /api/test-error (with JSON body)
                         </div>
                     </div>
 
                     {/* Back Link */}
                     <div className="text-center">
-                        <a href="/" className="text-blue-600 hover:underline">
+                        <Link href="/" className="text-blue-600 hover:underline">
                             ← Back to Home
-                        </a>
+                        </Link>
                     </div>
                 </div>
 
                 {/* Footer */}
                 <div className="mt-8 text-center text-slate-400 text-sm">
-                    <p>🧪 Test errors won't affect your application</p>
+                    <p>🧪 Test errors won&apos;t affect your application</p>
                     <p className="mt-2">📚 <a href="https://docs.sentry.io" target="_blank" className="text-blue-400 hover:underline">Sentry Documentation</a></p>
                 </div>
             </div>
