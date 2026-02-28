@@ -46,7 +46,8 @@ echo ""
 echo "2. TYPESCRIPT STRICT MODE"
 echo "─────────────────────────────────────────────────────────────────"
 TSC_OUTPUT=$(pnpm tsc --noEmit 2>&1 || true)
-ERROR_COUNT=$(echo "$TSC_OUTPUT" | grep -c "error TS" || echo 0)
+ERROR_COUNT=$(echo "$TSC_OUTPUT" | grep -c "error TS" || true)
+ERROR_COUNT=${ERROR_COUNT:-0}
 if [ "$ERROR_COUNT" -eq 0 ]; then
     check_status 0 "TypeScript strict mode: 0 errors"
 else

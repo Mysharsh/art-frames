@@ -40,10 +40,10 @@ export function HeroBanner() {
               Shop Now
             </Link>
             <Link
-              href="/?section=about"
+              href="/#about"
               className="inline-flex items-center rounded-full border-2 border-primary bg-transparent px-6 py-3 text-sm font-bold uppercase tracking-widest text-primary transition-colors hover:bg-primary/10"
             >
-              Explore More
+              Learn More
             </Link>
           </div>
 

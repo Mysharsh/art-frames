@@ -32,7 +32,7 @@ export function Homepage() {
     <div className="w-full">
       <HeroBanner />
       <CategoryThumbnails />
-      
+
       {/* All-Time Favorites section header */}
       <section className="px-4 py-8">
         <div className="flex flex-col items-center text-center">
@@ -44,13 +44,13 @@ export function Homepage() {
           </p>
         </div>
       </section>
-      
-      <div id="products">
+
+      <div id="products" className="scroll-mt-32">
         <ProductTabs selectedCategory={selectedCategory} />
       </div>
 
       {/* Order Section */}
-      <section id="order" className="border-t border-border bg-card/30 px-4 py-16">
+      <section id="order" className="border-t border-border bg-card/30 px-4 py-16 scroll-mt-32">
         <div className="mx-auto max-w-4xl">
           <div className="flex items-center gap-3 mb-6">
             <Package className="h-8 w-8 text-primary" />
@@ -79,7 +79,7 @@ export function Homepage() {
       </section>
 
       {/* About Section */}
-      <section id="about" className="px-4 py-16">
+      <section id="about" className="px-4 py-16 scroll-mt-32">
         <div className="mx-auto max-w-4xl">
           <h2 className="font-display text-3xl font-bold text-foreground mb-6">
             About METAL POSTERS
@@ -102,7 +102,7 @@ export function Homepage() {
       </section>
 
       {/* Events Section */}
-      <section id="events" className="border-t border-border bg-card/30 px-4 py-16">
+      <section id="events" className="border-t border-border bg-card/30 px-4 py-16 scroll-mt-32">
         <div className="mx-auto max-w-4xl">
           <div className="flex items-center gap-3 mb-6">
             <Calendar className="h-8 w-8 text-primary" />
@@ -137,7 +137,7 @@ export function Homepage() {
       </section>
 
       {/* Contact Section */}
-      <section id="contact" className="px-4 py-16">
+      <section id="contact" className="px-4 py-16 scroll-mt-32">
         <div className="mx-auto max-w-4xl">
           <div className="flex items-center gap-3 mb-6">
             <Mail className="h-8 w-8 text-primary" />

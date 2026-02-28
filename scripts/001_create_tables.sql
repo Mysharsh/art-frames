@@ -20,4 +20,4 @@ CREATE POLICY "Anyone can join waitlist" ON public.waitlist_entries
 
 -- Allow reading all entries (for count display)
 CREATE POLICY "Anyone can view waitlist count" ON public.waitlist_entries
-  FOR SELECT USING (true);
+  FOR SELECT USING (false);

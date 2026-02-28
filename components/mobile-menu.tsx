@@ -95,7 +95,7 @@ export function MobileMenu() {
               </div>
               <div className="space-y-1">
                 <Link
-                  href="/?section=order"
+                  href="/#order"
                   onClick={closeMobileMenu}
                   className="flex items-center gap-3 rounded-lg px-3 py-2.5 text-foreground transition-colors hover:bg-secondary active:bg-secondary/60"
                 >
@@ -103,7 +103,7 @@ export function MobileMenu() {
                   <span className="text-sm">Order & Track</span>
                 </Link>
                 <Link
-                  href="/?section=about"
+                  href="/#about"
                   onClick={closeMobileMenu}
                   className="flex items-center gap-3 rounded-lg px-3 py-2.5 text-foreground transition-colors hover:bg-secondary active:bg-secondary/60"
                 >
@@ -111,7 +111,7 @@ export function MobileMenu() {
                   <span className="text-sm">About Us</span>
                 </Link>
                 <Link
-                  href="/?section=events"
+                  href="/#events"
                   onClick={closeMobileMenu}
                   className="flex items-center gap-3 rounded-lg px-3 py-2.5 text-foreground transition-colors hover:bg-secondary active:bg-secondary/60"
                 >
@@ -119,7 +119,7 @@ export function MobileMenu() {
                   <span className="text-sm">Events</span>
                 </Link>
                 <Link
-                  href="/?section=contact"
+                  href="/#contact"
                   onClick={closeMobileMenu}
                   className="flex items-center gap-3 rounded-lg px-3 py-2.5 text-foreground transition-colors hover:bg-secondary active:bg-secondary/60"
                 >

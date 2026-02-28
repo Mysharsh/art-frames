@@ -11,7 +11,11 @@
 			},
 			"gallery": "https://api.mcp.github.com",
 			"version": "0.25.0"
-		}
+		},
+		"shadcn": {
+      "command": "npx",
+      "args": ["shadcn@latest", "mcp"]
+    }
 	},
 	"inputs": [
 		{

@@ -27,7 +27,7 @@ export default function ProductError({ error, reset }: ErrorProps) {
                 </h1>
 
                 <p className="text-muted-foreground mb-6 text-sm">
-                    We couldn't load the product details. Please try again.
+                    We couldn&apos;t load the product details. Please try again.
                 </p>
 
                 <div className="flex flex-col gap-3 sm:flex-row sm:justify-center">

@@ -5,12 +5,13 @@ import { Menu, Search, ShoppingBag, X } from "lucide-react"
 import { useAppStore } from "@/lib/store"
 import { SearchOverlay } from "@/components/search-overlay"
 import { MobileMenu } from "@/components/mobile-menu"
+import { AuthMenu } from "@/components/auth-menu"
 
 const primaryNav = [
-  { label: "Order", href: "/?section=order" },
-  { label: "About", href: "/?section=about" },
-  { label: "Events", href: "/?section=events" },
-  { label: "Contact", href: "/?section=contact" },
+  { label: "Order", href: "/#order" },
+  { label: "About", href: "/#about" },
+  { label: "Events", href: "/#events" },
+  { label: "Contact", href: "/#contact" },
 ]
 
 export function SiteHeader() {
@@ -77,6 +78,7 @@ export function SiteHeader() {
                 </span>
               )}
             </Link>
+            <AuthMenu />
           </div>
         </div>
       </header>
