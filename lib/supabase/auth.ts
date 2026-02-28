@@ -1,11 +1,17 @@
 import { createClient } from "@/lib/supabase/server"
 
+function getAuthCallbackUrl() {
+    const configuredSiteUrl = process.env.NEXT_PUBLIC_SITE_URL?.replace(/\/$/, "")
+    const origin = configuredSiteUrl || "http://localhost:3000"
+    return `${origin}/auth/callback`
+}
+
 export async function signInWithGoogle() {
     const supabase = await createClient()
     const { data, error } = await supabase.auth.signInWithOAuth({
         provider: "google",
         options: {
-            redirectTo: `${process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000"}/auth/callback`,
+            redirectTo: getAuthCallbackUrl(),
         },
     })
     return { data, error }
@@ -16,7 +22,7 @@ export async function signInWithGitHub() {
     const { data, error } = await supabase.auth.signInWithOAuth({
         provider: "github",
         options: {
-            redirectTo: `${process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000"}/auth/callback`,
+            redirectTo: getAuthCallbackUrl(),
         },
     })
     return { data, error }

@@ -1,6 +1,6 @@
 "use client"
 
-import { useRouter, useSearchParams } from "next/navigation"
+import { useSearchParams } from "next/navigation"
 import { useState, useEffect, useMemo } from "react"
 import Link from "next/link"
 import { Mail, Loader2 } from "lucide-react"
@@ -8,7 +8,6 @@ import { createClient } from "@/lib/supabase/client"
 import { Button } from "@/components/ui/button"
 
 export default function LoginPage() {
-    const router = useRouter()
     const searchParams = useSearchParams()
     const [loading, setLoading] = useState(false)
     const [error, setError] = useState<string | null>(null)
@@ -19,7 +18,8 @@ export default function LoginPage() {
     useEffect(() => {
         const errorParam = searchParams.get("error")
         if (errorParam === "auth_error") {
-            setError("Authentication failed. Please try again.")
+            const errorDescription = searchParams.get("error_description")
+            setError(errorDescription || "Authentication failed. Please try again.")
         }
     }, [searchParams])
 
@@ -28,10 +28,10 @@ export default function LoginPage() {
             setLoading(true)
             setError(null)
 
-            // Get origin only once
-            const origin = window.location.origin
+            const configuredSiteUrl = process.env.NEXT_PUBLIC_SITE_URL?.replace(/\/$/, "")
+            const origin = configuredSiteUrl || window.location.origin
 
-            const { data, error } = await supabase.auth.signInWithOAuth({
+            const { error } = await supabase.auth.signInWithOAuth({
                 provider: "google",
                 options: {
                     redirectTo: `${origin}/auth/callback`,

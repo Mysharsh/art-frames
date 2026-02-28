@@ -1,6 +1,5 @@
 "use client"
 
-import { useRouter } from "next/navigation"
 import { useState, useMemo } from "react"
 import Link from "next/link"
 import { Mail, Loader2 } from "lucide-react"
@@ -8,7 +7,6 @@ import { createClient } from "@/lib/supabase/client"
 import { Button } from "@/components/ui/button"
 
 export default function RegisterPage() {
-    const router = useRouter()
     const [loading, setLoading] = useState(false)
     const [error, setError] = useState<string | null>(null)
 
@@ -20,10 +18,10 @@ export default function RegisterPage() {
             setLoading(true)
             setError(null)
 
-            // Get origin only once
-            const origin = window.location.origin
+            const configuredSiteUrl = process.env.NEXT_PUBLIC_SITE_URL?.replace(/\/$/, "")
+            const origin = configuredSiteUrl || window.location.origin
 
-            const { data, error } = await supabase.auth.signInWithOAuth({
+            const { error } = await supabase.auth.signInWithOAuth({
                 provider: "google",
                 options: {
                     redirectTo: `${origin}/auth/callback`,
