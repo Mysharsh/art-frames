@@ -23,7 +23,11 @@ CREATE POLICY "Users can update own profile"
   FOR UPDATE
   USING (auth.uid() = id);
 
--- Create function to handle user creation on signup
+-- Allow users to delete their own profile
+CREATE POLICY "Users can delete own profile"
+  ON public.users
+  FOR DELETE
+  USING (auth.uid() = id);
 CREATE OR REPLACE FUNCTION public.handle_new_user()
 RETURNS TRIGGER AS $$
 BEGIN

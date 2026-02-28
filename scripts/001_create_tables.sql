@@ -18,6 +18,6 @@ ALTER TABLE public.waitlist_entries ENABLE ROW LEVEL SECURITY;
 CREATE POLICY "Anyone can join waitlist" ON public.waitlist_entries
   FOR INSERT WITH CHECK (true);
 
--- Allow reading all entries (for count display)
+-- Allow reading count (HEAD request returns count but no row data)
 CREATE POLICY "Anyone can view waitlist count" ON public.waitlist_entries
-  FOR SELECT USING (false);
+  FOR SELECT USING (true);
