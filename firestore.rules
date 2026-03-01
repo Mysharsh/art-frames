@@ -1,0 +1,68 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    
+    // Helper functions
+    function isAuthenticated() {
+      return request.auth != null;
+    }
+    
+    function isAdmin() {
+      return isAuthenticated() && get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'admin';
+    }
+    
+    function getUserEmail() {
+      return request.auth.token.email;
+    }
+    
+    // Waitlist Collection Rules
+    match /waitlist/{document=**} {
+      // Only admins may list/read individual waitlist entries
+      allow list, read: if isAdmin();
+      
+      // Allow public to add to waitlist
+      allow create: if request.resource.data.email != null &&
+                       request.resource.data.product_id != null &&
+                       request.resource.data.created_at == request.time &&
+                       request.resource.data.updated_at == request.time;
+      
+      // Allow authenticated users to delete their own entries
+      allow delete: if isAuthenticated() &&
+                       request.auth.token.email == resource.data.email;
+      
+      // Allow admins to see, update, and delete all entries
+      allow read, update, delete: if isAdmin();
+    }
+    
+    // Users Collection Rules
+    match /users/{userId} {
+      // Allow users to read their own profile
+      allow read: if isAuthenticated() && request.auth.uid == userId;
+      
+      // Allow users to update their own profile
+      allow update: if isAuthenticated() && 
+                       request.auth.uid == userId &&
+                       (request.resource.data.role == null ||
+                        request.resource.data.role == resource.data.role); // Prevent role escalation
+      
+      // Allow users to delete their own account
+      allow delete: if isAuthenticated() && request.auth.uid == userId;
+      
+      // Allow admins to see, update, and delete any profile
+      allow read, update, delete: if isAdmin();
+      
+      // Allow creation of user profile during sign-up
+      allow create: if isAuthenticated() && 
+                       document.id == request.auth.uid &&
+                       request.resource.data.email == request.auth.token.email &&
+                       request.resource.data.role == 'user' &&
+                       request.resource.data.created_at == request.time &&
+                       request.resource.data.updated_at == request.time;
+    }
+    
+    // Deny all other access
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}

@@ -98,7 +98,9 @@ test.describe('Accessibility', () => {
 
     test('should support focus visible states', async ({ page }) => {
         await page.goto('/')
-        const button = page.locator('button').first()
+        // Use a visible focusable button (the search button in header)
+        const button = page.locator('button[aria-label="Search"]').first()
+        await expect(button).toBeVisible({ timeout: 5000 })
         // Trigger focus
         await button.focus()
         // Button should be focused

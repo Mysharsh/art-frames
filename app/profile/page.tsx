@@ -3,28 +3,29 @@
 import { useEffect, useState } from "react"
 import Link from "next/link"
 import { useRouter } from "next/navigation"
-import { createClient } from "@/lib/supabase/client"
+import { auth } from "@/lib/firebase/client"
+import { onAuthStateChanged, type User as FirebaseUser } from "firebase/auth"
 
 export default function ProfilePage() {
     const router = useRouter()
-    const [user, setUser] = useState<any>(null)
+    const [user, setUser] = useState<FirebaseUser | null>(null)
     const [loading, setLoading] = useState(true)
-    const supabase = createClient()
 
     useEffect(() => {
-        async function getUser() {
-            const {
-                data: { user },
-            } = await supabase.auth.getUser()
-            if (!user) {
+        // Subscribe to auth state changes
+        const unsubscribe = onAuthStateChanged(auth, (firebaseUser) => {
+            if (!firebaseUser) {
                 router.push("/auth/login")
                 return
             }
-            setUser(user)
+            setUser(firebaseUser)
             setLoading(false)
+        })
+
+        return () => {
+            unsubscribe()
         }
-        getUser()
-    }, [supabase, router])
+    }, [router])
 
     if (loading) {
         return (
@@ -53,7 +54,7 @@ export default function ProfilePage() {
                         <div>
                             <p className="text-sm text-muted-foreground">Full Name</p>
                             <p className="text-foreground font-medium">
-                                {user.user_metadata?.full_name || "Not provided"}
+                                {user.displayName || "Not provided"}
                             </p>
                         </div>
 
@@ -65,18 +66,21 @@ export default function ProfilePage() {
                         <div>
                             <p className="text-sm text-muted-foreground">Account Type</p>
                             <p className="text-foreground font-medium capitalize">
-                                {user.app_metadata?.provider || "Email"}
+                                Google
                             </p>
                         </div>
 
                         <div>
                             <p className="text-sm text-muted-foreground">Member Since</p>
                             <p className="text-foreground font-medium">
-                                {new Date(user.created_at).toLocaleDateString("en-US", {
-                                    year: "numeric",
-                                    month: "long",
-                                    day: "numeric",
-                                })}
+                                {user.metadata?.creationTime
+                                    ? new Date(user.metadata.creationTime).toLocaleDateString("en-US", {
+                                        year: "numeric",
+                                        month: "long",
+                                        day: "numeric",
+                                    })
+                                    : "Unknown"
+                                }
                             </p>
                         </div>
                     </div>

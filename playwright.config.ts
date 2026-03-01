@@ -41,10 +41,13 @@ export default defineConfig({
             use: { ...devices['Desktop Firefox'] },
         },
 
-        {
-            name: 'webkit',
-            use: { ...devices['Desktop Safari'] },
-        },
+        // webkit requires libgstreamer, libgtk-4 and other native libs that are
+        // not available in this devcontainer. Re-enable in CI with a full
+        // playwright Docker image (mcr.microsoft.com/playwright).
+        // {
+        //     name: 'webkit',
+        //     use: { ...devices['Desktop Safari'] },
+        // },
 
         /* Test against mobile viewports. */
         // {
@@ -69,8 +72,9 @@ export default defineConfig({
 
     /* Run your local dev server before starting the tests */
     webServer: {
-        command: 'pnpm dev',
+        command: 'npm run dev',
         url: 'http://localhost:3000',
         reuseExistingServer: !process.env.CI,
+        timeout: 120000,
     },
 })

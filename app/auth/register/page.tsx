@@ -1,39 +1,27 @@
 "use client"
 
-import { useState, useMemo } from "react"
+import { useState } from "react"
+import { useRouter } from "next/navigation"
 import Link from "next/link"
 import { Mail, Loader2 } from "lucide-react"
-import { createClient } from "@/lib/supabase/client"
+import { signInWithGoogle } from "@/lib/firebase/auth"
 import { Button } from "@/components/ui/button"
 
 export default function RegisterPage() {
+    const router = useRouter()
     const [loading, setLoading] = useState(false)
     const [error, setError] = useState<string | null>(null)
-
-    // Memoize Supabase client to avoid recreation on every render
-    const supabase = useMemo(() => createClient(), [])
 
     const handleGoogleSignUp = async () => {
         try {
             setLoading(true)
             setError(null)
 
-            const configuredSiteUrl = process.env.NEXT_PUBLIC_SITE_URL?.replace(/\/$/, "")
-            const origin = configuredSiteUrl || window.location.origin
-
-            const { error } = await supabase.auth.signInWithOAuth({
-                provider: "google",
-                options: {
-                    redirectTo: `${origin}/auth/callback`,
-                    skipBrowserRedirect: false,
-                },
-            })
-
-            if (error) throw error
-
-            // Browser will redirect, keep loading state
+            await signInWithGoogle()
+            router.push("/")
         } catch (err) {
             setError(err instanceof Error ? err.message : "Authentication failed")
+        } finally {
             setLoading(false)
         }
     }

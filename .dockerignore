@@ -40,8 +40,6 @@ README.md
 # Config files
 .eslintignore
 .prettierignore
-tsconfig.json
-next.config.mjs
 vitest.config.ts
 playwright.config.ts
 

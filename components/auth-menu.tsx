@@ -4,7 +4,9 @@ import { useEffect, useState } from "react"
 import Link from "next/link"
 import { useRouter } from "next/navigation"
 import { LogOut, User } from "lucide-react"
-import { createClient } from "@/lib/supabase/client"
+import { auth } from "@/lib/firebase/client"
+import { signOut } from "@/lib/firebase/auth"
+import { onAuthStateChanged, type User as FirebaseUser } from "firebase/auth"
 import { Button } from "@/components/ui/button"
 import {
     DropdownMenu,
@@ -17,34 +19,23 @@ import {
 
 export function AuthMenu() {
     const router = useRouter()
-    const [user, setUser] = useState<any>(null)
+    const [user, setUser] = useState<FirebaseUser | null>(null)
     const [loading, setLoading] = useState(true)
-    const supabase = createClient()
 
     useEffect(() => {
-        async function getUser() {
-            const {
-                data: { user },
-            } = await supabase.auth.getUser()
-            setUser(user)
+        // Subscribe to auth state changes
+        const unsubscribe = onAuthStateChanged(auth, (firebaseUser) => {
+            setUser(firebaseUser)
             setLoading(false)
-        }
-        getUser()
-
-        // Subscribe to auth changes
-        const {
-            data: { subscription },
-        } = supabase.auth.onAuthStateChange((_event, session) => {
-            setUser(session?.user || null)
         })
 
         return () => {
-            subscription?.unsubscribe()
+            unsubscribe()
         }
-    }, [supabase])
+    }, [])
 
     const handleSignOut = async () => {
-        await supabase.auth.signOut()
+        await signOut()
         setUser(null)
         router.push("/")
     }
@@ -79,7 +70,7 @@ export function AuthMenu() {
                 <DropdownMenuLabel>
                     <div className="flex flex-col space-y-1">
                         <p className="text-sm font-medium leading-none">
-                            {user.user_metadata?.full_name || user.email}
+                            {user.displayName || user.email || "User"}
                         </p>
                         <p className="text-xs leading-none text-muted-foreground">
                             {user.email}

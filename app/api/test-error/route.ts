@@ -1,4 +1,5 @@
 import * as Sentry from '@sentry/nextjs'
+import { NextResponse } from 'next/server'
 
 /**
  * Test error endpoint for manual Sentry testing
@@ -6,6 +7,10 @@ import * as Sentry from '@sentry/nextjs'
  */
 
 export async function GET(request: Request) {
+    if (process.env.NODE_ENV === 'production') {
+        return NextResponse.json({ error: 'Not found' }, { status: 404 })
+    }
+
     const { searchParams } = new URL(request.url)
     const errorType = searchParams.get('type') || 'generic'
     const message = searchParams.get('message') || 'Manual production error test'
@@ -104,6 +109,10 @@ export async function GET(request: Request) {
 }
 
 export async function POST(request: Request) {
+    if (process.env.NODE_ENV === 'production') {
+        return NextResponse.json({ error: 'Not found' }, { status: 404 })
+    }
+
     try {
         const body = await request.json()
         const { errorType = 'generic', message = 'Manual error from POST', userId } = body

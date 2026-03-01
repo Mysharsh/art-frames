@@ -3,19 +3,19 @@ import { test, expect } from '@playwright/test'
 test.describe('Homepage', () => {
     test('should load homepage successfully', async ({ page }) => {
         await page.goto('/')
-        await expect(page).toHaveTitle(/Art Frames|app/i)
-        await expect(page.locator('text=/Frame Your Art/i')).toBeVisible({ timeout: 5000 })
+        await expect(page).toHaveTitle(/ArtFrames/i)
+        await expect(page.locator('text=/Bold|Durable|Limited Drops/i').first()).toBeVisible({ timeout: 5000 })
     })
 
     test('should display product grid', async ({ page }) => {
         await page.goto('/')
-        const products = page.locator('[class*="product-card"]').first()
+        const products = page.locator('a[href^="/product/"]').first()
         await expect(products).toBeVisible({ timeout: 5000 })
     })
 
     test('should have working navigation', async ({ page }) => {
         await page.goto('/')
-        const header = page.locator('[class*="site-header"]')
+        const header = page.locator('header').first()
         await expect(header).toBeVisible()
     })
 
@@ -46,7 +46,8 @@ test.describe('Homepage', () => {
 
     test('should display multiple product categories', async ({ page }) => {
         await page.goto('/')
-        const categories = page.locator('button[class*="chip"]')
+        await page.waitForSelector('button:has-text("All Metal")', { timeout: 5000 })
+        const categories = page.locator('button').filter({ hasText: /All Metal|Metal / })
         const count = await categories.count()
         expect(count).toBeGreaterThan(0)
     })

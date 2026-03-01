@@ -17,7 +17,7 @@ test.describe('Mobile Navigation', () => {
         await page.goto('/product/p1')
         const viewport = page.viewportSize()
         expect(viewport?.width).toBeLessThanOrEqual(375)
-        await expect(page).toHaveTitle(/Art Frames|app/i)
+        await expect(page).toHaveTitle(/ArtFrames/i)
     })
 
     test('should display bottom navigation on mobile', async ({ page }) => {
@@ -63,7 +63,7 @@ test.describe('Mobile Navigation', () => {
         // Scroll down the page
         await page.evaluate(() => window.scrollTo(0, document.body.scrollHeight))
         // Page should remain responsive
-        const products = page.locator('[class*="product-card"]')
+        const products = page.locator('a[href^="/product/"]')
         const count = await products.count()
         expect(count).toBeGreaterThan(0)
     })
@@ -79,7 +79,7 @@ test.describe('Mobile Navigation', () => {
 
     test('should support mobile search', async ({ page }) => {
         await page.goto('/')
-        const searchButton = page.locator('button').filter({ hasText: /search|🔍/i }).first()
+        const searchButton = page.locator('button[aria-label="Search"]').first()
         if (await searchButton.isVisible()) {
             await searchButton.click()
             const searchInput = page.locator('input[placeholder*="search" i]').first()

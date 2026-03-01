@@ -1,6 +1,6 @@
 # Art Frames E-Commerce Platform
 
-A production-ready Next.js 16 storefront for art frames with waitlist signup functionality. Built with TypeScript, Tailwind CSS, Radix UI, and Supabase.
+A production-ready Next.js 16 storefront for art frames with waitlist signup functionality. Built with TypeScript, Tailwind CSS, Radix UI, and Firebase.
 
 ## Features
 
@@ -18,7 +18,7 @@ A production-ready Next.js 16 storefront for art frames with waitlist signup fun
 - **Framework**: Next.js 16 with App Router
 - **Language**: TypeScript 5.7
 - **Styling**: Tailwind CSS + Radix UI
-- **Database**: Supabase (Postgres) with Row Level Security
+- **Database**: Firebase Firestore with Security Rules
 - **State Management**: Zustand
 - **Testing**: 
   - Vitest for unit tests (39 passing tests)
@@ -32,7 +32,7 @@ A production-ready Next.js 16 storefront for art frames with waitlist signup fun
 
 - Node.js 20+ 
 - pnpm 10.30+
-- Supabase account (free tier available at https://supabase.com)
+- Firebase project (create free at https://firebase.google.com)
 
 ### Installation
 
@@ -42,12 +42,10 @@ pnpm install
 
 # Set up environment variables
 cp .env.example .env.local
-# Edit .env.local with your Supabase credentials
+# Edit .env.local with your Firebase credentials
 
-# Run database migrations (on Supabase console)
-# 1. Go to SQL Editor
-# 2. Create new query with content from scripts/001_create_tables.sql
-# 3. Execute it
+# Run the data migration script (if migrating from Supabase)
+npx tsx scripts/migrate-to-firebase.ts
 # 4. Run scripts/002_enhance_waitlist_table.sql for enhancements
 
 # Start development server
@@ -60,8 +58,12 @@ Application will be available at [http://localhost:3000](http://localhost:3000)
 
 ```bash
 # Required for production
-NEXT_PUBLIC_SUPABASE_URL=https://your-project.supabase.co
-NEXT_PUBLIC_SUPABASE_ANON_KEY=your-anon-key
+NEXT_PUBLIC_FIREBASE_API_KEY=your-firebase-api-key
+NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN=your-project.firebaseapp.com
+NEXT_PUBLIC_FIREBASE_PROJECT_ID=your-project-id
+NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET=your-project.appspot.com
+NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID=your-messaging-sender-id
+NEXT_PUBLIC_FIREBASE_APP_ID=your-firebase-app-id
 
 # Optional
 NODE_ENV=production
@@ -205,18 +207,18 @@ CONSTRAINT valid_email_format CHECK (email ~* '^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+
 - Input validation with Zod (email verification, disposable email blocking)
 - Rate limiting on all API endpoints
 - Security headers (CSP, X-Frame-Options, X-Content-Type-Options)
-- Supabase Row Level Security enabled
+- Firebase Security Rules enabled
 - Non-root Docker user
 - Health check endpoint for monitoring
 
 🔒 **Production Checklist**:
-- [ ] Verify Supabase RLS policies are correct
-- [ ] Rotate Supabase credentials regularly
+- [ ] Verify Firebase Security Rules are correctly deployed
+- [ ] Rotate Firebase credentials regularly
 - [ ] Enable HTTPS/SSL certificates
 - [ ] Set up monitoring and alerting
-- [ ] Configure automated backups
-- [ ] Enable audit logging
-- [ ] Set up DDoS protection (Cloudflare)
+- [ ] Configure automated backups (Firebase export)
+- [ ] Enable audit logging (Cloud Logging)
+- [ ] Set up DDoS protection (Cloud Armor)
 
 ## Deployment
 
@@ -228,8 +230,12 @@ docker build -t art-frames:latest .
 
 # Run container
 docker run -p 3000:3000 \
-  -e NEXT_PUBLIC_SUPABASE_URL=https://xxx.supabase.co \
-  -e NEXT_PUBLIC_SUPABASE_ANON_KEY=xxx \
+  -e NEXT_PUBLIC_FIREBASE_API_KEY=xxx \
+  -e NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN=xxx \
+  -e NEXT_PUBLIC_FIREBASE_PROJECT_ID=xxx \
+  -e NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET=xxx \
+  -e NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID=xxx \
+  -e NEXT_PUBLIC_FIREBASE_APP_ID=xxx \
   art-frames:latest
 
 # Or use docker-compose
@@ -240,8 +246,12 @@ docker-compose up -d
 
 ```bash
 # .env.local (development only, DO NOT commit)
-NEXT_PUBLIC_SUPABASE_URL=https://xxx.supabase.co
-NEXT_PUBLIC_SUPABASE_ANON_KEY=xxx
+NEXT_PUBLIC_FIREBASE_API_KEY=xxx
+NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN=xxx
+NEXT_PUBLIC_FIREBASE_PROJECT_ID=xxx
+NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET=xxx
+NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID=xxx
+NEXT_PUBLIC_FIREBASE_APP_ID=xxx
 
 # Production - set these securely:
 # - Docker environment variables
@@ -315,13 +325,13 @@ docker logs -f <container-id>  # Follow logs
 ├── components/             # React components
 │   └── ui/                # Radix UI components
 ├── lib/                    # Utilities and hooks
-│   ├── supabase/          # Supabase clients
+│   ├── firebase/          # Firebase clients and utilities
 │   ├── validations.ts     # Zod schemas
 │   ├── rate-limit.ts      # Rate limiting
 │   └── products.ts        # Product data
 ├── __tests__/             # Unit tests (Vitest)
 ├── tests/e2e/            # E2E tests (Playwright)
-├── scripts/              # Database migrations
+├── scripts/              # Database migrations and utilities
 └── Dockerfile           # Production image
 ```
 

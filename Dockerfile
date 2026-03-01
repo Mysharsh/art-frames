@@ -19,13 +19,13 @@ WORKDIR /app
 COPY --from=dependencies /app/node_modules ./node_modules
 COPY --from=dependencies /app/pnpm-lock.yaml ./
 
-# Copy source code
+# Copy source code (tsconfig.json and next.config.mjs must NOT be in .dockerignore)
 COPY . .
 
-# Build Next.js application
-RUN npm run build
+# Build Next.js application using pnpm (same package manager as install step)
+RUN npm install -g pnpm@10.30.1 && pnpm run build
 
-# Production stage
+# Production stage — uses Next.js standalone output for a minimal image
 FROM node:20-alpine AS runtime
 WORKDIR /app
 
@@ -36,22 +36,19 @@ RUN apk add --no-cache dumb-init
 RUN addgroup --gid 1001 nodejs
 RUN adduser --uid 1001 -S nextjs -G nodejs
 
-# Install pnpm
-RUN npm install -g pnpm@10.30.1
+# Copy only the standalone server bundle and static assets
+COPY --from=builder --chown=nextjs:nodejs /app/.next/standalone ./
+COPY --from=builder --chown=nextjs:nodejs /app/.next/static ./.next/static
+COPY --from=builder --chown=nextjs:nodejs /app/public ./public
 
-# Copy from builder stage - production dependencies only
-COPY --from=builder /app/node_modules ./node_modules
-COPY --from=builder /app/.next ./.next
-COPY --from=builder /app/public ./public
-COPY --from=builder /app/package.json ./package.json
-COPY --from=builder /app/pnpm-lock.yaml ./pnpm-lock.yaml
+# Switch to non-root user
+USER nextjs
 
 # Set environment variables
 ENV NODE_ENV=production
 ENV NEXT_TELEMETRY_DISABLED=1
-
-# Disable Next.js analytics
-ENV NEXT_PUBLIC_DISABLE_ANALYTICS=1
+ENV PORT=3000
+ENV HOSTNAME="0.0.0.0"
 
 # Expose port
 EXPOSE 3000
@@ -63,5 +60,5 @@ HEALTHCHECK --interval=30s --timeout=10s --start-period=40s --retries=3 \
 # Use dumb-init to handle signals properly
 ENTRYPOINT ["dumb-init", "--"]
 
-# Start Next.js application
-CMD ["pnpm", "start"]
+# Start Next.js standalone server
+CMD ["node", "server.js"]

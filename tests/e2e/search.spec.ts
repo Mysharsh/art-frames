@@ -3,13 +3,13 @@ import { test, expect } from '@playwright/test'
 test.describe('Search Functionality', () => {
     test('should display search overlay button', async ({ page }) => {
         await page.goto('/')
-        const searchButton = page.locator('button').filter({ hasText: /search|🔍/i }).first()
+        const searchButton = page.locator('button[aria-label="Search"]').first()
         await expect(searchButton).toBeVisible()
     })
 
     test('should open search overlay', async ({ page }) => {
         await page.goto('/')
-        const searchButton = page.locator('button').filter({ hasText: /search|🔍/i }).first()
+        const searchButton = page.locator('button[aria-label="Search"]').first()
         if (await searchButton.isVisible()) {
             await searchButton.click()
             const searchInput = page.locator('input[placeholder*="search" i], input[type="search"]').first()
@@ -19,7 +19,7 @@ test.describe('Search Functionality', () => {
 
     test('should search for products', async ({ page }) => {
         await page.goto('/')
-        const searchButton = page.locator('button').filter({ hasText: /search|🔍/i }).first()
+        const searchButton = page.locator('button[aria-label="Search"]').first()
         if (await searchButton.isVisible()) {
             await searchButton.click()
             const searchInput = page.locator('input[placeholder*="search" i], input[type="search"]').first()
@@ -37,7 +37,7 @@ test.describe('Search Functionality', () => {
 
     test('should navigate from search results', async ({ page }) => {
         await page.goto('/')
-        const searchButton = page.locator('button').filter({ hasText: /search|🔍/i }).first()
+        const searchButton = page.locator('button[aria-label="Search"]').first()
         if (await searchButton.isVisible()) {
             await searchButton.click()
             const searchInput = page.locator('input[placeholder*="search" i], input[type="search"]').first()
@@ -57,7 +57,7 @@ test.describe('Search Functionality', () => {
 
     test('should handle empty search', async ({ page }) => {
         await page.goto('/')
-        const searchButton = page.locator('button').filter({ hasText: /search|🔍/i }).first()
+        const searchButton = page.locator('button[aria-label="Search"]').first()
         if (await searchButton.isVisible()) {
             await searchButton.click()
             const searchInput = page.locator('input[placeholder*="search" i], input[type="search"]').first()
@@ -75,7 +75,7 @@ test.describe('Search Functionality', () => {
 
     test('should close search overlay with ESC', async ({ page }) => {
         await page.goto('/')
-        const searchButton = page.locator('button').filter({ hasText: /search|🔍/i }).first()
+        const searchButton = page.locator('button[aria-label="Search"]').first()
         if (await searchButton.isVisible()) {
             await searchButton.click()
             const overlay = page.locator('[class*="search-overlay"], [role="dialog"]').first()
@@ -88,7 +88,7 @@ test.describe('Search Functionality', () => {
 
     test('should have keyboard navigation in search', async ({ page }) => {
         await page.goto('/')
-        const searchButton = page.locator('button').filter({ hasText: /search|🔍/i }).first()
+        const searchButton = page.locator('button[aria-label="Search"]').first()
         if (await searchButton.isVisible()) {
             await searchButton.click()
             const searchInput = page.locator('input[placeholder*="search" i], input[type="search"]').first()
@@ -105,7 +105,7 @@ test.describe('Search Functionality', () => {
 
     test('should display search results count', async ({ page }) => {
         await page.goto('/')
-        const searchButton = page.locator('button').filter({ hasText: /search|🔍/i }).first()
+        const searchButton = page.locator('button[aria-label="Search"]').first()
         if (await searchButton.isVisible()) {
             await searchButton.click()
             const searchInput = page.locator('input[placeholder*="search" i], input[type="search"]').first()

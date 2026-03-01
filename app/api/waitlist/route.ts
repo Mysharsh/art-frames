@@ -1,5 +1,14 @@
 import { NextResponse } from "next/server"
-import { createClient } from "@/lib/supabase/server"
+import { db } from "@/lib/firebase/client"
+import {
+  collection,
+  query,
+  where,
+  getDocs,
+  addDoc,
+  deleteDoc,
+  getCountFromServer,
+} from "firebase/firestore"
 import { waitlistLimiter, countLimiter, getClientIp } from "@/lib/rate-limit"
 import { safeParseWaitlistEntry } from "@/lib/validations"
 
@@ -38,37 +47,29 @@ export async function POST(request: Request) {
 
     const { email, productId, productTitle } = parseResult.data
 
-    const supabase = await createClient()
-
     // Check if already on waitlist for this product
-    const { data: existing } = await supabase
-      .from("waitlist_entries")
-      .select("id")
-      .eq("email", email)
-      .eq("product_id", productId)
-      .maybeSingle()
+    const q = query(
+      collection(db, "waitlist"),
+      where("email", "==", email),
+      where("product_id", "==", productId)
+    )
+    const snapshot = await getDocs(q)
 
-    if (existing) {
+    if (!snapshot.empty) {
       return NextResponse.json(
         { error: "You're already on the waitlist for this product" },
         { status: 409 }
       )
     }
 
-    const { error } = await supabase.from("waitlist_entries").insert({
+    // Add to waitlist
+    await addDoc(collection(db, "waitlist"), {
       email,
       product_id: productId,
       product_title: productTitle || null,
+      created_at: new Date(),
+      updated_at: new Date(),
     })
-
-    if (error) {
-      // Log error for debugging (in production, this would go to Sentry)
-      console.error("Waitlist insert error:", error)
-      return NextResponse.json(
-        { error: "Failed to join waitlist. Please try again later." },
-        { status: 500 }
-      )
-    }
 
     return NextResponse.json({ success: true })
   } catch (error) {
@@ -99,17 +100,11 @@ export async function GET(request: Request) {
   }
 
   try {
-    const supabase = await createClient()
+    // Use Firestore aggregation to avoid reading all documents into memory
+    const snapshot = await getCountFromServer(collection(db, "waitlist"))
+    const count = snapshot.data().count
 
-    const { count, error } = await supabase
-      .from("waitlist_entries")
-      .select("*", { count: "exact", head: true })
-
-    if (error) {
-      return NextResponse.json({ count: 0 })
-    }
-
-    return NextResponse.json({ count: count || 0 })
+    return NextResponse.json({ count })
   } catch {
     return NextResponse.json({ count: 0 })
   }

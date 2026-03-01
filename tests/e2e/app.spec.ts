@@ -5,17 +5,17 @@ test.describe('Homepage', () => {
         await page.goto('/')
 
         // Check if main content is visible
-        await expect(page).toHaveTitle(/Art Frames|app/i)
+        await expect(page).toHaveTitle(/ArtFrames/i)
 
         // Check for hero banner
-        await expect(page.locator('text=/Frame Your Art/i')).toBeVisible({ timeout: 5000 })
+        await expect(page.locator('text=/Bold|Durable|Limited Drops/i').first()).toBeVisible({ timeout: 5000 })
     })
 
     test('should display product grid', async ({ page }) => {
         await page.goto('/')
 
         // Wait for products to load
-        const products = page.locator('[class*="product-card"]').first()
+        const products = page.locator('a[href^="/product/"]').first()
         await expect(products).toBeVisible({ timeout: 5000 })
     })
 
@@ -23,7 +23,7 @@ test.describe('Homepage', () => {
         await page.goto('/')
 
         // Check for header
-        const header = page.locator('[class*="site-header"]')
+        const header = page.locator('header').first()
         await expect(header).toBeVisible()
     })
 
@@ -48,7 +48,7 @@ test.describe('Product Pages', () => {
         await expect(page.locator('h1').first()).toBeVisible({ timeout: 5000 })
 
         // Check for product image
-        const image = page.locator('img[alt*="product"]').first()
+        const image = page.locator('img[alt]').first()
         await expect(image).toBeVisible()
     })
 
@@ -66,8 +66,8 @@ test.describe('Product Pages', () => {
         //  Wait for content to load
         await page.waitForFunction(() => document.body.innerText.length > 100)
 
-        // Look for buttons
-        const button = page.locator('button').filter({ hasText: /add|cart|wishlist/i }).first()
+        // Look for CTA button
+        const button = page.locator('button[aria-label="Wishlist"], button:has-text("Notify")').first()
         await expect(button).toBeVisible({ timeout: 5000 })
     })
 
@@ -144,7 +144,7 @@ test.describe('Search Functionality', () => {
         await page.goto('/')
 
         // Look for search button
-        const searchButton = page.locator('button').filter({ hasText: /search/i }).first()
+        const searchButton = page.locator('button[aria-label="Search"]').first()
         if (await searchButton.isVisible()) {
             await searchButton.click()
 
@@ -180,7 +180,7 @@ test.describe('Mobile Navigation', () => {
         expect(viewport?.width).toBeLessThanOrEqual(375)
 
         // Page should load without errors
-        await expect(page).toHaveTitle(/Art Frames|app/i)
+        await expect(page).toHaveTitle(/ArtFrames/i)
     })
 })
 

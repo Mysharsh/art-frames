@@ -1,19 +1,17 @@
 "use client"
 
-import { useSearchParams } from "next/navigation"
-import { useState, useEffect, useMemo } from "react"
+import { useSearchParams, useRouter } from "next/navigation"
+import { useState, useEffect } from "react"
 import Link from "next/link"
 import { Mail, Loader2 } from "lucide-react"
-import { createClient } from "@/lib/supabase/client"
+import { signInWithGoogle } from "@/lib/firebase/auth"
 import { Button } from "@/components/ui/button"
 
 export default function LoginPage() {
     const searchParams = useSearchParams()
+    const router = useRouter()
     const [loading, setLoading] = useState(false)
     const [error, setError] = useState<string | null>(null)
-
-    // Memoize Supabase client to avoid recreation on every render
-    const supabase = useMemo(() => createClient(), [])
 
     useEffect(() => {
         const errorParam = searchParams.get("error")
@@ -28,22 +26,26 @@ export default function LoginPage() {
             setLoading(true)
             setError(null)
 
-            const configuredSiteUrl = process.env.NEXT_PUBLIC_SITE_URL?.replace(/\/$/, "")
-            const origin = configuredSiteUrl || window.location.origin
+            await signInWithGoogle()
+            const next = searchParams.get("next") || "/"
+            router.push(next)
+        } catch (err) {
+            let errorMessage = "Authentication failed"
 
-            const { error } = await supabase.auth.signInWithOAuth({
-                provider: "google",
-                options: {
-                    redirectTo: `${origin}/auth/callback`,
-                    skipBrowserRedirect: false,
-                },
+            if (err instanceof Error) {
+                errorMessage = err.message
+            }
+
+            // Log detailed error for debugging
+            console.error('Sign-in error:', {
+                type: err instanceof Error ? err.constructor.name : typeof err,
+                message: errorMessage,
+                errorString: err instanceof Error ? err.toString() : String(err),
+                stack: err instanceof Error ? err.stack : undefined,
             })
 
-            if (error) throw error
-
-            // Browser will redirect, keep loading state
-        } catch (err) {
-            setError(err instanceof Error ? err.message : "Authentication failed")
+            setError(errorMessage)
+        } finally {
             setLoading(false)
         }
     }
