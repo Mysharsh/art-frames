@@ -18,6 +18,14 @@ const nextConfig = {
       },
     ],
   },
+  async rewrites() {
+    return [
+      {
+        source: "/__/auth/:path*",
+        destination: `https://${process.env.NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN}/__/auth/:path*`,
+      },
+    ];
+  },
   async headers() {
     return [
       {
@@ -41,7 +49,7 @@ const nextConfig = {
           },
           {
             key: "Content-Security-Policy",
-            value: `default-src 'self'; img-src 'self' https://images.unsplash.com https://firebasestorage.googleapis.com https:; script-src 'self' 'unsafe-inline' https://accounts.google.com https://apis.google.com https://*.gstatic.com; style-src 'self' 'unsafe-inline'; font-src 'self' data:; connect-src 'self' https://*.firebaseio.com https://*.googleapis.com https://accounts.google.com https://oauth2.googleapis.com https://securetoken.googleapis.com https://identitytoolkit.googleapis.com https://o*.ingest.sentry.io https:; frame-src 'self' https://accounts.google.com https://art-frames-10cc0.firebaseapp.com; form-action 'self' https://accounts.google.com; frame-ancestors 'none';`,
+            value: `default-src 'self'; img-src 'self' https://images.unsplash.com https://firebasestorage.googleapis.com https:; script-src 'self' 'unsafe-inline' https://accounts.google.com https://apis.google.com https://*.gstatic.com; style-src 'self' 'unsafe-inline'; font-src 'self' data:; connect-src 'self' https://*.firebaseio.com https://*.googleapis.com https://accounts.google.com https://oauth2.googleapis.com https://securetoken.googleapis.com https://identitytoolkit.googleapis.com https://o*.ingest.sentry.io https:; frame-src 'self' https://accounts.google.com https://${process.env.NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN}; form-action 'self' https://accounts.google.com; frame-ancestors 'none';`,
           },
         ],
       },
