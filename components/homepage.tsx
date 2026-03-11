@@ -82,11 +82,11 @@ export function Homepage() {
       <section id="about" className="px-4 py-16 scroll-mt-32">
         <div className="mx-auto max-w-4xl">
           <h2 className="font-display text-3xl font-bold text-foreground mb-6">
-            About METAL POSTERS
+            About Posterwaala
           </h2>
           <div className="space-y-4 text-muted-foreground leading-relaxed">
             <p>
-              Welcome to India&apos;s premier destination for premium metal posters. We bring together bold artistry and unmatched durability to transform your spaces with stunning visual narratives.
+              Welcome to <span className="font-semibold text-foreground">Posterwaala</span> — India&apos;s premier destination for premium metal posters. We bring together bold artistry and unmatched durability to transform your spaces with stunning visual narratives.
             </p>
             <p>
               Every piece in our collection is carefully curated from talented artists across diverse genres—from anime and gaming to nature, abstract, and music. Our metal prints feature vibrant colors, exceptional detail, and a premium finish that elevates any wall.

@@ -2,6 +2,7 @@
 
 import { useEffect } from "react"
 import { SiteHeader } from "@/components/site-header"
+import { SiteFooter } from "@/components/site-footer"
 import { OfferTicker } from "@/components/offer-ticker"
 import { WaitlistModal } from "@/components/waitlist-modal"
 import { useAppStore } from "@/lib/store"
@@ -23,6 +24,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
       <OfferTicker />
       <SiteHeader />
       <main>{children}</main>
+      <SiteFooter />
       <WaitlistModal />
     </>
   )

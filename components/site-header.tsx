@@ -39,10 +39,7 @@ export function SiteHeader() {
 
           <Link href="/" className="flex items-center gap-2">
             <span className="font-display text-2xl tracking-wide text-foreground">
-              Metal
-            </span>
-            <span className="rounded-full bg-primary px-2.5 py-1 text-[11px] font-bold uppercase tracking-widest text-primary-foreground">
-              Posters
+              Posterwaala
             </span>
           </Link>
 

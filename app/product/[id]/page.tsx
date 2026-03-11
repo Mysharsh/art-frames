@@ -17,7 +17,7 @@ export async function generateMetadata({
   if (!product) return { title: "Product Not Found" }
 
   return {
-    title: `${product.title} by ${product.artist} - ArtFrames`,
+    title: `${product.title} by ${product.artist} - Posterwaala`,
     description: product.description,
   }
 }

@@ -15,7 +15,7 @@ export function HeroBanner() {
           <div className="mb-4 inline-flex items-center gap-2 rounded-full border border-primary bg-primary/10 px-4 py-2">
             <span className="h-2 w-2 rounded-full bg-primary" />
             <span className="text-xs font-semibold uppercase tracking-widest text-foreground">
-              Metal Posters
+              Posterwaala
             </span>
           </div>
 

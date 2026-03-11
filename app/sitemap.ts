@@ -4,9 +4,9 @@ import { products } from "@/lib/products"
 const BASE_URL = (() => {
     try {
         const raw = (process.env.NEXT_PUBLIC_SITE_URL ?? "").split(/[\s|]+/)[0].trim()
-        return new URL(raw || "https://artframes.shop").origin
+        return new URL(raw || "https://posterwaala.com").origin
     } catch {
-        return "https://artframes.shop"
+        return "https://posterwaala.com"
     }
 })()
 
@@ -34,6 +34,18 @@ export default function sitemap(): MetadataRoute.Sitemap {
             url: `${BASE_URL}/auth/register`,
             lastModified: new Date(),
             changeFrequency: "monthly",
+            priority: 0.3,
+        },
+        {
+            url: `${BASE_URL}/privacy`,
+            lastModified: new Date(),
+            changeFrequency: "yearly",
+            priority: 0.3,
+        },
+        {
+            url: `${BASE_URL}/terms`,
+            lastModified: new Date(),
+            changeFrequency: "yearly",
             priority: 0.3,
         },
     ]

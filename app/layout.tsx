@@ -18,32 +18,35 @@ const _bebasNeue = Bebas_Neue({
 
 export const metadata: Metadata = {
   title: {
-    default: "ArtFrames - Premium Poster Art",
-    template: "%s | ArtFrames",
+    default: "Posterwaala - Premium Metal Posters",
+    template: "%s | Posterwaala",
   },
   description:
-    "Discover unique poster art from talented artists. Join the waitlist for exclusive launches.",
-  keywords: ["poster art", "art prints", "wall art", "limited edition", "artist prints"],
+    "Discover unique metal poster art from talented artists. Join the waitlist for exclusive launches.",
+  keywords: ["poster art", "metal posters", "wall art", "limited edition", "artist prints", "posterwaala"],
   metadataBase: (() => {
     try {
       // Guard against malformed env var values (e.g. accidentally including shell logic)
       const raw = (process.env.NEXT_PUBLIC_SITE_URL ?? "").split(/[\s|]+/)[0].trim()
-      return new URL(raw || "https://artframes.shop")
+      return new URL(raw || "https://posterwaala.com")
     } catch {
-      return new URL("https://artframes.shop")
+      return new URL("https://posterwaala.com")
     }
   })(),
+  verification: {
+    google: "1_y-XILbZqEyS0eo2965GpAEnB8WlSuneYAbYwYY-VQ",
+  },
   openGraph: {
     type: "website",
     locale: "en_US",
-    siteName: "ArtFrames",
-    title: "ArtFrames - Premium Poster Art",
-    description: "Discover unique poster art from talented artists. Join the waitlist for exclusive launches.",
+    siteName: "Posterwaala",
+    title: "Posterwaala - Premium Metal Posters",
+    description: "Discover unique metal poster art from talented artists. Join the waitlist for exclusive launches.",
   },
   twitter: {
     card: "summary_large_image",
-    title: "ArtFrames - Premium Poster Art",
-    description: "Discover unique poster art from talented artists.",
+    title: "Posterwaala - Premium Metal Posters",
+    description: "Discover unique metal poster art from talented artists.",
   },
   robots: {
     index: true,
