@@ -38,11 +38,6 @@ if (!isConfigValid) {
 let app;
 try {
     app = getApps().length === 0 ? initializeApp(firebaseConfig) : getApps()[0];
-    console.log('[Firebase] App initialized successfully', {
-        projectId: firebaseConfig.projectId,
-        authDomain: firebaseConfig.authDomain,
-        appsCount: getApps().length,
-    });
 } catch (error) {
     console.error('Failed to initialize Firebase:', error);
     throw new Error('Firebase initialization failed. Check your configuration.');
@@ -51,11 +46,6 @@ try {
 // Get Firebase services
 export const auth = getAuth(app);
 export const db = getFirestore(app);
-
-console.log('[Firebase] Auth and Firestore services initialized', {
-    authReady: !!auth,
-    dbReady: !!db,
-});
 
 export default app;
 

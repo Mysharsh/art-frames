@@ -15,6 +15,7 @@ const PUBLIC_PREFIXES = [
     '/api',
     '/favicon.ico',
     '/monitoring', // Sentry tunnel route
+    '/__/',        // Firebase auth proxy (must not be intercepted)
 ];
 
 export function proxy(request: NextRequest) {

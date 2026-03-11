@@ -21,8 +21,11 @@ const nextConfig = {
   async rewrites() {
     return [
       {
+        // Route Firebase auth handler requests through our own Route Handler proxy
+        // instead of an external rewrite. External rewrites cause Vercel to follow
+        // Firebase's 302 redirects server-side, creating a 508 infinite loop.
         source: "/__/auth/:path*",
-        destination: `https://${process.env.NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN}/__/auth/:path*`,
+        destination: "/api/_fb-auth/:path*",
       },
     ];
   },
@@ -49,7 +52,7 @@ const nextConfig = {
           },
           {
             key: "Content-Security-Policy",
-            value: `default-src 'self'; img-src 'self' https://images.unsplash.com https://firebasestorage.googleapis.com https:; script-src 'self' 'unsafe-inline' https://accounts.google.com https://apis.google.com https://*.gstatic.com; style-src 'self' 'unsafe-inline'; font-src 'self' data:; connect-src 'self' https://*.firebaseio.com https://*.googleapis.com https://accounts.google.com https://oauth2.googleapis.com https://securetoken.googleapis.com https://identitytoolkit.googleapis.com https://o*.ingest.sentry.io https:; frame-src 'self' https://accounts.google.com https://${process.env.NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN}; form-action 'self' https://accounts.google.com; frame-ancestors 'none';`,
+            value: `default-src 'self'; img-src 'self' https://images.unsplash.com https://firebasestorage.googleapis.com https:; script-src 'self' 'unsafe-inline' https://accounts.google.com https://apis.google.com https://*.gstatic.com; style-src 'self' 'unsafe-inline'; font-src 'self' data:; connect-src 'self' https://*.firebaseio.com https://*.googleapis.com https://accounts.google.com https://oauth2.googleapis.com https://securetoken.googleapis.com https://identitytoolkit.googleapis.com https://o4510922557227008.ingest.de.sentry.io https:; frame-src 'self' https://accounts.google.com https://${process.env.NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN}; form-action 'self' https://accounts.google.com; frame-ancestors 'none';`,
           },
         ],
       },

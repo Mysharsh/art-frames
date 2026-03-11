@@ -27,42 +27,17 @@ function getGoogleProvider() {
  */
 export async function signInWithGoogle() {
     try {
-        // Log initialization state for debugging
-        console.log('[Auth Debug] Attempting Google sign-in...', {
-            authInitialized: !!auth,
-            authApp: !!auth?.app,
-            authDomain: auth?.app?.options?.authDomain,
-            projectId: auth?.app?.options?.projectId,
-        });
-
-        const googleProvider = getGoogleProvider();
-        console.log('[Auth Debug] Google provider created with scopes:', {
-            scopes: ['profile', 'email'],
-        });
-
-        // Verify auth is properly initialized
         if (!auth || !auth.app) {
             throw new Error('Firebase Auth is not properly initialized. Check your configuration.');
         }
 
-        console.log('[Auth Debug] Starting signInWithPopup...');
+        const googleProvider = getGoogleProvider();
         const result = await signInWithPopup(auth, googleProvider);
-        console.log('[Auth Debug] Sign-in successful!', {
-            uid: result.user.uid,
-            email: result.user.email,
-            displayName: result.user.displayName,
-        });
         return result.user;
     } catch (error) {
         const firebaseError = error as FirebaseError;
 
-        // Log full error for debugging
-        console.error('Google sign-in error:', {
-            code: firebaseError?.code || 'unknown',
-            message: firebaseError?.message || String(error),
-            errorString: error instanceof Error ? error.toString() : String(error),
-            errorName: firebaseError?.name || 'Unknown Error',
-        });
+
 
         // Handle specific Firebase auth errors
         if (firebaseError.code === 'auth/popup-closed-by-user') {

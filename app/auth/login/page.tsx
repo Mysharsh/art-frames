@@ -36,14 +36,6 @@ export default function LoginPage() {
                 errorMessage = err.message
             }
 
-            // Log detailed error for debugging
-            console.error('Sign-in error:', {
-                type: err instanceof Error ? err.constructor.name : typeof err,
-                message: errorMessage,
-                errorString: err instanceof Error ? err.toString() : String(err),
-                stack: err instanceof Error ? err.stack : undefined,
-            })
-
             setError(errorMessage)
         } finally {
             setLoading(false)
