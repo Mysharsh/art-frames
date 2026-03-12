@@ -23,7 +23,7 @@ export function SiteHeader() {
 
   return (
     <>
-      <header className="sticky top-0 z-50 border-b border-border/70 bg-background/90 backdrop-blur-md">
+      <header role="banner" className="sticky top-0 z-50 border-b border-border/70 bg-background/90 backdrop-blur-md">
         <div className="flex h-14 items-center justify-between px-4">
           <button
             onClick={toggleMobileMenu}

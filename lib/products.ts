@@ -340,7 +340,7 @@ export const products: Product[] = [
     artist: "Aqua Arts",
     category: "Abstract",
     price: 28,
-    image: "https://images.unsplash.com/photo-1567095761054-7a02e69e5b2b?w=600&h=600&fit=crop",
+    image: "https://images.unsplash.com/photo-1579546929518-9e396f3cc809?w=600&h=600&fit=crop",
     description: "Liquid art frozen in time. Smooth gradients and organic shapes flow across the canvas in mesmerizing patterns.",
     sizes: ["M (12x16)", "L (18x24)"],
     materials: ["Matte Paper", "Glossy Paper"],

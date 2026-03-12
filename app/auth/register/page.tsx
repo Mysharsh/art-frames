@@ -4,7 +4,7 @@ import { useState } from "react"
 import { useRouter } from "next/navigation"
 import Link from "next/link"
 import { Mail, Loader2 } from "lucide-react"
-import { signInWithGoogle } from "@/lib/firebase/auth"
+import { signInWithGoogle } from "@/lib/supabase/auth"
 import { Button } from "@/components/ui/button"
 
 export default function RegisterPage() {
@@ -17,7 +17,7 @@ export default function RegisterPage() {
             setLoading(true)
             setError(null)
 
-            await signInWithGoogle()
+            await signInWithGoogle("/")
             router.push("/")
         } catch (err) {
             setError(err instanceof Error ? err.message : "Authentication failed")

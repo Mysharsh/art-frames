@@ -4,9 +4,10 @@ import { useEffect, useState } from "react"
 import Link from "next/link"
 import { useRouter } from "next/navigation"
 import { LogOut, User } from "lucide-react"
-import { auth } from "@/lib/firebase/client"
-import { signOut } from "@/lib/firebase/auth"
-import { onAuthStateChanged, type User as FirebaseUser } from "firebase/auth"
+import type { User as SupabaseUser } from "@supabase/supabase-js"
+import { createClient } from "@/lib/supabase/client"
+import { signOut } from "@/lib/supabase/auth"
+import { clearUserContext, setUserContext } from "@/lib/sentry"
 import { Button } from "@/components/ui/button"
 import {
     DropdownMenu,
@@ -19,18 +20,39 @@ import {
 
 export function AuthMenu() {
     const router = useRouter()
-    const [user, setUser] = useState<FirebaseUser | null>(null)
+    const [user, setUser] = useState<SupabaseUser | null>(null)
     const [loading, setLoading] = useState(true)
 
     useEffect(() => {
-        // Subscribe to auth state changes
-        const unsubscribe = onAuthStateChanged(auth, (firebaseUser) => {
-            setUser(firebaseUser)
+        const supabase = createClient()
+
+        void supabase.auth.getUser().then(({ data }) => {
+            const currentUser = data.user ?? null
+            if (currentUser) {
+                setUserContext(currentUser.id, currentUser.email)
+            } else {
+                clearUserContext()
+            }
+
+            setUser(currentUser)
             setLoading(false)
         })
 
+        const {
+            data: { subscription },
+        } = supabase.auth.onAuthStateChange((_event, session) => {
+            const currentUser = session?.user ?? null
+            if (currentUser) {
+                setUserContext(currentUser.id, currentUser.email)
+            } else {
+                clearUserContext()
+            }
+
+            setUser(currentUser)
+        })
+
         return () => {
-            unsubscribe()
+            subscription.unsubscribe()
         }
     }, [])
 
@@ -70,7 +92,7 @@ export function AuthMenu() {
                 <DropdownMenuLabel>
                     <div className="flex flex-col space-y-1">
                         <p className="text-sm font-medium leading-none">
-                            {user.displayName || user.email || "User"}
+                            {(user.user_metadata?.full_name as string | undefined) || user.email || "User"}
                         </p>
                         <p className="text-xs leading-none text-muted-foreground">
                             {user.email}

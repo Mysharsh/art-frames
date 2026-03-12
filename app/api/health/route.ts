@@ -1,43 +1,46 @@
 import { NextResponse } from "next/server"
-import { adminDb } from "@/lib/firebase/server"
+import { createAdminClient } from "@/lib/supabase/admin"
 
 export async function GET() {
     const startTime = Date.now()
 
-    // Verify required client-side Firebase env vars are present
-    const firebaseConfigured =
-        !!process.env.NEXT_PUBLIC_FIREBASE_API_KEY &&
-        !!process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID &&
-        !!process.env.NEXT_PUBLIC_FIREBASE_APP_ID
+    const supabaseConfigured =
+        !!process.env.NEXT_PUBLIC_SUPABASE_URL &&
+        !!process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY &&
+        !!process.env.SUPABASE_SERVICE_ROLE_KEY
 
-    if (!firebaseConfigured) {
+    if (!supabaseConfigured) {
         return NextResponse.json(
             {
                 status: "unhealthy",
                 timestamp: new Date().toISOString(),
-                error: "Firebase client configuration is missing",
+                error: "Supabase configuration is missing",
                 responseTime: Date.now() - startTime,
             },
             { status: 503 }
         )
     }
 
-    // If Admin SDK is configured, do a lightweight Firestore ping via Admin (bypasses rules)
-    let dbStatus: "ok" | "unavailable" | "unconfigured" = "unconfigured"
-    if (adminDb) {
-        try {
-            await adminDb.collection("_health").doc("ping").get()
+    let dbStatus: "ok" | "unavailable" = "unavailable"
+
+    try {
+        const supabase = createAdminClient()
+        const { error } = await supabase
+            .from("waitlist")
+            .select("id", { head: true, count: "exact" })
+
+        if (!error) {
             dbStatus = "ok"
-        } catch {
-            dbStatus = "unavailable"
         }
+    } catch {
+        dbStatus = "unavailable"
     }
 
     return NextResponse.json({
         status: "healthy",
         timestamp: new Date().toISOString(),
         checks: {
-            firebase: "ok",
+            supabase: "ok",
             database: dbStatus,
             api: "ok",
         },

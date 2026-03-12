@@ -1,14 +1,5 @@
 import { NextResponse } from "next/server"
-import { db } from "@/lib/firebase/client"
-import {
-  collection,
-  query,
-  where,
-  getDocs,
-  addDoc,
-  deleteDoc,
-  getCountFromServer,
-} from "firebase/firestore"
+import { createAdminClient } from "@/lib/supabase/admin"
 import { waitlistLimiter, countLimiter, getClientIp } from "@/lib/rate-limit"
 import { safeParseWaitlistEntry } from "@/lib/validations"
 
@@ -30,6 +21,7 @@ export async function POST(request: Request) {
   }
 
   try {
+    const supabase = createAdminClient()
     const body = await request.json()
 
     // Validate input using Zod schema
@@ -48,28 +40,36 @@ export async function POST(request: Request) {
     const { email, productId, productTitle } = parseResult.data
 
     // Check if already on waitlist for this product
-    const q = query(
-      collection(db, "waitlist"),
-      where("email", "==", email),
-      where("product_id", "==", productId)
-    )
-    const snapshot = await getDocs(q)
+    const { data: existing, error: existingError } = await supabase
+      .from("waitlist")
+      .select("id")
+      .eq("email", email)
+      .eq("product_id", productId)
+      .limit(1)
 
-    if (!snapshot.empty) {
+    if (existingError) {
+      throw existingError
+    }
+
+    if (existing && existing.length > 0) {
       return NextResponse.json(
         { error: "You're already on the waitlist for this product" },
         { status: 409 }
       )
     }
 
-    // Add to waitlist
-    await addDoc(collection(db, "waitlist"), {
+    const now = new Date().toISOString()
+    const { error: insertError } = await supabase.from("waitlist").insert({
       email,
       product_id: productId,
       product_title: productTitle || null,
-      created_at: new Date(),
-      updated_at: new Date(),
+      created_at: now,
+      updated_at: now,
     })
+
+    if (insertError) {
+      throw insertError
+    }
 
     return NextResponse.json({ success: true })
   } catch (error) {
@@ -100,11 +100,16 @@ export async function GET(request: Request) {
   }
 
   try {
-    // Use Firestore aggregation to avoid reading all documents into memory
-    const snapshot = await getCountFromServer(collection(db, "waitlist"))
-    const count = snapshot.data().count
+    const supabase = createAdminClient()
+    const { count, error } = await supabase
+      .from("waitlist")
+      .select("id", { count: "exact", head: true })
 
-    return NextResponse.json({ count })
+    if (error) {
+      throw error
+    }
+
+    return NextResponse.json({ count: count ?? 0 })
   } catch {
     return NextResponse.json({ count: 0 })
   }

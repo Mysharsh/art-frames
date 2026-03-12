@@ -1,78 +1,39 @@
 import { test, expect } from '@playwright/test'
 
 test.describe('Homepage', () => {
-    test('should load homepage successfully', async ({ page }) => {
+    test('renders the hero, primary navigation, and product grid', async ({ page }) => {
         await page.goto('/')
-        await expect(page).toHaveTitle(/ArtFrames/i)
-        await expect(page.locator('text=/Bold|Durable|Limited Drops/i').first()).toBeVisible({ timeout: 5000 })
+
+        await expect(page).toHaveTitle(/Posterwaala/i)
+        await expect(page.getByRole('banner')).toBeVisible()
+        await expect(page.getByRole('heading', { name: /Bold\. Durable\./i })).toBeVisible()
+        await expect(page.getByRole('link', { name: 'Shop Now' })).toHaveAttribute('href', '/#products')
+        await expect(page.getByRole('link', { name: 'Learn More' })).toHaveAttribute('href', '/#about')
+        await expect(page.getByRole('heading', { name: 'All-Time Favorites' })).toBeVisible()
+        await expect(page.getByRole('link', { name: /Neon Samurai/i }).first()).toBeVisible()
     })
 
-    test('should display product grid', async ({ page }) => {
+    test('renders category shortcuts for browsing', async ({ page }) => {
         await page.goto('/')
-        const products = page.locator('a[href^="/product/"]').first()
-        await expect(products).toBeVisible({ timeout: 5000 })
+
+        await expect(page.getByRole('heading', { name: 'Browse By Category' })).toBeVisible()
+        await expect(page.getByRole('link', { name: /Anime/i }).first()).toBeVisible()
+        await expect(page.getByRole('link', { name: /Gaming/i }).first()).toBeVisible()
+        await expect(page.getByRole('link', { name: /Music/i }).first()).toBeVisible()
     })
 
-    test('should have working navigation', async ({ page }) => {
-        await page.goto('/')
-        const header = page.locator('header').first()
-        await expect(header).toBeVisible()
+    test('filters products from the category query string', async ({ page }) => {
+        await page.goto('/?category=Anime')
+
+        await expect(page.getByRole('link', { name: /Neon Samurai/i }).first()).toBeVisible()
+        await expect(page.getByRole('link', { name: /Cyber Dragon/i }).first()).toBeVisible()
     })
 
-    test('should display footer with links', async ({ page }) => {
+    test('shows global header actions for search, waitlist, and auth', async ({ page }) => {
         await page.goto('/')
-        await page.evaluate(() => window.scrollTo(0, document.body.scrollHeight))
-        // Footer should be accessible
-        const footer = page.locator('footer').first()
-        if (await footer.isVisible()) {
-            await expect(footer).toBeVisible()
-        }
-    })
 
-    test('should filter products by category', async ({ page }) => {
-        await page.goto('/')
-        const categoryFilter = page.locator('button:has-text("Anime")').first()
-        if (await categoryFilter.isVisible()) {
-            await categoryFilter.click()
-            await page.waitForLoadState('networkidle')
-        }
-    })
-
-    test('should load images correctly', async ({ page }) => {
-        await page.goto('/')
-        const images = page.locator('img').first()
-        await expect(images).toBeVisible({ timeout: 5000 })
-    })
-
-    test('should display multiple product categories', async ({ page }) => {
-        await page.goto('/')
-        await page.waitForSelector('button:has-text("All Metal")', { timeout: 5000 })
-        const categories = page.locator('button').filter({ hasText: /All Metal|Metal / })
-        const count = await categories.count()
-        expect(count).toBeGreaterThan(0)
-    })
-
-    test('should have featured row visible', async ({ page }) => {
-        await page.goto('/')
-        const featured = page.locator('text=/featured|popular|trending/i').first()
-        if (await featured.isVisible({ timeout: 3000 }).catch(() => false)) {
-            await expect(featured).toBeVisible()
-        }
-    })
-
-    test('should navigate to product from homepage', async ({ page }) => {
-        await page.goto('/')
-        const productLink = page.locator('[class*="product-card"]').first()
-        if (await productLink.isVisible()) {
-            await productLink.click()
-            await page.waitForLoadState('networkidle')
-            // Should be on a product page
-            expect(page.url()).toMatch(/\/product\//)
-        }
-    })
-
-    test('should load homepage with server-side rendering', async ({ page }) => {
-        const response = await page.goto('/')
-        expect(response?.status()).toBeLessThan(400)
+        await expect(page.getByRole('button', { name: 'Search' })).toBeVisible()
+        await expect(page.getByRole('link', { name: /Waitlist/i })).toBeVisible()
+        await expect(page.getByRole('link', { name: 'Sign In' })).toBeVisible()
     })
 })

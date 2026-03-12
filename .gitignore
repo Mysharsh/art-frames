@@ -25,6 +25,7 @@ build/
 # Test artifacts
 test-results/
 coverage/
+playwright-report/
 
 # Logs
 logs

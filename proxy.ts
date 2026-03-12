@@ -1,9 +1,10 @@
 import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
+import { updateSession } from '@/lib/supabase/middleware';
 
 /**
  * Protected route prefixes.
- * Any path starting with one of these values requires a valid session cookie.
+ * Any path starting with one of these values requires a valid authenticated session.
  */
 const PROTECTED_PREFIXES = ['/profile'];
 
@@ -15,10 +16,9 @@ const PUBLIC_PREFIXES = [
     '/api',
     '/favicon.ico',
     '/monitoring', // Sentry tunnel route
-    '/__/',        // Firebase auth proxy (must not be intercepted)
 ];
 
-export function proxy(request: NextRequest) {
+export async function proxy(request: NextRequest) {
     const { pathname } = request.nextUrl;
 
     // Skip middleware for Next.js internals and API routes
@@ -32,20 +32,15 @@ export function proxy(request: NextRequest) {
         return NextResponse.next();
     }
 
-    // Check for session cookie — full cryptographic verification happens in the
-    // Server Component/Route Handler via lib/firebase/auth-server.ts.
-    // The middleware acts as a first-pass redirect to avoid loading protected pages
-    // for users who have no session at all.
-    const sessionCookie = request.cookies.get('__session');
-
-    if (!sessionCookie?.value) {
+    const { response, user } = await updateSession(request)
+    if (!user) {
         const loginUrl = request.nextUrl.clone();
         loginUrl.pathname = '/auth/login';
         loginUrl.searchParams.set('next', pathname);
         return NextResponse.redirect(loginUrl);
     }
 
-    return NextResponse.next();
+    return response;
 }
 
 export const config = {

@@ -3,27 +3,43 @@
 import { useEffect, useState } from "react"
 import Link from "next/link"
 import { useRouter } from "next/navigation"
-import { auth } from "@/lib/firebase/client"
-import { onAuthStateChanged, type User as FirebaseUser } from "firebase/auth"
+import type { User as SupabaseUser } from "@supabase/supabase-js"
+import { createClient } from "@/lib/supabase/client"
 
 export default function ProfilePage() {
     const router = useRouter()
-    const [user, setUser] = useState<FirebaseUser | null>(null)
+    const [user, setUser] = useState<SupabaseUser | null>(null)
     const [loading, setLoading] = useState(true)
 
     useEffect(() => {
-        // Subscribe to auth state changes
-        const unsubscribe = onAuthStateChanged(auth, (firebaseUser) => {
-            if (!firebaseUser) {
+        const supabase = createClient()
+
+        void supabase.auth.getUser().then(({ data }) => {
+            const currentUser = data.user ?? null
+            if (!currentUser) {
                 router.push("/auth/login")
                 return
             }
-            setUser(firebaseUser)
+
+            setUser(currentUser)
+            setLoading(false)
+        })
+
+        const {
+            data: { subscription },
+        } = supabase.auth.onAuthStateChange((_event, session) => {
+            const currentUser = session?.user ?? null
+            if (!currentUser) {
+                router.push("/auth/login")
+                return
+            }
+
+            setUser(currentUser)
             setLoading(false)
         })
 
         return () => {
-            unsubscribe()
+            subscription.unsubscribe()
         }
     }, [router])
 
@@ -54,7 +70,7 @@ export default function ProfilePage() {
                         <div>
                             <p className="text-sm text-muted-foreground">Full Name</p>
                             <p className="text-foreground font-medium">
-                                {user.displayName || "Not provided"}
+                                {(user.user_metadata?.full_name as string | undefined) || "Not provided"}
                             </p>
                         </div>
 
@@ -73,8 +89,8 @@ export default function ProfilePage() {
                         <div>
                             <p className="text-sm text-muted-foreground">Member Since</p>
                             <p className="text-foreground font-medium">
-                                {user.metadata?.creationTime
-                                    ? new Date(user.metadata.creationTime).toLocaleDateString("en-US", {
+                                {user.created_at
+                                    ? new Date(user.created_at).toLocaleDateString("en-US", {
                                         year: "numeric",
                                         month: "long",
                                         day: "numeric",

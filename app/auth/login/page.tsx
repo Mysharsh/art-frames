@@ -4,7 +4,7 @@ import { useSearchParams, useRouter } from "next/navigation"
 import { useState, useEffect } from "react"
 import Link from "next/link"
 import { Mail, Loader2 } from "lucide-react"
-import { signInWithGoogle } from "@/lib/firebase/auth"
+import { signInWithGoogle } from "@/lib/supabase/auth"
 import { Button } from "@/components/ui/button"
 
 export default function LoginPage() {
@@ -26,8 +26,8 @@ export default function LoginPage() {
             setLoading(true)
             setError(null)
 
-            await signInWithGoogle()
             const next = searchParams.get("next") || "/"
+            await signInWithGoogle(next)
             router.push(next)
         } catch (err) {
             let errorMessage = "Authentication failed"

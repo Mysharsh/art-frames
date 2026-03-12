@@ -81,7 +81,7 @@ export default function PrivacyPage() {
                     <section>
                         <h2 className="font-semibold text-xl text-foreground mb-3">5. Google Sign-In</h2>
                         <p>
-                            Our authentication is powered by <span className="font-semibold text-foreground">Firebase Authentication</span> with Google Sign-In. When you sign in, you are redirected to Google&apos;s own sign-in page and Google&apos;s{" "}
+                            Our authentication is powered by <span className="font-semibold text-foreground">Supabase Auth</span> with Google Sign-In. When you sign in, you are redirected to Google&apos;s own sign-in page and Google&apos;s{" "}
                             <a
                                 href="https://policies.google.com/privacy"
                                 target="_blank"
