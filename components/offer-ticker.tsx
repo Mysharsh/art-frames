@@ -1,24 +1,19 @@
 "use client"
 
-export function OfferTicker() {
-  const messages = [
-    "Metal Posters. Bold. Durable. Limited Drops.",
-    "Buy 2 Get 1 Free on Metal Posters",
-    "Free Shipping on Prepaid Orders",
-    "New Drops Every Friday",
-  ]
+import { siteContent } from "@/lib/site-content"
 
-  const repeated = [...messages, ...messages]
+export function OfferTicker() {
+  const repeated = [...siteContent.tickerMessages, ...siteContent.tickerMessages]
 
   return (
-    <div className="overflow-hidden bg-primary py-2">
-      <div className="animate-ticker flex whitespace-nowrap">
-        {repeated.map((msg, i) => (
+    <div className="overflow-hidden border-b border-foreground/10 bg-foreground text-background">
+      <div className="animate-ticker flex whitespace-nowrap py-2.5">
+        {repeated.map((message, index) => (
           <span
-            key={i}
-            className="mx-8 text-xs font-semibold uppercase tracking-[0.25em] text-primary-foreground"
+            key={`${message}-${index}`}
+            className="mx-8 text-[10px] font-semibold uppercase tracking-[0.3em] text-background/85"
           >
-            {msg}
+            {message}
           </span>
         ))}
       </div>

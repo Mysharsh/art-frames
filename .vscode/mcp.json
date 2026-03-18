@@ -15,7 +15,16 @@
 		"shadcn": {
       "command": "npx",
       "args": ["shadcn@latest", "mcp"]
+    },
+    "stitch": {
+      "url": "https://stitch.googleapis.com/mcp",
+      "type": "http",
+      "headers": {
+        "Accept": "application/json",
+        "X-Goog-Api-Key": "AQ.Ab8RN6KNdzu7GfIH76b2Sqv5U_gsfQepN0_Teb407bo9-KFefg"
+      }
     }
+
 	},
 	"inputs": [
 		{

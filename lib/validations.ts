@@ -66,3 +66,49 @@ export async function parseWaitlistEntry(json: unknown): Promise<WaitlistEntry> 
 export async function safeParseWaitlistEntry(json: unknown) {
     return waitlistEntrySchema.safeParse(json)
 }
+
+const cartItemSchema = z.object({
+    productId: productIdSchema,
+    title: z.string().min(1).max(200),
+    image: z.string().url().max(1200),
+    artist: z.string().min(1).max(120),
+    price: z.number().positive().max(100000),
+    size: z.string().min(1).max(60),
+    material: z.string().min(1).max(60),
+    quantity: z.number().int().min(1).max(20),
+})
+
+const paymentMethodSchema = z.enum(["cod", "stripe"])
+
+export const checkoutOrderSchema = z.object({
+    customerName: z.string().trim().min(2).max(120),
+    email: emailSchema,
+    phone: z
+        .string()
+        .trim()
+        .regex(/^[6-9]\d{9}$/, "Enter a valid 10-digit Indian mobile number"),
+    addressLine1: z.string().trim().min(5).max(180),
+    addressLine2: z.string().trim().max(180).optional().default(""),
+    city: z.string().trim().min(2).max(80),
+    state: z.string().trim().min(2).max(80),
+    pincode: z
+        .string()
+        .trim()
+        .regex(/^\d{6}$/, "Enter a valid 6-digit pincode"),
+    gstNumber: z
+        .string()
+        .trim()
+        .toUpperCase()
+        .regex(/^[0-9A-Z]{15}$/, "Enter a valid 15-character GST number")
+        .optional()
+        .or(z.literal("")),
+    paymentMethod: paymentMethodSchema,
+    cartItems: z.array(cartItemSchema).min(1).max(50),
+    notes: z.string().trim().max(300).optional().default(""),
+})
+
+export type CheckoutOrderInput = z.infer<typeof checkoutOrderSchema>
+
+export async function safeParseCheckoutOrder(json: unknown) {
+    return checkoutOrderSchema.safeParse(json)
+}

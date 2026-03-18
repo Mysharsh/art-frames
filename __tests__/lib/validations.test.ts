@@ -1,5 +1,9 @@
 import { describe, it, expect } from "vitest"
-import { waitlistEntrySchema, safeParseWaitlistEntry } from "@/lib/validations"
+import {
+    checkoutOrderSchema,
+    safeParseWaitlistEntry,
+    waitlistEntrySchema,
+} from "@/lib/validations"
 
 describe("Validations", () => {
     describe("waitlistEntrySchema", () => {
@@ -110,6 +114,75 @@ describe("Validations", () => {
                     result.error.errors.some((e) => e.path.includes("email") || e.path.includes("productId"))
                 ).toBe(true)
             }
+        })
+    })
+
+    describe("checkoutOrderSchema", () => {
+        const basePayload = {
+            customerName: "Harsh Singh",
+            email: "harsh@example.com",
+            phone: "9876543210",
+            addressLine1: "101, Residency Road",
+            addressLine2: "Near Central Park",
+            city: "Bengaluru",
+            state: "Karnataka",
+            pincode: "560001",
+            gstNumber: "29ABCDE1234F1Z5",
+            paymentMethod: "cod" as const,
+            notes: "Call before delivery",
+            cartItems: [
+                {
+                    productId: "p1",
+                    title: "Neon Samurai",
+                    image: "https://images.unsplash.com/photo-1578632767115-351597cf2477?w=600&h=600&fit=crop",
+                    artist: "Yuki Tanaka",
+                    price: 29,
+                    size: "M (12x16)",
+                    material: "Metal Print",
+                    quantity: 2,
+                },
+            ],
+        }
+
+        it("should validate a correct checkout payload", () => {
+            const result = checkoutOrderSchema.safeParse(basePayload)
+            expect(result.success).toBe(true)
+        })
+
+        it("should reject invalid payment method", () => {
+            const payload = {
+                ...basePayload,
+                paymentMethod: "paypal",
+            }
+            const result = checkoutOrderSchema.safeParse(payload)
+            expect(result.success).toBe(false)
+        })
+
+        it("should reject invalid pincode", () => {
+            const payload = {
+                ...basePayload,
+                pincode: "5600",
+            }
+            const result = checkoutOrderSchema.safeParse(payload)
+            expect(result.success).toBe(false)
+        })
+
+        it("should reject empty cart", () => {
+            const payload = {
+                ...basePayload,
+                cartItems: [],
+            }
+            const result = checkoutOrderSchema.safeParse(payload)
+            expect(result.success).toBe(false)
+        })
+
+        it("should reject non-Indian mobile format", () => {
+            const payload = {
+                ...basePayload,
+                phone: "1234567890",
+            }
+            const result = checkoutOrderSchema.safeParse(payload)
+            expect(result.success).toBe(false)
         })
     })
 })

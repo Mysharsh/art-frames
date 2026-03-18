@@ -44,7 +44,7 @@ export function WaitlistPageContent() {
             return (
               <Link
                 key={`${item.productId}-${index}`}
-                href={`/product/${item.productId}`}
+                href={`/products/${item.productId}`}
                 className="flex items-center gap-4 rounded-xl bg-card p-3 transition-colors hover:ring-1 hover:ring-primary/30"
               >
                 {product && (

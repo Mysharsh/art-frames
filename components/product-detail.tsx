@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react"
 import Image from "next/image"
 import Link from "next/link"
+import { useRouter } from "next/navigation"
 import { ArrowLeft, Heart, Share2, ShoppingBag } from "lucide-react"
 import type { Product } from "@/lib/products"
 import { getRelatedProducts } from "@/lib/products"
@@ -21,6 +22,7 @@ interface ProductDetailProps {
 }
 
 export function ProductDetail({ product }: ProductDetailProps) {
+  const router = useRouter()
   const [selectedSize, setSelectedSize] = useState(product.sizes[0])
   const [selectedMaterial, setSelectedMaterial] = useState(
     product.materials.find((material) =>
@@ -30,6 +32,7 @@ export function ProductDetail({ product }: ProductDetailProps) {
   const openWaitlistModal = useAppStore((s) => s.openWaitlistModal)
   const toggleWishlist = useAppStore((s) => s.toggleWishlist)
   const isInWishlist = useAppStore((s) => s.isInWishlist)
+  const addToCart = useAppStore((s) => s.addToCart)
   const { toast } = useToast()
   const [carouselApi, setCarouselApi] = useState<CarouselApi | null>(null)
   const [activeSlide, setActiveSlide] = useState(0)
@@ -88,6 +91,23 @@ export function ProductDetail({ product }: ProductDetailProps) {
     })
   }
 
+  const handleAddToCart = () => {
+    addToCart({
+      productId: product.id,
+      title: product.title,
+      image: product.image,
+      artist: product.artist,
+      price: product.price,
+      size: selectedSize,
+      material: selectedMaterial,
+    })
+
+    toast({
+      title: "Added to cart",
+      description: `${product.title} (${selectedSize}, ${selectedMaterial})`,
+    })
+  }
+
   useEffect(() => {
     if (!carouselApi) return
 
@@ -134,7 +154,7 @@ export function ProductDetail({ product }: ProductDetailProps) {
           <button
             className="flex h-10 w-10 items-center justify-center rounded-full bg-secondary text-foreground transition-colors hover:bg-secondary/80"
             aria-label="Bag"
-            onClick={() => toast({ title: "Coming soon", description: "Shopping cart feature is under development" })}
+            onClick={() => router.push("/cart")}
           >
             <ShoppingBag className="h-5 w-5" />
           </button>
@@ -279,14 +299,21 @@ export function ProductDetail({ product }: ProductDetailProps) {
 
         {/* CTA */}
         <button
-          onClick={() => openWaitlistModal(product.id, product.title)}
+          onClick={handleAddToCart}
           className="mt-6 w-full rounded-xl bg-primary py-4 text-sm font-bold uppercase tracking-widest text-primary-foreground transition-transform hover:scale-[1.02] active:scale-[0.98]"
         >
-          Notify Me for Drop
+          Add To Cart
+        </button>
+
+        <button
+          onClick={() => openWaitlistModal(product.id, product.title)}
+          className="mt-3 w-full rounded-xl border border-border bg-background py-3 text-xs font-semibold uppercase tracking-[0.18em] text-foreground/80 transition-colors hover:border-primary/40 hover:text-primary"
+        >
+          Notify Me For Drop
         </button>
 
         <p className="mt-3 text-center text-xs text-muted-foreground">
-          Limited metal poster drops. No payment required.
+          Checkout is now active in MVP mode. Waitlist remains available for upcoming drops.
         </p>
         </div>
       </div>

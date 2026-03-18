@@ -2,9 +2,9 @@
 
 import { useEffect } from "react"
 import Link from "next/link"
-import { Home, Grid3X3, ClipboardList, PhoneCall, Calendar, Info, X, Package } from "lucide-react"
+import { Home, Grid3X3, ClipboardList, PhoneCall, Info, ShoppingBag, CreditCard, X, Package, LayoutTemplate } from "lucide-react"
 import { useAppStore } from "@/lib/store"
-import { categories } from "@/lib/products"
+import { categories, getCategoryHandle } from "@/lib/products"
 
 export function MobileMenu() {
   const isMobileMenuOpen = useAppStore((s) => s.isMobileMenuOpen)
@@ -76,12 +76,36 @@ export function MobileMenu() {
                 <span className="text-sm font-medium">Home</span>
               </Link>
               <Link
+                href="/collections/all"
+                onClick={closeMobileMenu}
+                className="flex items-center gap-3 rounded-lg px-3 py-3 text-foreground transition-colors hover:bg-secondary active:bg-secondary/60"
+              >
+                <LayoutTemplate className="h-5 w-5 text-primary" />
+                <span className="text-sm font-medium">Shop Collections</span>
+              </Link>
+              <Link
                 href="/waitlist"
                 onClick={closeMobileMenu}
                 className="flex items-center gap-3 rounded-lg px-3 py-3 text-foreground transition-colors hover:bg-secondary active:bg-secondary/60"
               >
                 <ClipboardList className="h-5 w-5 text-primary" />
                 <span className="text-sm font-medium">My Waitlist</span>
+              </Link>
+              <Link
+                href="/cart"
+                onClick={closeMobileMenu}
+                className="flex items-center gap-3 rounded-lg px-3 py-3 text-foreground transition-colors hover:bg-secondary active:bg-secondary/60"
+              >
+                <ShoppingBag className="h-5 w-5 text-primary" />
+                <span className="text-sm font-medium">Cart</span>
+              </Link>
+              <Link
+                href="/checkout"
+                onClick={closeMobileMenu}
+                className="flex items-center gap-3 rounded-lg px-3 py-3 text-foreground transition-colors hover:bg-secondary active:bg-secondary/60"
+              >
+                <CreditCard className="h-5 w-5 text-primary" />
+                <span className="text-sm font-medium">Checkout</span>
               </Link>
             </div>
 
@@ -95,15 +119,15 @@ export function MobileMenu() {
               </div>
               <div className="space-y-1">
                 <Link
-                  href="/#order"
+                  href="/gallery-walls"
                   onClick={closeMobileMenu}
                   className="flex items-center gap-3 rounded-lg px-3 py-2.5 text-foreground transition-colors hover:bg-secondary active:bg-secondary/60"
                 >
                   <Grid3X3 className="h-4 w-4 text-primary" />
-                  <span className="text-sm">Order & Track</span>
+                  <span className="text-sm">Gallery Walls</span>
                 </Link>
                 <Link
-                  href="/#about"
+                  href="/about"
                   onClick={closeMobileMenu}
                   className="flex items-center gap-3 rounded-lg px-3 py-2.5 text-foreground transition-colors hover:bg-secondary active:bg-secondary/60"
                 >
@@ -111,15 +135,7 @@ export function MobileMenu() {
                   <span className="text-sm">About Us</span>
                 </Link>
                 <Link
-                  href="/#events"
-                  onClick={closeMobileMenu}
-                  className="flex items-center gap-3 rounded-lg px-3 py-2.5 text-foreground transition-colors hover:bg-secondary active:bg-secondary/60"
-                >
-                  <Calendar className="h-4 w-4 text-primary" />
-                  <span className="text-sm">Events</span>
-                </Link>
-                <Link
-                  href="/#contact"
+                  href="mailto:contact@posterwaala.com"
                   onClick={closeMobileMenu}
                   className="flex items-center gap-3 rounded-lg px-3 py-2.5 text-foreground transition-colors hover:bg-secondary active:bg-secondary/60"
                 >
@@ -143,7 +159,7 @@ export function MobileMenu() {
                   .map((category) => (
                     <Link
                       key={category}
-                      href={`/?category=${category}`}
+                      href={`/collections/${getCategoryHandle(category)}`}
                       onClick={closeMobileMenu}
                       className="block rounded-lg px-3 py-2 text-sm text-foreground transition-colors hover:bg-secondary active:bg-secondary/60"
                     >

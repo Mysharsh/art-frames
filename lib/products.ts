@@ -27,6 +27,21 @@ export const categories: Category[] = [
   "Music",
 ]
 
+const categoryHandleMap: Record<Category, string> = {
+  All: "all",
+  Anime: "anime",
+  Gaming: "gaming",
+  Nature: "nature",
+  Movies: "movies",
+  Artists: "artists",
+  Abstract: "abstract",
+  Music: "music",
+}
+
+const categoryByHandle = Object.fromEntries(
+  Object.entries(categoryHandleMap).map(([category, handle]) => [handle, category])
+) as Record<string, Category>
+
 export const products: Product[] = [
   {
     id: "p1",
@@ -462,6 +477,14 @@ export function getProductById(id: string): Product | undefined {
 export function getProductsByCategory(category: Category): Product[] {
   if (category === "All") return products
   return products.filter((p) => p.category === category)
+}
+
+export function getCategoryHandle(category: Category): string {
+  return categoryHandleMap[category]
+}
+
+export function getCategoryFromHandle(handle: string): Category | undefined {
+  return categoryByHandle[handle.toLowerCase()]
 }
 
 export function getFeaturedProducts(): Product[] {

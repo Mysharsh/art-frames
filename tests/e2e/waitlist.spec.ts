@@ -2,7 +2,7 @@ import { test, expect } from '@playwright/test'
 
 test.describe('Waitlist Functionality', () => {
     test.beforeEach(async ({ page }) => {
-        await page.goto('/product/p1')
+        await page.goto('/products/p1')
         await page.getByRole('button', { name: 'Notify Me for Drop' }).click()
         await expect(page.getByRole('heading', { name: 'Join the Waitlist' })).toBeVisible()
     })

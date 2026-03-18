@@ -16,7 +16,7 @@ export function FeaturedRow() {
           </h2>
           <p className="text-xs text-muted-foreground">Fan favorites & trending picks</p>
         </div>
-        <Link href="/?category=All" className="text-xs font-medium text-primary">
+        <Link href="/collections/all" className="text-xs font-medium text-primary">
           See all
         </Link>
       </div>
@@ -24,7 +24,7 @@ export function FeaturedRow() {
         {saleProducts.map((product) => (
           <Link
             key={product.id}
-            href={`/product/${product.id}`}
+            href={`/products/${product.id}`}
             className="flex-shrink-0 w-[140px] group"
           >
             <div className="relative aspect-square rounded-lg overflow-hidden bg-card">

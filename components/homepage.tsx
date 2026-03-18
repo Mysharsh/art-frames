@@ -33,15 +33,22 @@ export function Homepage() {
       <HeroBanner />
       <CategoryThumbnails />
 
-      {/* All-Time Favorites section header */}
       <section className="px-4 py-8">
-        <div className="flex flex-col items-center text-center">
-          <h2 className="font-display text-4xl font-bold tracking-wide text-foreground">
-            All-Time Favorites
-          </h2>
-          <p className="mt-2 text-sm text-muted-foreground">
-            Discover the most loved metal posters in our collection
+        <div className="mx-auto max-w-5xl rounded-2xl border border-border bg-card/40 p-6 text-center md:p-8">
+          <p className="text-[10px] font-semibold uppercase tracking-[0.24em] text-primary">
+            Community picks
           </p>
+          <h2 className="mt-2 font-display text-4xl font-bold tracking-wide text-foreground">
+            Most Wanted This Week
+          </h2>
+          <p className="mx-auto mt-2 max-w-2xl text-sm text-muted-foreground">
+            Browse top-performing drops loved by collectors. Filter by category, compare styles, and claim your favorite before it sells out.
+          </p>
+          <div className="mt-5 flex flex-wrap items-center justify-center gap-2 text-[10px] font-semibold uppercase tracking-[0.2em] text-muted-foreground">
+            <span className="rounded-full border border-border bg-background px-3 py-1">Fast shipping</span>
+            <span className="rounded-full border border-border bg-background px-3 py-1">Limited editions</span>
+            <span className="rounded-full border border-border bg-background px-3 py-1">Artist curated</span>
+          </div>
         </div>
       </section>
 
