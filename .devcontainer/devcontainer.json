@@ -1,25 +1,8 @@
 {
-  "name": "art-frames",
-  "image": "mcr.microsoft.com/devcontainers/javascript-node:20",
-  "customizations": {
-    "vscode": {
-      "settings": {
-        "terminal.integrated.defaultProfile.windows": "PowerShell"
-      }
+  "name": "Art Frames",
+  "features": {
+    "ghcr.io/devcontainers/features/sshd:1": {
+      "version": "latest"
     }
-  },
-  "forwardPorts": [3000],
-  "portsAttributes": {
-    "3000": {
-      "label": "Next.js Dev Server",
-      "onAutoForward": "openPreview"
-    }
-  },
-  "remoteEnv": {
-    "PATH": "/home/node/.local/bin:${containerEnv:PATH}",
-    "NEXT_PUBLIC_SUPABASE_URL": "${localEnv:NEXT_PUBLIC_SUPABASE_URL}",
-    "NEXT_PUBLIC_SUPABASE_ANON_KEY": "${localEnv:NEXT_PUBLIC_SUPABASE_ANON_KEY}"
-  },
-  "onCreateCommand": "mkdir -p /home/node/.local/bin && corepack enable --install-directory /home/node/.local/bin && corepack prepare pnpm@latest --activate",
-  "postCreateCommand": "pnpm install"
+  }
 }
