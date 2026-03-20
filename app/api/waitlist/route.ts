@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server"
 import { createAdminClient } from "@/lib/supabase/admin"
-import { waitlistLimiter, countLimiter, getClientIp } from "@/lib/rate-limit"
-import { safeParseWaitlistEntry } from "@/lib/validations"
+import { waitlistLimiter, countLimiter, getClientIp } from "@/lib/utils/rate-limit"
+import { safeParseWaitlistEntry } from "@/lib/validations/schemas"
 
 export async function POST(request: Request) {
   // Rate limiting: 10 requests per minute per IP

@@ -2,7 +2,7 @@
 
 import Link from "next/link"
 import { ClipboardList, ArrowRight } from "lucide-react"
-import { useAppStore } from "@/lib/store"
+import { useAppStore } from "@/store/cart"
 import { getProductById } from "@/lib/products"
 import Image from "next/image"
 

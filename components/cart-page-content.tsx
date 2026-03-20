@@ -2,7 +2,7 @@
 
 import Link from "next/link"
 import { Minus, Plus, Trash2 } from "lucide-react"
-import { useAppStore } from "@/lib/store"
+import { useAppStore } from "@/store/cart"
 
 export function CartPageContent() {
   const cartItems = useAppStore((s) => s.cartItems)

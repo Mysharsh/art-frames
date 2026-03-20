@@ -6,7 +6,7 @@ import { OfferTicker } from "@/components/offer-ticker"
 import { SiteFooter } from "@/components/site-footer"
 import { SiteHeader } from "@/components/site-header"
 import { WaitlistModal } from "@/components/waitlist-modal"
-import { useAppStore } from "@/lib/store"
+import { useAppStore } from "@/store/cart"
 
 export function AppShell({ children }: { children: React.ReactNode }) {
   const setWaitlistCount = useAppStore((s) => s.setWaitlistCount)
@@ -17,7 +17,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
       .then((data) => {
         if (data.count) setWaitlistCount(data.count)
       })
-      .catch(() => {})
+      .catch(() => { })
   }, [setWaitlistCount])
 
   return (

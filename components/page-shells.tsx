@@ -2,7 +2,7 @@ import type { ReactNode } from "react"
 import Link from "next/link"
 import { ArrowLeft } from "lucide-react"
 import { siteContent } from "@/lib/site-content"
-import { cn } from "@/lib/utils"
+import { cn } from "@/lib/utils/helpers"
 
 interface PageIntroProps {
   eyebrow?: string

@@ -4,11 +4,10 @@ import { useMemo, useState } from "react"
 import Link from "next/link"
 import { useRouter } from "next/navigation"
 import { Loader2 } from "lucide-react"
-import { useAppStore } from "@/lib/store"
-import { checkoutOrderSchema } from "@/lib/validations"
+import { useAppStore } from "@/store/cart"
+import { COD_FEE, calculateTotals, type PaymentMethod } from "@/lib/commerce"
+import { checkoutOrderSchema } from "@/lib/validations/schemas"
 import { useToast } from "@/hooks/use-toast"
-
-type PaymentMethod = "cod" | "stripe"
 
 const initialForm = {
   customerName: "",
@@ -28,17 +27,17 @@ export function CheckoutPageContent() {
   const { toast } = useToast()
   const cartItems = useAppStore((s) => s.cartItems)
   const clearCart = useAppStore((s) => s.clearCart)
+  const addRecentOrder = useAppStore((s) => s.addRecentOrder)
   const [form, setForm] = useState(initialForm)
   const [paymentMethod, setPaymentMethod] = useState<PaymentMethod>("cod")
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [submitError, setSubmitError] = useState("")
+  const [stripeIntentMessage, setStripeIntentMessage] = useState("")
 
-  const subtotal = useMemo(
-    () => cartItems.reduce((acc, item) => acc + item.price * item.quantity, 0),
-    [cartItems]
+  const { subtotal, codFee, total } = useMemo(
+    () => calculateTotals(cartItems, paymentMethod),
+    [cartItems, paymentMethod]
   )
-  const codFee = cartItems.length > 0 ? 49 : 0
-  const total = subtotal + codFee
 
   const updateField = (field: keyof typeof initialForm, value: string) => {
     setForm((prev) => ({ ...prev, [field]: value }))
@@ -51,7 +50,31 @@ export function CheckoutPageContent() {
     const payload = {
       ...form,
       paymentMethod,
+      stripePaymentIntentId: undefined as string | undefined,
       cartItems,
+    }
+
+    if (paymentMethod === "stripe") {
+      const intentResponse = await fetch("/api/stripe/create-intent", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          cartItems,
+          email: form.email || undefined,
+        }),
+      })
+
+      const intentResult = await intentResponse.json()
+      if (!intentResponse.ok) {
+        throw new Error(intentResult.error || "Failed to initialize Stripe payment")
+      }
+
+      payload.stripePaymentIntentId = intentResult.paymentIntentId
+      setStripeIntentMessage(
+        `Stripe PaymentIntent created: ${intentResult.paymentIntentId}`
+      )
     }
 
     const parsed = checkoutOrderSchema.safeParse(payload)
@@ -76,13 +99,23 @@ export function CheckoutPageContent() {
         throw new Error(result.error || "Failed to place order")
       }
 
+      addRecentOrder({
+        orderId: result.orderId,
+        status: result.status,
+        amount: result.amount,
+        paymentMethod,
+        createdAt: new Date().toISOString(),
+      })
+
       clearCart()
       toast({
         title: "Order created",
         description: `Order ${result.orderId} is now ${result.status.replaceAll("_", " ")}`,
       })
 
-      router.push("/waitlist")
+      router.push(
+        `/order-success?orderId=${encodeURIComponent(result.orderId)}&status=${encodeURIComponent(result.status)}`
+      )
     } catch (error: unknown) {
       setSubmitError(error instanceof Error ? error.message : "Failed to place order")
     } finally {
@@ -192,19 +225,33 @@ export function CheckoutPageContent() {
               type="radio"
               name="paymentMethod"
               checked={paymentMethod === "cod"}
-              onChange={() => setPaymentMethod("cod")}
+              onChange={() => {
+                setPaymentMethod("cod")
+                setStripeIntentMessage("")
+              }}
             />
-            Cash on Delivery (+$49)
+            Cash on Delivery (+${COD_FEE})
           </label>
           <label className="flex cursor-pointer items-center gap-3 rounded-xl border border-border bg-background px-4 py-3 text-sm">
             <input
               type="radio"
               name="paymentMethod"
               checked={paymentMethod === "stripe"}
-              onChange={() => setPaymentMethod("stripe")}
+              onChange={() => {
+                setPaymentMethod("stripe")
+                setStripeIntentMessage("")
+              }}
             />
-            Stripe (Payment intent flow)
+            Stripe (cards / UPI)
           </label>
+          {paymentMethod === "stripe" ? (
+            <p className="rounded-xl border border-border/70 bg-background/70 px-3 py-2 text-xs text-muted-foreground">
+              Stripe intent is created at submit time. Full card/UPI confirmation UI will use this client secret in the next step.
+            </p>
+          ) : null}
+          {stripeIntentMessage ? (
+            <p className="text-xs text-muted-foreground">{stripeIntentMessage}</p>
+          ) : null}
         </section>
 
         {submitError ? <p className="text-sm text-destructive">{submitError}</p> : null}

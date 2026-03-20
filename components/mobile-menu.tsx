@@ -3,7 +3,7 @@
 import { useEffect } from "react"
 import Link from "next/link"
 import { Home, Grid3X3, ClipboardList, PhoneCall, Info, ShoppingBag, CreditCard, X, Package, LayoutTemplate } from "lucide-react"
-import { useAppStore } from "@/lib/store"
+import { useAppStore } from "@/store/cart"
 import { categories, getCategoryHandle } from "@/lib/products"
 
 export function MobileMenu() {

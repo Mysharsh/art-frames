@@ -1,5 +1,5 @@
 import { describe, it, expect, beforeEach } from "vitest"
-import { waitlistLimiter, countLimiter, getClientIp } from "@/lib/rate-limit"
+import { waitlistLimiter, countLimiter, getClientIp } from "@/lib/utils/rate-limit"
 
 describe("Rate Limiter", () => {
     beforeEach(() => {

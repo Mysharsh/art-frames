@@ -5,7 +5,7 @@ import { Search, X } from "lucide-react"
 import Link from "next/link"
 import Image from "next/image"
 import { products } from "@/lib/products"
-import { useAppStore } from "@/lib/store"
+import { useAppStore } from "@/store/cart"
 
 export function SearchOverlay() {
   const [query, setQuery] = useState("")

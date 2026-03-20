@@ -1,16 +1,10 @@
 import { NextResponse } from "next/server"
 import { randomUUID } from "crypto"
-import { safeParseCheckoutOrder } from "@/lib/validations"
+import { safeParseCheckoutOrder } from "@/lib/validations/schemas"
+import { calculateTotals } from "@/lib/commerce"
 import { createAdminClient } from "@/lib/supabase/admin"
 import { createClient as createServerSupabaseClient } from "@/lib/supabase/server"
-import { getClientIp, waitlistLimiter } from "@/lib/rate-limit"
-
-function calculateTotals(cartItems: Array<{ price: number; quantity: number }>) {
-  const subtotal = cartItems.reduce((acc, item) => acc + item.price * item.quantity, 0)
-  const codFee = cartItems.length > 0 ? 49 : 0
-  const total = subtotal + codFee
-  return { subtotal, codFee, total }
-}
+import { getClientIp, waitlistLimiter } from "@/lib/utils/rate-limit"
 
 function makeOrderId() {
   return `ORD-${new Date().toISOString().slice(0, 10).replace(/-/g, "")}-${randomUUID().slice(0, 8).toUpperCase()}`
@@ -48,7 +42,7 @@ export async function POST(request: Request) {
     }
 
     const payload = parseResult.data
-    const totals = calculateTotals(payload.cartItems)
+    const totals = calculateTotals(payload.cartItems, payload.paymentMethod)
     const orderId = makeOrderId()
 
     let userId: string | null = null
@@ -75,6 +69,7 @@ export async function POST(request: Request) {
       pincode: payload.pincode,
       gst_number: payload.gstNumber || null,
       payment_method: payload.paymentMethod,
+      stripe_payment_intent_id: payload.stripePaymentIntentId || null,
       status: payload.paymentMethod === "cod" ? "pending_cod_confirm" : "pending_payment",
       subtotal: totals.subtotal,
       cod_fee: totals.codFee,

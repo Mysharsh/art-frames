@@ -7,7 +7,7 @@ import { useRouter } from "next/navigation"
 import { ArrowLeft, Heart, Share2, ShoppingBag } from "lucide-react"
 import type { Product } from "@/lib/products"
 import { getRelatedProducts } from "@/lib/products"
-import { useAppStore } from "@/lib/store"
+import { useAppStore } from "@/store/cart"
 import { ProductCard } from "@/components/product-card"
 import { useToast } from "@/hooks/use-toast"
 import {
@@ -206,11 +206,10 @@ export function ProductDetail({ product }: ProductDetailProps) {
                 <button
                   key={`${product.id}-dot-${index}`}
                   onClick={() => carouselApi?.scrollTo(index)}
-                  className={`h-2.5 w-2.5 rounded-full transition-all ${
-                    activeSlide === index
+                  className={`h-2.5 w-2.5 rounded-full transition-all ${activeSlide === index
                       ? "bg-foreground"
                       : "bg-muted-foreground/40"
-                  }`}
+                    }`}
                   aria-label={`Go to image ${index + 1}`}
                 />
               ))}
@@ -220,101 +219,99 @@ export function ProductDetail({ product }: ProductDetailProps) {
 
         {/* Details */}
         <div className="px-4 pt-5 lg:px-0">
-        <p className="text-xs font-semibold uppercase tracking-[0.3em] text-muted-foreground">
-          {product.category} Series
-        </p>
-        <h1 className="mt-1 font-display text-3xl leading-none text-foreground">
-          {product.title}
-        </h1>
-        <p className="mt-1 text-sm text-muted-foreground">by {product.artist}</p>
+          <p className="text-xs font-semibold uppercase tracking-[0.3em] text-muted-foreground">
+            {product.category} Series
+          </p>
+          <h1 className="mt-1 font-display text-3xl leading-none text-foreground">
+            {product.title}
+          </h1>
+          <p className="mt-1 text-sm text-muted-foreground">by {product.artist}</p>
 
-        <div className="mt-2 flex items-baseline gap-3">
-          <span className="text-2xl font-bold text-foreground">
-            ${product.price}
-          </span>
-          {product.originalPrice && (
-            <span className="text-base text-muted-foreground line-through">
-              ${product.originalPrice}
+          <div className="mt-2 flex items-baseline gap-3">
+            <span className="text-2xl font-bold text-foreground">
+              ${product.price}
             </span>
-          )}
-          {product.onSale && product.originalPrice && (
-            <span className="rounded-full bg-destructive/10 px-2 py-0.5 text-xs font-semibold text-destructive">
-              {Math.round(
-                ((product.originalPrice - product.price) /
-                  product.originalPrice) *
+            {product.originalPrice && (
+              <span className="text-base text-muted-foreground line-through">
+                ${product.originalPrice}
+              </span>
+            )}
+            {product.onSale && product.originalPrice && (
+              <span className="rounded-full bg-destructive/10 px-2 py-0.5 text-xs font-semibold text-destructive">
+                {Math.round(
+                  ((product.originalPrice - product.price) /
+                    product.originalPrice) *
                   100
-              )}
-              % OFF
-            </span>
-          )}
-        </div>
-
-        <p className="mt-4 text-sm leading-relaxed text-muted-foreground">
-          {product.description}
-        </p>
-
-        {/* Size selector */}
-        <div className="mt-6">
-          <p className="mb-2 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
-            Size
-          </p>
-          <div className="flex flex-wrap gap-2">
-            {product.sizes.map((size) => (
-              <button
-                key={size}
-                onClick={() => setSelectedSize(size)}
-                className={`rounded-lg border px-3 py-2 text-xs font-medium transition-all ${
-                  selectedSize === size
-                    ? "border-primary bg-primary/10 text-primary"
-                    : "border-border text-muted-foreground hover:border-foreground hover:text-foreground"
-                }`}
-              >
-                {size}
-              </button>
-            ))}
+                )}
+                % OFF
+              </span>
+            )}
           </div>
-        </div>
 
-        {/* Material selector */}
-        <div className="mt-5">
-          <p className="mb-2 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
-            Material
+          <p className="mt-4 text-sm leading-relaxed text-muted-foreground">
+            {product.description}
           </p>
-          <div className="flex flex-wrap gap-2">
-            {product.materials.map((material) => (
-              <button
-                key={material}
-                onClick={() => setSelectedMaterial(material)}
-                className={`rounded-lg border px-3 py-2 text-xs font-medium transition-all ${
-                  selectedMaterial === material
-                    ? "border-primary bg-primary/10 text-primary"
-                    : "border-border text-muted-foreground hover:border-foreground hover:text-foreground"
-                }`}
-              >
-                {material}
-              </button>
-            ))}
+
+          {/* Size selector */}
+          <div className="mt-6">
+            <p className="mb-2 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+              Size
+            </p>
+            <div className="flex flex-wrap gap-2">
+              {product.sizes.map((size) => (
+                <button
+                  key={size}
+                  onClick={() => setSelectedSize(size)}
+                  className={`rounded-lg border px-3 py-2 text-xs font-medium transition-all ${selectedSize === size
+                      ? "border-primary bg-primary/10 text-primary"
+                      : "border-border text-muted-foreground hover:border-foreground hover:text-foreground"
+                    }`}
+                >
+                  {size}
+                </button>
+              ))}
+            </div>
           </div>
-        </div>
 
-        {/* CTA */}
-        <button
-          onClick={handleAddToCart}
-          className="mt-6 w-full rounded-xl bg-primary py-4 text-sm font-bold uppercase tracking-widest text-primary-foreground transition-transform hover:scale-[1.02] active:scale-[0.98]"
-        >
-          Add To Cart
-        </button>
+          {/* Material selector */}
+          <div className="mt-5">
+            <p className="mb-2 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+              Material
+            </p>
+            <div className="flex flex-wrap gap-2">
+              {product.materials.map((material) => (
+                <button
+                  key={material}
+                  onClick={() => setSelectedMaterial(material)}
+                  className={`rounded-lg border px-3 py-2 text-xs font-medium transition-all ${selectedMaterial === material
+                      ? "border-primary bg-primary/10 text-primary"
+                      : "border-border text-muted-foreground hover:border-foreground hover:text-foreground"
+                    }`}
+                >
+                  {material}
+                </button>
+              ))}
+            </div>
+          </div>
 
-        <button
-          onClick={() => openWaitlistModal(product.id, product.title)}
-          className="mt-3 w-full rounded-xl border border-border bg-background py-3 text-xs font-semibold uppercase tracking-[0.18em] text-foreground/80 transition-colors hover:border-primary/40 hover:text-primary"
-        >
-          Notify Me For Drop
-        </button>
+          {/* CTA */}
+          <button
+            onClick={handleAddToCart}
+            className="mt-6 w-full rounded-xl bg-primary py-4 text-sm font-bold uppercase tracking-widest text-primary-foreground transition-transform hover:scale-[1.02] active:scale-[0.98]"
+          >
+            Add To Cart
+          </button>
 
-        <p className="mt-3 text-center text-xs text-muted-foreground">
-          Checkout is now active in MVP mode. Waitlist remains available for upcoming drops.
-        </p>
+          <button
+            onClick={() => openWaitlistModal(product.id, product.title)}
+            className="mt-3 w-full rounded-xl border border-border bg-background py-3 text-xs font-semibold uppercase tracking-[0.18em] text-foreground/80 transition-colors hover:border-primary/40 hover:text-primary"
+          >
+            Notify Me For Drop
+          </button>
+
+          <p className="mt-3 text-center text-xs text-muted-foreground">
+            Checkout is now active in MVP mode. Waitlist remains available for upcoming drops.
+          </p>
         </div>
       </div>
 

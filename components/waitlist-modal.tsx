@@ -2,7 +2,7 @@
 
 import { useState } from "react"
 import { X, CheckCircle2, Loader2 } from "lucide-react"
-import { useAppStore } from "@/lib/store"
+import { useAppStore } from "@/store/cart"
 
 export function WaitlistModal() {
   const {

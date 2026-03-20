@@ -3,7 +3,7 @@ import {
     checkoutOrderSchema,
     safeParseWaitlistEntry,
     waitlistEntrySchema,
-} from "@/lib/validations"
+} from "@/lib/validations/schemas"
 
 describe("Validations", () => {
     describe("waitlistEntrySchema", () => {
@@ -183,6 +183,26 @@ describe("Validations", () => {
             }
             const result = checkoutOrderSchema.safeParse(payload)
             expect(result.success).toBe(false)
+        })
+
+        it("should reject stripe checkout without payment intent id", () => {
+            const payload = {
+                ...basePayload,
+                paymentMethod: "stripe" as const,
+                stripePaymentIntentId: undefined,
+            }
+            const result = checkoutOrderSchema.safeParse(payload)
+            expect(result.success).toBe(false)
+        })
+
+        it("should accept stripe checkout with payment intent id", () => {
+            const payload = {
+                ...basePayload,
+                paymentMethod: "stripe" as const,
+                stripePaymentIntentId: "pi_1234567890",
+            }
+            const result = checkoutOrderSchema.safeParse(payload)
+            expect(result.success).toBe(true)
         })
     })
 })

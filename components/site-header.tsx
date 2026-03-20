@@ -2,7 +2,7 @@
 
 import Link from "next/link"
 import { Menu, Search, ShoppingBag, X } from "lucide-react"
-import { useAppStore } from "@/lib/store"
+import { useAppStore } from "@/store/cart"
 import { SearchOverlay } from "@/components/search-overlay"
 import { MobileMenu } from "@/components/mobile-menu"
 import { AuthMenu } from "@/components/auth-menu"

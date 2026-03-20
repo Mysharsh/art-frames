@@ -6,7 +6,7 @@ import { updateSession } from '@/lib/supabase/middleware';
  * Protected route prefixes.
  * Any path starting with one of these values requires a valid authenticated session.
  */
-const PROTECTED_PREFIXES = ['/profile'];
+const PROTECTED_PREFIXES = ['/admin', '/profile'];
 
 /**
  * Routes that should be skipped entirely (static assets, Next internals).

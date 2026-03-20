@@ -21,7 +21,7 @@
       "type": "http",
       "headers": {
         "Accept": "application/json",
-        "X-Goog-Api-Key": "AQ.Ab8RN6KNdzu7GfIH76b2Sqv5U_gsfQepN0_Teb407bo9-KFefg"
+        "X-Goog-Api-Key": "${input:STITCH_API_KEY}"
       }
     }
 
@@ -31,6 +31,12 @@
 			"id": "SENTRY_ACCESS_TOKEN",
 			"type": "promptString",
 			"description": "Your Sentry user authentication token",
+			"password": true
+		},
+		{
+			"id": "STITCH_API_KEY",
+			"type": "promptString",
+			"description": "Your Google Cloud API key for Stitch",
 			"password": true
 		}
 	]
