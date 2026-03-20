@@ -3,8 +3,7 @@
 import { useEffect, useState } from "react"
 import Image from "next/image"
 import Link from "next/link"
-import { useRouter } from "next/navigation"
-import { ArrowLeft, Heart, Share2, ShoppingBag } from "lucide-react"
+import { ArrowLeft, Heart, Share2 } from "lucide-react"
 import type { Product } from "@/lib/products"
 import { getRelatedProducts } from "@/lib/products"
 import { useAppStore } from "@/store/cart"
@@ -22,7 +21,6 @@ interface ProductDetailProps {
 }
 
 export function ProductDetail({ product }: ProductDetailProps) {
-  const router = useRouter()
   const [selectedSize, setSelectedSize] = useState(product.sizes[0])
   const [selectedMaterial, setSelectedMaterial] = useState(
     product.materials.find((material) =>
@@ -150,13 +148,6 @@ export function ProductDetail({ product }: ProductDetailProps) {
             aria-label="Wishlist"
           >
             <Heart className={`h-5 w-5 ${inWishlist ? "fill-red-500 text-red-500" : ""}`} />
-          </button>
-          <button
-            className="flex h-10 w-10 items-center justify-center rounded-full bg-secondary text-foreground transition-colors hover:bg-secondary/80"
-            aria-label="Bag"
-            onClick={() => router.push("/cart")}
-          >
-            <ShoppingBag className="h-5 w-5" />
           </button>
         </div>
       </div>
@@ -294,24 +285,38 @@ export function ProductDetail({ product }: ProductDetailProps) {
             </div>
           </div>
 
-          {/* CTA */}
-          <button
-            onClick={handleAddToCart}
-            className="mt-6 w-full rounded-xl bg-primary py-4 text-sm font-bold uppercase tracking-widest text-primary-foreground transition-transform hover:scale-[1.02] active:scale-[0.98]"
-          >
-            Add To Cart
-          </button>
-
-          <button
-            onClick={() => openWaitlistModal(product.id, product.title)}
-            className="mt-3 w-full rounded-xl border border-border bg-background py-3 text-xs font-semibold uppercase tracking-[0.18em] text-foreground/80 transition-colors hover:border-primary/40 hover:text-primary"
-          >
-            Notify Me For Drop
-          </button>
-
-          <p className="mt-3 text-center text-xs text-muted-foreground">
-            Checkout is now active in MVP mode. Waitlist remains available for upcoming drops.
-          </p>
+          {/* CTA — conditional on stock */}
+          {product.inStock ? (
+            <>
+              <button
+                onClick={handleAddToCart}
+                className="mt-6 w-full rounded-xl bg-primary py-4 text-sm font-bold uppercase tracking-widest text-primary-foreground transition-transform hover:scale-[1.02] active:scale-[0.98]"
+              >
+                Add To Cart
+              </button>
+              <button
+                onClick={() => openWaitlistModal(product.id, product.title)}
+                className="mt-3 w-full text-xs font-semibold uppercase tracking-[0.18em] text-muted-foreground transition-colors hover:text-primary"
+              >
+                Or notify me for the next drop →
+              </button>
+            </>
+          ) : (
+            <>
+              <div className="mt-6 flex items-center gap-2 rounded-xl border border-border bg-secondary/50 px-4 py-3">
+                <span className="h-2 w-2 rounded-full bg-destructive" />
+                <span className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+                  Sold Out — Next drop coming soon
+                </span>
+              </div>
+              <button
+                onClick={() => openWaitlistModal(product.id, product.title)}
+                className="mt-3 w-full rounded-xl border border-primary/60 bg-primary/10 py-4 text-sm font-bold uppercase tracking-widest text-primary transition-transform hover:scale-[1.02] active:scale-[0.98]"
+              >
+                Notify Me For Drop
+              </button>
+            </>
+          )}
         </div>
       </div>
 

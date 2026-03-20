@@ -27,7 +27,7 @@ export function SiteHeader() {
         <div className="flex h-14 items-center justify-between px-4">
           <button
             onClick={toggleMobileMenu}
-            className="flex h-10 w-10 items-center justify-center text-foreground transition-colors hover:text-primary md:hidden"
+            className="hidden h-10 w-10 items-center justify-center text-foreground transition-colors hover:text-primary"
             aria-label={isMobileMenuOpen ? "Close menu" : "Open menu"}
           >
             {isMobileMenuOpen ? (

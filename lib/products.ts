@@ -1,4 +1,4 @@
-export type Category = "All" | "Anime" | "Gaming" | "Nature" | "Movies" | "Artists" | "Abstract" | "Music"
+﻿export type Category = "All" | "Anime" | "Gaming" | "Nature" | "Movies" | "Artists" | "Abstract" | "Music"
 
 export interface Product {
   id: string
@@ -14,6 +14,7 @@ export interface Product {
   materials: string[]
   onSale: boolean
   featured: boolean
+  inStock: boolean
 }
 
 export const categories: Category[] = [
@@ -56,6 +57,7 @@ export const products: Product[] = [
     materials: ["Matte Paper", "Glossy Paper", "Metal Print"],
     onSale: true,
     featured: true,
+    inStock: true,
   },
   {
     id: "p2",
@@ -69,6 +71,7 @@ export const products: Product[] = [
     materials: ["Matte Paper", "Glossy Paper", "Metal Print"],
     onSale: false,
     featured: false,
+    inStock: true,
   },
   {
     id: "p3",
@@ -82,6 +85,7 @@ export const products: Product[] = [
     materials: ["Matte Paper", "Glossy Paper"],
     onSale: false,
     featured: false,
+    inStock: true,
   },
   {
     id: "p4",
@@ -96,6 +100,7 @@ export const products: Product[] = [
     materials: ["Matte Paper", "Glossy Paper", "Metal Print"],
     onSale: true,
     featured: false,
+    inStock: true,
   },
   {
     id: "p5",
@@ -109,6 +114,7 @@ export const products: Product[] = [
     materials: ["Matte Paper", "Glossy Paper", "Metal Print"],
     onSale: false,
     featured: true,
+    inStock: true,
   },
   {
     id: "p6",
@@ -122,6 +128,7 @@ export const products: Product[] = [
     materials: ["Matte Paper", "Glossy Paper"],
     onSale: false,
     featured: false,
+    inStock: true,
   },
   {
     id: "p7",
@@ -136,6 +143,7 @@ export const products: Product[] = [
     materials: ["Matte Paper", "Glossy Paper", "Metal Print"],
     onSale: true,
     featured: false,
+    inStock: true,
   },
   {
     id: "p8",
@@ -149,6 +157,7 @@ export const products: Product[] = [
     materials: ["Matte Paper", "Glossy Paper"],
     onSale: false,
     featured: false,
+    inStock: true,
   },
   {
     id: "p9",
@@ -162,6 +171,7 @@ export const products: Product[] = [
     materials: ["Matte Paper", "Glossy Paper", "Metal Print"],
     onSale: false,
     featured: true,
+    inStock: true,
   },
   {
     id: "p10",
@@ -176,6 +186,7 @@ export const products: Product[] = [
     materials: ["Matte Paper", "Glossy Paper", "Metal Print"],
     onSale: true,
     featured: false,
+    inStock: true,
   },
   {
     id: "p11",
@@ -189,6 +200,7 @@ export const products: Product[] = [
     materials: ["Matte Paper", "Glossy Paper", "Metal Print"],
     onSale: false,
     featured: false,
+    inStock: true,
   },
   {
     id: "p12",
@@ -202,6 +214,7 @@ export const products: Product[] = [
     materials: ["Matte Paper", "Glossy Paper"],
     onSale: false,
     featured: false,
+    inStock: true,
   },
   {
     id: "p13",
@@ -215,6 +228,7 @@ export const products: Product[] = [
     materials: ["Matte Paper", "Glossy Paper", "Metal Print"],
     onSale: false,
     featured: false,
+    inStock: true,
   },
   {
     id: "p14",
@@ -229,6 +243,7 @@ export const products: Product[] = [
     materials: ["Matte Paper", "Glossy Paper", "Metal Print"],
     onSale: true,
     featured: true,
+    inStock: true,
   },
   {
     id: "p15",
@@ -242,6 +257,7 @@ export const products: Product[] = [
     materials: ["Matte Paper", "Glossy Paper"],
     onSale: false,
     featured: false,
+    inStock: true,
   },
   {
     id: "p16",
@@ -255,6 +271,7 @@ export const products: Product[] = [
     materials: ["Matte Paper", "Glossy Paper"],
     onSale: false,
     featured: false,
+    inStock: true,
   },
   {
     id: "p17",
@@ -268,6 +285,7 @@ export const products: Product[] = [
     materials: ["Matte Paper", "Glossy Paper", "Metal Print"],
     onSale: false,
     featured: true,
+    inStock: true,
   },
   {
     id: "p18",
@@ -282,6 +300,7 @@ export const products: Product[] = [
     materials: ["Matte Paper", "Glossy Paper", "Metal Print"],
     onSale: true,
     featured: false,
+    inStock: true,
   },
   {
     id: "p19",
@@ -295,6 +314,7 @@ export const products: Product[] = [
     materials: ["Matte Paper", "Glossy Paper", "Metal Print"],
     onSale: false,
     featured: false,
+    inStock: true,
   },
   {
     id: "p20",
@@ -308,6 +328,7 @@ export const products: Product[] = [
     materials: ["Matte Paper", "Glossy Paper"],
     onSale: false,
     featured: false,
+    inStock: true,
   },
   {
     id: "p21",
@@ -321,6 +342,7 @@ export const products: Product[] = [
     materials: ["Matte Paper", "Glossy Paper", "Metal Print"],
     onSale: false,
     featured: false,
+    inStock: true,
   },
   {
     id: "p22",
@@ -335,6 +357,7 @@ export const products: Product[] = [
     materials: ["Matte Paper", "Glossy Paper", "Metal Print"],
     onSale: true,
     featured: false,
+    inStock: true,
   },
   {
     id: "p23",
@@ -348,6 +371,7 @@ export const products: Product[] = [
     materials: ["Matte Paper", "Glossy Paper", "Metal Print"],
     onSale: false,
     featured: false,
+    inStock: true,
   },
   {
     id: "p24",
@@ -361,6 +385,7 @@ export const products: Product[] = [
     materials: ["Matte Paper", "Glossy Paper"],
     onSale: false,
     featured: false,
+    inStock: true,
   },
   {
     id: "p25",
@@ -374,6 +399,7 @@ export const products: Product[] = [
     materials: ["Matte Paper", "Glossy Paper", "Metal Print"],
     onSale: false,
     featured: false,
+    inStock: true,
   },
   {
     id: "p26",
@@ -388,6 +414,7 @@ export const products: Product[] = [
     materials: ["Matte Paper", "Glossy Paper", "Metal Print"],
     onSale: true,
     featured: false,
+    inStock: true,
   },
   {
     id: "p27",
@@ -401,6 +428,7 @@ export const products: Product[] = [
     materials: ["Matte Paper", "Glossy Paper"],
     onSale: false,
     featured: false,
+    inStock: true,
   },
   {
     id: "p28",
@@ -414,6 +442,7 @@ export const products: Product[] = [
     materials: ["Matte Paper", "Glossy Paper", "Metal Print"],
     onSale: false,
     featured: false,
+    inStock: true,
   },
   {
     id: "p29",
@@ -428,6 +457,7 @@ export const products: Product[] = [
     materials: ["Matte Paper", "Glossy Paper", "Metal Print"],
     onSale: true,
     featured: false,
+    inStock: true,
   },
   {
     id: "p30",
@@ -441,6 +471,7 @@ export const products: Product[] = [
     materials: ["Matte Paper", "Glossy Paper", "Metal Print"],
     onSale: false,
     featured: false,
+    inStock: true,
   },
   {
     id: "p31",
@@ -454,6 +485,7 @@ export const products: Product[] = [
     materials: ["Matte Paper", "Glossy Paper", "Metal Print"],
     onSale: false,
     featured: false,
+    inStock: true,
   },
   {
     id: "p32",
@@ -467,6 +499,7 @@ export const products: Product[] = [
     materials: ["Matte Paper", "Glossy Paper"],
     onSale: false,
     featured: false,
+    inStock: true,
   },
 ]
 
