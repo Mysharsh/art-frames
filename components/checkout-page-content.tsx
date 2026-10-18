@@ -7,8 +7,7 @@ import { Loader2 } from "lucide-react"
 import { useAppStore } from "@/lib/store"
 import { checkoutOrderSchema } from "@/lib/validations"
 import { useToast } from "@/hooks/use-toast"
-
-type PaymentMethod = "cod" | "stripe"
+import { COD_FEE, formatPrice, getCodFee, getUnitPrice, type PaymentMethod } from "@/lib/pricing"
 
 const initialForm = {
   customerName: "",
@@ -34,10 +33,10 @@ export function CheckoutPageContent() {
   const [submitError, setSubmitError] = useState("")
 
   const subtotal = useMemo(
-    () => cartItems.reduce((acc, item) => acc + item.price * item.quantity, 0),
+    () => cartItems.reduce((acc, item) => acc + getUnitPrice(item.productId, item.price) * item.quantity, 0),
     [cartItems]
   )
-  const codFee = cartItems.length > 0 ? 49 : 0
+  const codFee = getCodFee(paymentMethod, cartItems.length)
   const total = subtotal + codFee
 
   const updateField = (field: keyof typeof initialForm, value: string) => {
@@ -48,10 +47,16 @@ export function CheckoutPageContent() {
     event.preventDefault()
     setSubmitError("")
 
+    // Only identifiers are sent; the server prices every line from the catalogue.
     const payload = {
       ...form,
       paymentMethod,
-      cartItems,
+      cartItems: cartItems.map(({ productId, size, material, quantity }) => ({
+        productId,
+        size,
+        material,
+        quantity,
+      })),
     }
 
     const parsed = checkoutOrderSchema.safeParse(payload)
@@ -194,16 +199,11 @@ export function CheckoutPageContent() {
               checked={paymentMethod === "cod"}
               onChange={() => setPaymentMethod("cod")}
             />
-            Cash on Delivery (+$49)
+            Cash on Delivery (+{formatPrice(COD_FEE)})
           </label>
-          <label className="flex cursor-pointer items-center gap-3 rounded-xl border border-border bg-background px-4 py-3 text-sm">
-            <input
-              type="radio"
-              name="paymentMethod"
-              checked={paymentMethod === "stripe"}
-              onChange={() => setPaymentMethod("stripe")}
-            />
-            Stripe (Payment intent flow)
+          <label className="flex cursor-not-allowed items-center gap-3 rounded-xl border border-border bg-background px-4 py-3 text-sm text-muted-foreground opacity-60">
+            <input type="radio" name="paymentMethod" disabled />
+            Online payment (coming soon)
           </label>
         </section>
 
@@ -227,22 +227,22 @@ export function CheckoutPageContent() {
           {cartItems.map((item) => (
             <div key={`${item.productId}-${item.size}-${item.material}`} className="flex items-center justify-between text-muted-foreground">
               <span className="pr-3">{item.title} x{item.quantity}</span>
-              <span>${(item.price * item.quantity).toFixed(2)}</span>
+              <span>{formatPrice(getUnitPrice(item.productId, item.price) * item.quantity)}</span>
             </div>
           ))}
 
           <div className="mt-3 border-t border-border pt-3">
             <div className="flex items-center justify-between text-muted-foreground">
               <span>Subtotal</span>
-              <span>${subtotal.toFixed(2)}</span>
+              <span>{formatPrice(subtotal)}</span>
             </div>
             <div className="mt-1 flex items-center justify-between text-muted-foreground">
               <span>COD Fee</span>
-              <span>${codFee.toFixed(2)}</span>
+              <span>{formatPrice(codFee)}</span>
             </div>
             <div className="mt-2 flex items-center justify-between font-semibold text-foreground">
               <span>Total</span>
-              <span>${total.toFixed(2)}</span>
+              <span>{formatPrice(total)}</span>
             </div>
           </div>
         </div>

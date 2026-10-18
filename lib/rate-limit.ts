@@ -93,18 +93,101 @@ export const waitlistLimiter = new RateLimiter(60 * 1000, 10)
 // Tighter limit for public count endpoint (5 requests per minute)
 export const countLimiter = new RateLimiter(60 * 1000, 5)
 
+// Order creation (5 requests per minute)
+export const ordersLimiter = new RateLimiter(60 * 1000, 5)
+
+export type RateLimitPolicy = 'waitlist' | 'count' | 'orders'
+
+const policies: Record<RateLimitPolicy, { limiter: RateLimiter; windowMs: number; max: number }> = {
+    waitlist: { limiter: waitlistLimiter, windowMs: 60 * 1000, max: 10 },
+    count: { limiter: countLimiter, windowMs: 60 * 1000, max: 5 },
+    orders: { limiter: ordersLimiter, windowMs: 60 * 1000, max: 5 },
+}
+
+type UpstashResult = Array<{ result?: number; error?: string }>
+
 /**
- * Utility function to extract client IP from request
+ * Fixed-window counter in Upstash Redis via its REST API, shared by every
+ * serverless instance. Returns null if Redis is not configured or unreachable.
+ */
+async function checkWithUpstash(
+    key: string,
+    windowMs: number,
+    max: number
+): Promise<{ allowed: boolean; retryAfter?: number } | null> {
+    const url = process.env.UPSTASH_REDIS_REST_URL
+    const token = process.env.UPSTASH_REDIS_REST_TOKEN
+    if (!url || !token) {
+        return null
+    }
+
+    try {
+        const response = await fetch(`${url.replace(/\/$/, '')}/pipeline`, {
+            method: 'POST',
+            headers: {
+                Authorization: `Bearer ${token}`,
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify([
+                ['INCR', key],
+                ['PEXPIRE', key, String(windowMs), 'NX'],
+                ['PTTL', key],
+            ]),
+            cache: 'no-store',
+        })
+
+        if (!response.ok) {
+            throw new Error(`Upstash responded with ${response.status}`)
+        }
+
+        const [incr, , pttl] = (await response.json()) as UpstashResult
+        if (typeof incr?.result !== 'number') {
+            throw new Error(incr?.error || 'Unexpected Upstash response')
+        }
+
+        if (incr.result > max) {
+            const ttlMs = typeof pttl?.result === 'number' && pttl.result > 0 ? pttl.result : windowMs
+            return { allowed: false, retryAfter: Math.ceil(ttlMs / 1000) }
+        }
+
+        return { allowed: true }
+    } catch (error) {
+        console.error('Rate limit store unavailable, using in-memory fallback:', error)
+        return null
+    }
+}
+
+/**
+ * Check a request against a named policy. Uses Redis when UPSTASH_REDIS_REST_URL and
+ * UPSTASH_REDIS_REST_TOKEN are set (required on serverless hosts such as Vercel, where
+ * memory is per instance); otherwise falls back to the in-memory limiter.
+ */
+export async function checkRateLimit(
+    policy: RateLimitPolicy,
+    identifier: string
+): Promise<{ allowed: boolean; retryAfter?: number }> {
+    const { limiter, windowMs, max } = policies[policy]
+    const shared = await checkWithUpstash(`ratelimit:${policy}:${identifier}`, windowMs, max)
+    return shared ?? limiter.isAllowed(identifier)
+}
+
+/**
+ * Extract the client IP. Headers set by the hosting proxy (Vercel, nginx) are preferred
+ * because they overwrite any client-supplied value; the first x-forwarded-for entry can be
+ * forged by the client behind proxies that append to it, so it is only a fallback.
  */
 export function getClientIp(request: Request): string {
+    const vercelIp = request.headers.get('x-vercel-forwarded-for')
+    if (vercelIp) {
+        return vercelIp.split(',')[0].trim()
+    }
+    const realIp = request.headers.get('x-real-ip')
+    if (realIp) {
+        return realIp.trim()
+    }
     const forwarded = request.headers.get('x-forwarded-for')
     if (forwarded) {
         return forwarded.split(',')[0].trim()
     }
-    const realIp = request.headers.get('x-real-ip')
-    if (realIp) {
-        return realIp
-    }
-    // Fallback for development - will be "127.0.0.1" in dev
     return request.headers.get('cf-connecting-ip') || 'unknown'
 }

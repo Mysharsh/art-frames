@@ -1,5 +1,5 @@
-import { describe, it, expect, beforeEach } from "vitest"
-import { waitlistLimiter, countLimiter, getClientIp } from "@/lib/rate-limit"
+import { describe, it, expect, beforeEach, afterEach, vi } from "vitest"
+import { waitlistLimiter, countLimiter, ordersLimiter, getClientIp, checkRateLimit } from "@/lib/rate-limit"
 
 describe("Rate Limiter", () => {
     beforeEach(() => {
@@ -126,7 +126,7 @@ describe("Rate Limiter", () => {
             expect(ip).toBe("unknown")
         })
 
-        it("should prioritize x-forwarded-for over x-real-ip", () => {
+        it("should prioritize proxy-set x-real-ip over client-forgeable x-forwarded-for", () => {
             const request = new Request("http://localhost", {
                 headers: {
                     "x-forwarded-for": "192.168.1.1",
@@ -134,7 +134,19 @@ describe("Rate Limiter", () => {
                 },
             })
             const ip = getClientIp(request)
-            expect(ip).toBe("192.168.1.1")
+            expect(ip).toBe("10.0.0.1")
+        })
+
+        it("should prioritize x-vercel-forwarded-for over other headers", () => {
+            const request = new Request("http://localhost", {
+                headers: {
+                    "x-vercel-forwarded-for": "203.0.113.7",
+                    "x-forwarded-for": "192.168.1.1",
+                    "x-real-ip": "10.0.0.1",
+                },
+            })
+            const ip = getClientIp(request)
+            expect(ip).toBe("203.0.113.7")
         })
     })
 
@@ -146,6 +158,57 @@ describe("Rate Limiter", () => {
             const result = waitlistLimiter.isAllowed("ip-1")
             expect(result.retryAfter).toBeLessThanOrEqual(60)
             expect(result.retryAfter).toBeGreaterThan(0)
+        })
+    })
+
+    describe("checkRateLimit", () => {
+        beforeEach(() => {
+            ordersLimiter.clear()
+        })
+
+        afterEach(() => {
+            vi.unstubAllEnvs()
+            vi.unstubAllGlobals()
+        })
+
+        it("should fall back to the in-memory limiter without Redis config", async () => {
+            vi.stubEnv("UPSTASH_REDIS_REST_URL", "")
+            vi.stubEnv("UPSTASH_REDIS_REST_TOKEN", "")
+
+            for (let i = 0; i < 5; i++) {
+                expect((await checkRateLimit("orders", "ip-mem")).allowed).toBe(true)
+            }
+            expect((await checkRateLimit("orders", "ip-mem")).allowed).toBe(false)
+        })
+
+        it("should use the shared Redis counter when configured", async () => {
+            vi.stubEnv("UPSTASH_REDIS_REST_URL", "https://redis.example.com")
+            vi.stubEnv("UPSTASH_REDIS_REST_TOKEN", "token")
+            const fetchMock = vi.fn().mockResolvedValue(
+                new Response(JSON.stringify([{ result: 6 }, { result: 0 }, { result: 30000 }]))
+            )
+            vi.stubGlobal("fetch", fetchMock)
+
+            const result = await checkRateLimit("orders", "ip-redis")
+
+            expect(result).toEqual({ allowed: false, retryAfter: 30 })
+            expect(fetchMock).toHaveBeenCalledWith(
+                "https://redis.example.com/pipeline",
+                expect.objectContaining({ method: "POST" })
+            )
+            const body = JSON.parse(fetchMock.mock.calls[0][1].body)
+            expect(body[0]).toEqual(["INCR", "ratelimit:orders:ip-redis"])
+        })
+
+        it("should fall back to memory when Redis is unreachable", async () => {
+            vi.stubEnv("UPSTASH_REDIS_REST_URL", "https://redis.example.com")
+            vi.stubEnv("UPSTASH_REDIS_REST_TOKEN", "token")
+            vi.stubGlobal("fetch", vi.fn().mockRejectedValue(new Error("network down")))
+            vi.spyOn(console, "error").mockImplementation(() => {})
+
+            const result = await checkRateLimit("orders", "ip-down")
+            expect(result.allowed).toBe(true)
+            expect(ordersLimiter.getRemaining("ip-down")).toBe(4)
         })
     })
 })

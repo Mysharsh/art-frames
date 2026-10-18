@@ -7,6 +7,7 @@ import { useRouter } from "next/navigation"
 import { ArrowLeft, Heart, Share2, ShoppingBag } from "lucide-react"
 import type { Product } from "@/lib/products"
 import { getRelatedProducts } from "@/lib/products"
+import { formatPrice } from "@/lib/pricing"
 import { useAppStore } from "@/lib/store"
 import { ProductCard } from "@/components/product-card"
 import { useToast } from "@/hooks/use-toast"
@@ -230,11 +231,11 @@ export function ProductDetail({ product }: ProductDetailProps) {
 
         <div className="mt-2 flex items-baseline gap-3">
           <span className="text-2xl font-bold text-foreground">
-            ${product.price}
+            {formatPrice(product.price)}
           </span>
           {product.originalPrice && (
             <span className="text-base text-muted-foreground line-through">
-              ${product.originalPrice}
+              {formatPrice(product.originalPrice)}
             </span>
           )}
           {product.onSale && product.originalPrice && (

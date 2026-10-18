@@ -3,6 +3,7 @@
 import Image from "next/image"
 import Link from "next/link"
 import { getSaleProducts } from "@/lib/products"
+import { formatPrice } from "@/lib/pricing"
 
 export function FeaturedRow() {
   const saleProducts = getSaleProducts().slice(0, 6)
@@ -43,9 +44,9 @@ export function FeaturedRow() {
             </div>
             <h3 className="text-xs font-semibold text-foreground mt-2 truncate">{product.title}</h3>
             <div className="flex items-center gap-1.5 mt-0.5">
-              <span className="text-xs font-bold text-foreground">${product.price}</span>
+              <span className="text-xs font-bold text-foreground">{formatPrice(product.price)}</span>
               {product.originalPrice && (
-                <span className="text-[10px] text-muted-foreground line-through">${product.originalPrice}</span>
+                <span className="text-[10px] text-muted-foreground line-through">{formatPrice(product.originalPrice)}</span>
               )}
             </div>
           </Link>

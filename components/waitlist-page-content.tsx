@@ -5,6 +5,7 @@ import { ClipboardList, ArrowRight } from "lucide-react"
 import { useAppStore } from "@/lib/store"
 import { getProductById } from "@/lib/products"
 import Image from "next/image"
+import { formatPrice } from "@/lib/pricing"
 
 export function WaitlistPageContent() {
   const { waitlistItems, waitlistCount } = useAppStore()
@@ -67,7 +68,7 @@ export function WaitlistPageContent() {
                   </p>
                   {product && (
                     <p className="mt-0.5 text-xs text-muted-foreground">
-                      From ${product.price}
+                      From {formatPrice(product.price)}
                     </p>
                   )}
                 </div>

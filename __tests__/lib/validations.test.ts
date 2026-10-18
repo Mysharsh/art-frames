@@ -149,6 +149,19 @@ describe("Validations", () => {
             expect(result.success).toBe(true)
         })
 
+        it("should strip client-supplied price, title and image from cart items", () => {
+            const result = checkoutOrderSchema.safeParse(basePayload)
+            expect(result.success).toBe(true)
+            if (result.success) {
+                expect(result.data.cartItems[0]).toEqual({
+                    productId: "p1",
+                    size: "M (12x16)",
+                    material: "Metal Print",
+                    quantity: 2,
+                })
+            }
+        })
+
         it("should reject invalid payment method", () => {
             const payload = {
                 ...basePayload,

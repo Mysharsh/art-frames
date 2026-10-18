@@ -67,12 +67,10 @@ export async function safeParseWaitlistEntry(json: unknown) {
     return waitlistEntrySchema.safeParse(json)
 }
 
+// Only identifiers and quantity are accepted from the client. Price, title and image
+// are resolved server-side from the catalogue (see lib/pricing.ts); extra keys are stripped.
 const cartItemSchema = z.object({
     productId: productIdSchema,
-    title: z.string().min(1).max(200),
-    image: z.string().url().max(1200),
-    artist: z.string().min(1).max(120),
-    price: z.number().positive().max(100000),
     size: z.string().min(1).max(60),
     material: z.string().min(1).max(60),
     quantity: z.number().int().min(1).max(20),
