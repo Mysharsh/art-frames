@@ -3,14 +3,9 @@ import { randomUUID } from "crypto"
 import { safeParseCheckoutOrder } from "@/lib/validations"
 import { createAdminClient } from "@/lib/supabase/admin"
 import { createClient as createServerSupabaseClient } from "@/lib/supabase/server"
-import { getClientIp, waitlistLimiter } from "@/lib/rate-limit"
-
-function calculateTotals(cartItems: Array<{ price: number; quantity: number }>) {
-  const subtotal = cartItems.reduce((acc, item) => acc + item.price * item.quantity, 0)
-  const codFee = cartItems.length > 0 ? 49 : 0
-  const total = subtotal + codFee
-  return { subtotal, codFee, total }
-}
+import { checkRateLimit, getClientIp } from "@/lib/rate-limit"
+import { calculateTotals, priceOrderLines } from "@/lib/pricing"
+import { captureException } from "@/lib/sentry"
 
 function makeOrderId() {
   return `ORD-${new Date().toISOString().slice(0, 10).replace(/-/g, "")}-${randomUUID().slice(0, 8).toUpperCase()}`
@@ -18,7 +13,7 @@ function makeOrderId() {
 
 export async function POST(request: Request) {
   const clientIp = getClientIp(request)
-  const rateLimitResult = waitlistLimiter.isAllowed(`orders:${clientIp}`)
+  const rateLimitResult = await checkRateLimit("orders", clientIp)
 
   if (!rateLimitResult.allowed) {
     return NextResponse.json(
@@ -32,84 +27,112 @@ export async function POST(request: Request) {
     )
   }
 
+  let body: unknown
   try {
-    const body = await request.json()
-    const parseResult = await safeParseCheckoutOrder(body)
+    body = await request.json()
+  } catch {
+    return NextResponse.json({ error: "Invalid JSON body" }, { status: 400 })
+  }
 
-    if (!parseResult.success) {
-      const details = parseResult.error.errors
-        .map((err) => `${err.path.join(".")}: ${err.message}`)
-        .join("; ")
+  const parseResult = await safeParseCheckoutOrder(body)
 
-      return NextResponse.json(
-        { error: "Validation failed", details },
-        { status: 400 }
-      )
-    }
+  if (!parseResult.success) {
+    const details = parseResult.error.errors
+      .map((err) => `${err.path.join(".")}: ${err.message}`)
+      .join("; ")
 
-    const payload = parseResult.data
-    const totals = calculateTotals(payload.cartItems)
-    const orderId = makeOrderId()
-
-    let userId: string | null = null
-    try {
-      const supabase = await createServerSupabaseClient()
-      const {
-        data: { user },
-      } = await supabase.auth.getUser()
-      userId = user?.id ?? null
-    } catch {
-      userId = null
-    }
-
-    const orderRecord = {
-      order_id: orderId,
-      user_id: userId,
-      customer_name: payload.customerName,
-      email: payload.email,
-      phone: payload.phone,
-      address_line_1: payload.addressLine1,
-      address_line_2: payload.addressLine2 || null,
-      city: payload.city,
-      state: payload.state,
-      pincode: payload.pincode,
-      gst_number: payload.gstNumber || null,
-      payment_method: payload.paymentMethod,
-      status: payload.paymentMethod === "cod" ? "pending_cod_confirm" : "pending_payment",
-      subtotal: totals.subtotal,
-      cod_fee: totals.codFee,
-      total: totals.total,
-      line_items: payload.cartItems,
-      notes: payload.notes || null,
-      created_at: new Date().toISOString(),
-      updated_at: new Date().toISOString(),
-    }
-
-    let persisted = false
-    try {
-      const admin = createAdminClient()
-      const { error } = await admin.from("orders").insert(orderRecord)
-      if (error) {
-        throw error
-      }
-      persisted = true
-    } catch (error) {
-      console.error("Order persistence warning:", error)
-    }
-
-    return NextResponse.json({
-      success: true,
-      orderId,
-      paymentMethod: payload.paymentMethod,
-      amount: totals.total,
-      status: orderRecord.status,
-      persisted,
-    })
-  } catch (error) {
-    console.error("Order create API error:", error)
     return NextResponse.json(
-      { error: "Internal server error" },
-      { status: 500 }
+      { error: "Validation failed", details },
+      { status: 400 }
     )
   }
+
+  const payload = parseResult.data
+
+  // Online payment has no provider integration yet; refuse rather than create
+  // orders that sit in "pending_payment" with no way to pay.
+  if (payload.paymentMethod !== "cod") {
+    return NextResponse.json(
+      { error: "Online payment is not available yet. Please choose Cash on Delivery." },
+      { status: 400 }
+    )
+  }
+
+  // Prices are always resolved from the catalogue, never taken from the request.
+  const priced = priceOrderLines(payload.cartItems)
+  if (!priced.ok) {
+    return NextResponse.json(
+      { error: "Some items in your cart are no longer available", details: priced.error },
+      { status: 400 }
+    )
+  }
+
+  const totals = calculateTotals(priced.items, payload.paymentMethod)
+  const orderId = makeOrderId()
+
+  let userId: string | null = null
+  try {
+    const supabase = await createServerSupabaseClient()
+    const {
+      data: { user },
+    } = await supabase.auth.getUser()
+    userId = user?.id ?? null
+  } catch {
+    userId = null
+  }
+
+  const now = new Date().toISOString()
+  const orderRecord = {
+    order_id: orderId,
+    user_id: userId,
+    customer_name: payload.customerName,
+    email: payload.email,
+    phone: payload.phone,
+    address_line_1: payload.addressLine1,
+    address_line_2: payload.addressLine2 || null,
+    city: payload.city,
+    state: payload.state,
+    pincode: payload.pincode,
+    gst_number: payload.gstNumber || null,
+    payment_method: payload.paymentMethod,
+    status: "pending_cod_confirm",
+    currency: "INR",
+    subtotal: totals.subtotal,
+    cod_fee: totals.codFee,
+    total: totals.total,
+    line_items: priced.items,
+    notes: payload.notes || null,
+    created_at: now,
+    updated_at: now,
+  }
+
+  try {
+    const admin = createAdminClient()
+    const { error } = await admin.from("orders").insert(orderRecord)
+    if (error) {
+      throw error
+    }
+  } catch (error) {
+    // Never report success for an order that was not saved: the client clears the
+    // cart on success, so a silent failure would lose the order entirely.
+    console.error("Order persistence failed:", error)
+    // Supabase returns plain PostgrestError objects, not Error instances.
+    const message = (error as { message?: string } | null)?.message ?? String(error)
+    captureException(error instanceof Error ? error : new Error(message), {
+      orderId,
+      endpoint: "/api/orders/create",
+    })
+    return NextResponse.json(
+      { error: "We couldn't place your order right now. Your cart is saved; please try again." },
+      { status: 503 }
+    )
+  }
+
+  return NextResponse.json({
+    success: true,
+    orderId,
+    paymentMethod: payload.paymentMethod,
+    amount: totals.total,
+    status: orderRecord.status,
+  })
 }

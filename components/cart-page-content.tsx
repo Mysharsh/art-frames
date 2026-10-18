@@ -3,6 +3,7 @@
 import Link from "next/link"
 import { Minus, Plus, Trash2 } from "lucide-react"
 import { useAppStore } from "@/lib/store"
+import { COD_FEE, formatPrice, getUnitPrice } from "@/lib/pricing"
 
 export function CartPageContent() {
   const cartItems = useAppStore((s) => s.cartItems)
@@ -10,9 +11,7 @@ export function CartPageContent() {
   const removeFromCart = useAppStore((s) => s.removeFromCart)
   const clearCart = useAppStore((s) => s.clearCart)
 
-  const subtotal = cartItems.reduce((acc, item) => acc + item.price * item.quantity, 0)
-  const codFee = cartItems.length > 0 ? 49 : 0
-  const total = subtotal + codFee
+  const subtotal = cartItems.reduce((acc, item) => acc + getUnitPrice(item.productId, item.price) * item.quantity, 0)
 
   if (cartItems.length === 0) {
     return (
@@ -61,7 +60,7 @@ export function CartPageContent() {
 
             <div className="mt-3 flex items-center justify-between">
               <p className="text-sm font-semibold text-foreground">
-                ${(item.price * item.quantity).toFixed(2)}
+                {formatPrice(getUnitPrice(item.productId, item.price) * item.quantity)}
               </p>
 
               <div className="flex items-center gap-2">
@@ -108,18 +107,13 @@ export function CartPageContent() {
         </h2>
 
         <div className="mt-4 space-y-2 text-sm">
-          <div className="flex items-center justify-between text-muted-foreground">
+          <div className="flex items-center justify-between font-semibold text-foreground">
             <span>Subtotal</span>
-            <span>${subtotal.toFixed(2)}</span>
+            <span>{formatPrice(subtotal)}</span>
           </div>
-          <div className="flex items-center justify-between text-muted-foreground">
-            <span>COD Fee</span>
-            <span>${codFee.toFixed(2)}</span>
-          </div>
-          <div className="mt-3 flex items-center justify-between border-t border-border pt-3 font-semibold text-foreground">
-            <span>Total</span>
-            <span>${total.toFixed(2)}</span>
-          </div>
+          <p className="text-xs text-muted-foreground">
+            A {formatPrice(COD_FEE)} fee applies to Cash on Delivery orders. Final total is shown at checkout.
+          </p>
         </div>
 
         <div className="mt-5 grid gap-2">

@@ -1,12 +1,12 @@
 import { NextResponse } from "next/server"
 import { createAdminClient } from "@/lib/supabase/admin"
-import { waitlistLimiter, countLimiter, getClientIp } from "@/lib/rate-limit"
+import { checkRateLimit, getClientIp } from "@/lib/rate-limit"
 import { safeParseWaitlistEntry } from "@/lib/validations"
 
 export async function POST(request: Request) {
   // Rate limiting: 10 requests per minute per IP
   const clientIp = getClientIp(request)
-  const rateLimitResult = waitlistLimiter.isAllowed(clientIp)
+  const rateLimitResult = await checkRateLimit("waitlist", clientIp)
 
   if (!rateLimitResult.allowed) {
     return NextResponse.json(
@@ -68,6 +68,13 @@ export async function POST(request: Request) {
     })
 
     if (insertError) {
+      // Unique (email, product_id) violation: a concurrent request got there first.
+      if (insertError.code === "23505") {
+        return NextResponse.json(
+          { error: "You're already on the waitlist for this product" },
+          { status: 409 }
+        )
+      }
       throw insertError
     }
 
@@ -85,7 +92,7 @@ export async function POST(request: Request) {
 export async function GET(request: Request) {
   // Rate limiting: 5 requests per minute per IP
   const clientIp = getClientIp(request)
-  const rateLimitResult = countLimiter.isAllowed(clientIp)
+  const rateLimitResult = await checkRateLimit("count", clientIp)
 
   if (!rateLimitResult.allowed) {
     return NextResponse.json(

@@ -6,6 +6,7 @@ import Link from "next/link"
 import Image from "next/image"
 import { products } from "@/lib/products"
 import { useAppStore } from "@/lib/store"
+import { formatPrice } from "@/lib/pricing"
 
 export function SearchOverlay() {
   const [query, setQuery] = useState("")
@@ -93,7 +94,7 @@ export function SearchOverlay() {
                   </p>
                 </div>
                 <span className="text-sm font-semibold text-primary">
-                  ${product.price}
+                  {formatPrice(product.price)}
                 </span>
               </Link>
             ))}

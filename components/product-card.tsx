@@ -3,6 +3,7 @@
 import Image from "next/image"
 import Link from "next/link"
 import type { Product } from "@/lib/products"
+import { formatPrice } from "@/lib/pricing"
 
 interface ProductCardProps {
   product: Product
@@ -70,11 +71,11 @@ export function ProductCard({ product }: ProductCardProps) {
         </div>
         <div className="mt-3 flex items-center gap-2">
           <span className="text-base font-bold text-foreground">
-            ${product.price}
+            {formatPrice(product.price)}
           </span>
           {product.originalPrice && (
             <span className="text-xs font-semibold text-muted-foreground line-through">
-              ${product.originalPrice}
+              {formatPrice(product.originalPrice)}
             </span>
           )}
         </div>
