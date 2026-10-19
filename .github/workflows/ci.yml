@@ -118,7 +118,7 @@ jobs:
         run: pnpm install --frozen-lockfile
 
       - name: Run unit tests
-        run: pnpm test:run
+        run: pnpm test:coverage
 
       - name: Upload coverage reports
         if: always()
@@ -164,23 +164,9 @@ jobs:
       - name: Build Next.js
         run: pnpm build
         env:
-          # Firebase client config (public) — use real secrets when available, fallback to dummies for build
-          NEXT_PUBLIC_FIREBASE_API_KEY: ${{ secrets.NEXT_PUBLIC_FIREBASE_API_KEY || 'build-placeholder-api-key' }}
-          NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN: ${{ secrets.NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN || 'build-placeholder.firebaseapp.com' }}
-          NEXT_PUBLIC_FIREBASE_PROJECT_ID: ${{ secrets.NEXT_PUBLIC_FIREBASE_PROJECT_ID || 'build-placeholder-project' }}
-          NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET: ${{ secrets.NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET || 'build-placeholder.appspot.com' }}
-          NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID: ${{ secrets.NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID || '000000000000' }}
-          NEXT_PUBLIC_FIREBASE_APP_ID: ${{ secrets.NEXT_PUBLIC_FIREBASE_APP_ID || '1:000000000000:web:placeholder' }}
-          NEXT_PUBLIC_FIREBASE_MEASUREMENT_ID: ${{ secrets.NEXT_PUBLIC_FIREBASE_MEASUREMENT_ID || '' }}
+          # Supabase is read at runtime only; the build does not need it.
           # Site URL
           NEXT_PUBLIC_SITE_URL: ${{ secrets.NEXT_PUBLIC_SITE_URL || 'https://example.com' }}
-          # Firebase Admin SDK (server-only — never baked into the client bundle)
-          FIREBASE_ADMIN_PROJECT_ID: ${{ secrets.FIREBASE_ADMIN_PROJECT_ID || '' }}
-          FIREBASE_ADMIN_CLIENT_EMAIL: ${{ secrets.FIREBASE_ADMIN_CLIENT_EMAIL || '' }}
-          FIREBASE_ADMIN_PRIVATE_KEY: ${{ secrets.FIREBASE_ADMIN_PRIVATE_KEY || '' }}
-          # Session
-          SESSION_COOKIE_NAME: ${{ secrets.SESSION_COOKIE_NAME || '__session' }}
-          SESSION_EXPIRES_DAYS: ${{ secrets.SESSION_EXPIRES_DAYS || '14' }}
           # Sentry
           NEXT_PUBLIC_SENTRY_DSN: ${{ secrets.NEXT_PUBLIC_SENTRY_DSN || '' }}
           SENTRY_DSN: ${{ secrets.SENTRY_DSN || '' }}
@@ -193,6 +179,60 @@ jobs:
         with:
           name: next-build
           path: .next
+
+  # End-to-end and automated accessibility (axe) tests against the production build
+  e2e:
+    name: E2E & Accessibility
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+
+      - name: Install pnpm
+        uses: pnpm/action-setup@v2
+        with:
+          version: ${{ env.PNPM_VERSION }}
+
+      - name: Get pnpm store directory
+        id: pnpm-cache
+        shell: bash
+        run: |
+          echo "STORE_PATH=$(pnpm store path)" >> $GITHUB_OUTPUT
+
+      - uses: actions/cache@v3
+        with:
+          path: ${{ steps.pnpm-cache.outputs.STORE_PATH }}
+          key: ${{ runner.os }}-pnpm-store-${{ hashFiles('**/pnpm-lock.yaml') }}
+          restore-keys: |
+            ${{ runner.os }}-pnpm-store-
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Install Playwright browsers
+        run: pnpm exec playwright install --with-deps chromium firefox
+
+      - name: Build Next.js
+        run: pnpm build
+        env:
+          NEXT_PUBLIC_SITE_URL: http://localhost:3000
+
+      # Playwright starts `pnpm start` when CI=true (set by GitHub Actions).
+      - name: Run E2E and accessibility tests
+        run: pnpm test:e2e
+
+      - name: Upload Playwright report
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: playwright-report
+          path: playwright-report
+          retention-days: 7
 
   # Security audit
   security:
@@ -234,7 +274,7 @@ jobs:
   # Status check
   status:
     name: CI Status
-    needs: [lint, typecheck, test, build, security]
+    needs: [lint, typecheck, test, build, e2e, security]
     if: always()
     runs-on: ubuntu-latest
     steps:
@@ -243,7 +283,8 @@ jobs:
           if [ "${{ needs.lint.result }}" = "failure" ] || \
              [ "${{ needs.typecheck.result }}" = "failure" ] || \
              [ "${{ needs.test.result }}" = "failure" ] || \
-             [ "${{ needs.build.result }}" = "failure" ]; then
+             [ "${{ needs.build.result }}" = "failure" ] || \
+             [ "${{ needs.e2e.result }}" = "failure" ]; then
             echo "CI Pipeline Failed"
             exit 1
           fi

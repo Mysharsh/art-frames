@@ -33,7 +33,13 @@ export default defineConfig({
     projects: [
         {
             name: 'chromium',
-            use: { ...devices['Desktop Chrome'] },
+            use: {
+                ...devices['Desktop Chrome'],
+                // Use a preinstalled Chromium when the bundled one is unavailable (containers).
+                launchOptions: process.env.PLAYWRIGHT_CHROMIUM_PATH
+                    ? { executablePath: process.env.PLAYWRIGHT_CHROMIUM_PATH }
+                    : undefined,
+            },
         },
 
         {
@@ -72,7 +78,8 @@ export default defineConfig({
 
     /* Run your local dev server before starting the tests */
     webServer: {
-        command: 'pnpm dev',
+        // CI tests the production build (`pnpm build` runs first); locally the dev server.
+        command: process.env.CI ? 'pnpm start' : 'pnpm dev',
         url: 'http://localhost:3000',
         reuseExistingServer: process.env.PLAYWRIGHT_REUSE_SERVER === 'true',
         timeout: 120000,
