@@ -1,62 +1,39 @@
 "use client"
 
-import { useEffect } from "react"
 import Link from "next/link"
 import { Home, Grid3X3, ClipboardList, PhoneCall, Info, ShoppingBag, CreditCard, X, Package, LayoutTemplate } from "lucide-react"
 import { useAppStore } from "@/lib/store"
 import { categories, getCategoryHandle } from "@/lib/products"
 import { siteContent } from "@/lib/site-content"
+import { buttonVariants } from "@/components/ui/button"
+import { Sheet, SheetClose, SheetContent, SheetTitle } from "@/components/ui/sheet"
+import { useReturnFocus } from "@/hooks/use-return-focus"
 
 export function MobileMenu() {
   const isMobileMenuOpen = useAppStore((s) => s.isMobileMenuOpen)
   const closeMobileMenu = useAppStore((s) => s.closeMobileMenu)
+  const returnFocus = useReturnFocus()
 
-  // Close menu on ESC key
-  useEffect(() => {
-    const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.key === "Escape" && isMobileMenuOpen) {
-        closeMobileMenu()
-      }
-    }
-
-    document.addEventListener("keydown", handleKeyDown)
-    return () => document.removeEventListener("keydown", handleKeyDown)
-  }, [isMobileMenuOpen, closeMobileMenu])
-
-  // Lock body scroll when menu is open
-  useEffect(() => {
-    if (isMobileMenuOpen) {
-      document.body.style.overflow = "hidden"
-    } else {
-      document.body.style.overflow = ""
-    }
-
-    return () => {
-      document.body.style.overflow = ""
-    }
-  }, [isMobileMenuOpen])
-
+  // Radix Sheet provides role="dialog", the focus trap, Escape, scroll lock and
+  // focus return to the menu button.
   return (
-    <>
-      {/* Drawer sidebar */}
-      <div
-        className={`fixed inset-0 top-14 z-50 w-full overflow-hidden bg-background transition-transform duration-300 ${isMobileMenuOpen ? "translate-x-0" : "-translate-x-full"
-          }`}
+    <Sheet open={isMobileMenuOpen} onOpenChange={(open) => !open && closeMobileMenu()}>
+      <SheetContent
+        {...returnFocus}
+        side="left"
+        showClose={false}
+        aria-describedby={undefined}
+        className="flex w-full flex-col gap-0 p-0 sm:max-w-sm"
       >
-        <nav className="flex h-full flex-col overflow-y-auto">
-          {/* Header: Logo + Close Button */}
-          <div className="border-b border-border/40 bg-background/95 px-4 py-4">
+        <nav aria-label="Mobile" className="flex h-full flex-col overflow-y-auto">
+          <div className="border-b border-border/40 bg-background/95 px-4 py-2">
             <div className="flex items-center justify-between">
-              <span className="font-display text-xl tracking-wide text-foreground">
+              <SheetTitle className="font-display text-xl font-normal tracking-wide text-foreground">
                 {siteContent.brand.name}
-              </span>
-              <button
-                onClick={closeMobileMenu}
-                className="flex h-9 w-9 items-center justify-center rounded-lg bg-secondary text-foreground transition-colors active:bg-secondary/80"
-                aria-label="Close menu"
-              >
-                <X className="h-5 w-5" />
-              </button>
+              </SheetTitle>
+              <SheetClose className={buttonVariants({ variant: "secondary", size: "icon", className: "rounded-lg" })} aria-label="Close menu">
+                <X />
+              </SheetClose>
             </div>
           </div>
 
@@ -117,7 +94,7 @@ export function MobileMenu() {
                 <Link
                   href="/gallery-walls"
                   onClick={closeMobileMenu}
-                  className="flex items-center gap-3 rounded-lg px-3 py-2.5 text-foreground transition-colors hover:bg-secondary active:bg-secondary/60"
+                  className="flex min-h-11 items-center gap-3 rounded-lg px-3 py-2.5 text-foreground transition-colors hover:bg-secondary active:bg-secondary/60"
                 >
                   <Grid3X3 className="h-4 w-4 text-primary-ink" />
                   <span className="text-sm">Gallery Walls</span>
@@ -125,7 +102,7 @@ export function MobileMenu() {
                 <Link
                   href="/about"
                   onClick={closeMobileMenu}
-                  className="flex items-center gap-3 rounded-lg px-3 py-2.5 text-foreground transition-colors hover:bg-secondary active:bg-secondary/60"
+                  className="flex min-h-11 items-center gap-3 rounded-lg px-3 py-2.5 text-foreground transition-colors hover:bg-secondary active:bg-secondary/60"
                 >
                   <Info className="h-4 w-4 text-primary-ink" />
                   <span className="text-sm">About Us</span>
@@ -133,7 +110,7 @@ export function MobileMenu() {
                 <Link
                   href={`mailto:${siteContent.brand.supportEmail}`}
                   onClick={closeMobileMenu}
-                  className="flex items-center gap-3 rounded-lg px-3 py-2.5 text-foreground transition-colors hover:bg-secondary active:bg-secondary/60"
+                  className="flex min-h-11 items-center gap-3 rounded-lg px-3 py-2.5 text-foreground transition-colors hover:bg-secondary active:bg-secondary/60"
                 >
                   <PhoneCall className="h-4 w-4 text-primary-ink" />
                   <span className="text-sm">Contact</span>
@@ -157,7 +134,7 @@ export function MobileMenu() {
                       key={category}
                       href={`/collections/${getCategoryHandle(category)}`}
                       onClick={closeMobileMenu}
-                      className="block rounded-lg px-3 py-2 text-sm text-foreground transition-colors hover:bg-secondary active:bg-secondary/60"
+                      className="flex min-h-11 items-center rounded-lg px-3 py-2 text-sm text-foreground transition-colors hover:bg-secondary active:bg-secondary/60"
                     >
                       {category}
                     </Link>
@@ -166,8 +143,8 @@ export function MobileMenu() {
             </div>
           </div>
         </nav>
-      </div>
-    </>
+      </SheetContent>
+    </Sheet>
   )
 }
 

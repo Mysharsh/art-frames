@@ -18,7 +18,6 @@ export function SiteHeader() {
     s.cartItems.reduce((acc, item) => acc + item.quantity, 0)
   )
   const isMobileMenuOpen = useAppStore((s) => s.isMobileMenuOpen)
-  const isSearchOpen = useAppStore((s) => s.isSearchOpen)
   const toggleMobileMenu = useAppStore((s) => s.toggleMobileMenu)
   const toggleSearch = useAppStore((s) => s.toggleSearch)
 
@@ -99,8 +98,9 @@ export function SiteHeader() {
         </div>
       </header>
 
-      {isSearchOpen && <SearchOverlay />}
-      {isMobileMenuOpen && <MobileMenu />}
+      {/* Both are Radix dialogs controlled by the store; they render nothing while closed. */}
+      <SearchOverlay />
+      <MobileMenu />
     </>
   )
 }
