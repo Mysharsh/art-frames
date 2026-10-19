@@ -1,6 +1,7 @@
 "use client"
 
 import Link from "next/link"
+import { buttonVariants } from "@/components/ui/button"
 import { usePathname } from "next/navigation"
 import { Menu, Search, ShoppingBag, X } from "lucide-react"
 import { useAppStore } from "@/lib/store"
@@ -34,18 +35,18 @@ export function SiteHeader() {
         <div className="flex h-14 items-center justify-between px-4">
           <button
             onClick={toggleMobileMenu}
-            className="flex h-10 w-10 items-center justify-center text-foreground transition-colors hover:text-primary-ink md:hidden"
+            className={buttonVariants({ variant: "ghost", size: "icon", className: "md:hidden" })}
             aria-label={isMobileMenuOpen ? "Close menu" : "Open menu"}
             aria-expanded={isMobileMenuOpen}
           >
             {isMobileMenuOpen ? (
-              <X className="h-5 w-5" />
+              <X />
             ) : (
-              <Menu className="h-5 w-5" />
+              <Menu />
             )}
           </button>
 
-          <Link href="/" className="flex items-center gap-2">
+          <Link href="/" className="flex h-11 items-center gap-2">
             <span className="font-display text-2xl tracking-wide text-foreground">
               {siteContent.brand.name}
             </span>
@@ -73,17 +74,17 @@ export function SiteHeader() {
           <div className="flex items-center gap-2">
             <button
               onClick={toggleSearch}
-              className="flex h-10 w-10 items-center justify-center text-foreground transition-colors hover:text-primary-ink"
+              className={buttonVariants({ variant: "ghost", size: "icon" })}
               aria-label="Search"
             >
-              <Search className="h-5 w-5" />
+              <Search />
             </button>
             <Link
               href="/cart"
-              className="relative flex h-10 w-10 items-center justify-center text-foreground transition-colors hover:text-primary-ink"
+              className={buttonVariants({ variant: "ghost", size: "icon", className: "relative" })}
               aria-label={cartLabel}
             >
-              <ShoppingBag className="h-5 w-5" />
+              <ShoppingBag />
               {visibleCartCount > 0 && (
                 <span
                   aria-hidden="true"

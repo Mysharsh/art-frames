@@ -1,5 +1,6 @@
 import type { Metadata } from "next"
 import Link from "next/link"
+import { buttonVariants } from "@/components/ui/button"
 import { Package } from "lucide-react"
 import { AppShell } from "@/components/app-shell"
 import { ContentPageShell } from "@/components/page-shells"
@@ -62,8 +63,6 @@ async function loadOrders(): Promise<OrdersResult> {
 }
 
 const cardClass = "rounded-2xl border border-border/70 bg-card p-5"
-const primaryAction =
-  "inline-flex rounded-full border border-primary/40 bg-primary/10 px-4 py-2 text-xs font-semibold uppercase tracking-label text-primary-ink transition-colors hover:bg-primary hover:text-primary-foreground"
 
 const dateFormatter = new Intl.DateTimeFormat("en-IN", {
   day: "numeric",
@@ -87,7 +86,7 @@ export default async function OrdersPage() {
               Sign in to see your order history. Ordered as a guest? Contact us with the order ID from your confirmation page.
             </p>
             <div className="mt-5">
-              <Link href="/auth/login?next=/orders" className={primaryAction}>
+              <Link href="/auth/login?next=/orders" className={buttonVariants({ variant: "soft", size: "pill" })}>
                 Sign In
               </Link>
             </div>
@@ -103,7 +102,7 @@ export default async function OrdersPage() {
             <Package className="mx-auto h-8 w-8 text-muted-foreground" aria-hidden="true" />
             <p className="mt-3 text-sm leading-7 text-muted-foreground">You haven&apos;t placed any orders yet.</p>
             <div className="mt-5">
-              <Link href="/collections/all" className={primaryAction}>
+              <Link href="/collections/all" className={buttonVariants({ variant: "soft", size: "pill" })}>
                 Browse Collections
               </Link>
             </div>

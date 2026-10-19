@@ -5,20 +5,20 @@ export function SiteFooter() {
         <footer className="border-t border-border bg-background/90 px-4 py-8 mt-8">
             <div className="mx-auto max-w-4xl">
                 <div className="flex flex-col items-center gap-4 sm:flex-row sm:justify-between">
-                    <Link href="/" className="flex items-center gap-2">
+                    <Link href="/" className="flex h-11 items-center gap-2">
                         <span className="font-display text-xl tracking-wide text-foreground">
                             Posterwaala
                         </span>
                     </Link>
 
-                    <nav className="flex flex-wrap items-center justify-center gap-x-6 gap-y-2 text-xs text-muted-foreground">
-                        <Link href="/privacy" className="transition-colors hover:text-foreground">
+                    <nav className="flex flex-wrap items-center justify-center gap-x-6 text-xs text-muted-foreground">
+                        <Link href="/privacy" className="inline-flex h-11 items-center transition-colors hover:text-foreground">
                             Privacy Policy
                         </Link>
-                        <Link href="/terms" className="transition-colors hover:text-foreground">
+                        <Link href="/terms" className="inline-flex h-11 items-center transition-colors hover:text-foreground">
                             Terms of Service
                         </Link>
-                        <a href="mailto:contact@posterwaala.com" className="transition-colors hover:text-foreground">
+                        <a href="mailto:contact@posterwaala.com" className="inline-flex h-11 items-center transition-colors hover:text-foreground">
                             Contact
                         </a>
                     </nav>

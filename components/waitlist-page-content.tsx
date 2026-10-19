@@ -1,6 +1,7 @@
 "use client"
 
 import Link from "next/link"
+import { buttonVariants } from "@/components/ui/button"
 import { ClipboardList, ArrowRight } from "lucide-react"
 import { useAppStore } from "@/lib/store"
 import { getProductById } from "@/lib/products"
@@ -32,7 +33,7 @@ export function WaitlistPageContent() {
           </p>
           <Link
             href="/"
-            className="mt-6 inline-flex items-center gap-2 rounded-full bg-primary px-6 py-2.5 text-sm font-semibold text-primary-foreground transition-transform hover:scale-105 active:scale-95"
+            className={buttonVariants({ size: "pill", className: "mt-6" })}
           >
             Browse Posters
             <ArrowRight className="h-4 w-4" />

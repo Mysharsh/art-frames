@@ -11,7 +11,6 @@ test.describe('Product Pages', () => {
         await expect(page.getByText('₹39', { exact: true })).toBeVisible()
         await expect(page.getByRole('button', { name: 'Share' })).toBeVisible()
         await expect(page.getByRole('button', { name: 'Wishlist' })).toBeVisible()
-        await expect(page.getByRole('button', { name: 'Bag' })).toBeVisible()
         await expect(page.getByRole('button', { name: 'Add To Cart' })).toBeVisible()
         await expect(page.getByRole('button', { name: 'Notify Me for Drop' })).toBeVisible()
         await expect(page.getByText('Metal Print')).toBeVisible()

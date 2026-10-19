@@ -1,6 +1,7 @@
 import type { Metadata } from "next"
 import { AppShell } from "@/components/app-shell"
 import { ContentPageShell } from "@/components/page-shells"
+import { buttonVariants } from "@/components/ui/button"
 import { siteContent } from "@/lib/site-content"
 
 export const metadata: Metadata = {
@@ -49,7 +50,7 @@ export default function AboutPage() {
               Need help with an order, waitlist status, or product recommendation?
             </p>
             <a
-              className="mt-3 inline-flex rounded-full border border-primary/40 bg-primary/10 px-4 py-2 text-xs font-semibold uppercase tracking-label text-primary-ink transition-colors hover:bg-primary hover:text-primary-foreground"
+              className={buttonVariants({ variant: "soft", size: "pill", className: "mt-3" })}
               href={`mailto:${siteContent.brand.supportEmail}`}
             >
               Contact Support

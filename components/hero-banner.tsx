@@ -1,6 +1,7 @@
 "use client"
 
 import Link from "next/link"
+import { buttonVariants } from "@/components/ui/button"
 
 export function HeroBanner() {
   return (
@@ -31,13 +32,13 @@ export function HeroBanner() {
           <div className="mt-7 flex flex-wrap items-center gap-3">
             <Link
               href="/#products"
-              className="inline-flex items-center rounded-full bg-primary px-6 py-3 text-xs font-bold uppercase tracking-label text-primary-foreground transition-all hover:-translate-y-0.5 hover:shadow-glow"
+              className={buttonVariants({ size: "pill", className: "px-6 font-bold transition-all hover:-translate-y-0.5 hover:shadow-glow" })}
             >
               Shop Collection
             </Link>
             <Link
               href="/waitlist"
-              className="inline-flex items-center rounded-full border border-foreground/20 bg-background/80 px-6 py-3 text-xs font-bold uppercase tracking-label text-foreground transition-colors hover:border-primary/60 hover:text-primary-ink"
+              className={buttonVariants({ variant: "outline", size: "pill", className: "px-6 font-bold" })}
             >
               Join Early Access
             </Link>

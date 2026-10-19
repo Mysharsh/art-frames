@@ -75,7 +75,7 @@ export function AuthMenu() {
     if (!user) {
         return (
             <div className="flex items-center gap-2">
-                <Link href="/auth/login" className="text-xs font-semibold uppercase tracking-widest text-foreground/80 hover:text-foreground transition-colors">
+                <Link href="/auth/login" className="inline-flex h-11 items-center px-1 text-xs font-semibold uppercase tracking-widest text-foreground/80 transition-colors hover:text-foreground">
                     Sign In
                 </Link>
             </div>

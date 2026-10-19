@@ -7,6 +7,8 @@ import { getProductById } from "@/lib/products"
 
 export const CURRENCY = "INR"
 export const COD_FEE = 49
+/** Most units of one size/material per order; enforced by the cart and the order API. */
+export const MAX_LINE_QUANTITY = 20
 
 export type PaymentMethod = "cod" | "stripe"
 

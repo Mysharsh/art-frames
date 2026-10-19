@@ -1,4 +1,5 @@
 import { z } from "zod"
+import { MAX_LINE_QUANTITY } from "@/lib/pricing"
 
 /**
  * Validation schemas for API endpoints
@@ -73,7 +74,7 @@ const cartItemSchema = z.object({
     productId: productIdSchema,
     size: z.string().min(1).max(60),
     material: z.string().min(1).max(60),
-    quantity: z.number().int().min(1).max(20),
+    quantity: z.number().int().min(1).max(MAX_LINE_QUANTITY),
 })
 
 const paymentMethodSchema = z.enum(["cod", "stripe"])

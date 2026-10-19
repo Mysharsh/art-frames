@@ -2,6 +2,7 @@
 
 import { useMemo, useSyncExternalStore } from "react"
 import Link from "next/link"
+import { buttonVariants } from "@/components/ui/button"
 import { CheckCircle2 } from "lucide-react"
 import { formatPrice } from "@/lib/pricing"
 import { LAST_ORDER_STORAGE_KEY, getOrderStatusLabel, parseLastOrder } from "@/lib/orders"
@@ -16,18 +17,14 @@ function readStoredOrder() {
   }
 }
 
-const primaryAction =
-  "inline-flex justify-center rounded-full border border-primary/40 bg-primary/10 px-4 py-2 text-xs font-semibold uppercase tracking-label text-primary-ink transition-colors hover:bg-primary hover:text-primary-foreground"
-const secondaryAction =
-  "inline-flex justify-center rounded-full border border-border bg-background px-4 py-2 text-xs font-semibold uppercase tracking-label text-foreground transition-colors hover:border-primary/40 hover:text-primary-ink"
 
 function Actions() {
   return (
     <div className="mt-5 flex flex-wrap gap-2">
-      <Link href="/collections/all" className={primaryAction}>
+      <Link href="/collections/all" className={buttonVariants({ size: "pill" })}>
         Continue Shopping
       </Link>
-      <Link href="/orders" className={secondaryAction}>
+      <Link href="/orders" className={buttonVariants({ variant: "outline", size: "pill" })}>
         View My Orders
       </Link>
     </div>

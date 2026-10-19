@@ -3,7 +3,8 @@
 import Link from "next/link"
 import { Minus, Plus, Trash2 } from "lucide-react"
 import { useAppStore } from "@/lib/store"
-import { COD_FEE, formatPrice, getUnitPrice } from "@/lib/pricing"
+import { COD_FEE, MAX_LINE_QUANTITY, formatPrice, getUnitPrice } from "@/lib/pricing"
+import { Button, buttonVariants } from "@/components/ui/button"
 
 export function CartPageContent() {
   const cartItems = useAppStore((s) => s.cartItems)
@@ -20,10 +21,7 @@ export function CartPageContent() {
           Your cart is empty. Browse collections and add your first wall art piece.
         </p>
         <div className="mt-5">
-          <Link
-            href="/collections/all"
-            className="inline-flex rounded-full border border-primary/40 bg-primary/10 px-4 py-2 text-xs font-semibold uppercase tracking-label text-primary-ink transition-colors hover:bg-primary hover:text-primary-foreground"
-          >
+          <Link href="/collections/all" className={buttonVariants({ variant: "soft", size: "pill" })}>
             Browse Collections
           </Link>
         </div>
@@ -47,15 +45,17 @@ export function CartPageContent() {
                   {item.size} • {item.material}
                 </p>
               </div>
-              <button
+              <Button
+                variant="outline"
+                size="icon"
+                className="rounded-md text-muted-foreground hover:border-destructive/40 hover:text-destructive"
                 onClick={() =>
                   removeFromCart(item.productId, item.size, item.material)
                 }
-                className="inline-flex h-8 w-8 items-center justify-center rounded-md border border-border bg-background text-muted-foreground transition-colors hover:text-destructive"
-                aria-label="Remove item"
+                aria-label={`Remove ${item.title} (${item.size}, ${item.material})`}
               >
-                <Trash2 className="h-4 w-4" />
-              </button>
+                <Trash2 />
+              </Button>
             </div>
 
             <div className="mt-3 flex items-center justify-between">
@@ -63,8 +63,11 @@ export function CartPageContent() {
                 {formatPrice(getUnitPrice(item.productId, item.price) * item.quantity)}
               </p>
 
-              <div className="flex items-center gap-2">
-                <button
+              <div className="flex items-center gap-2" role="group" aria-label={`Quantity of ${item.title}`}>
+                <Button
+                  variant="outline"
+                  size="icon"
+                  className="rounded-md"
                   onClick={() =>
                     updateCartQuantity(
                       item.productId,
@@ -73,15 +76,18 @@ export function CartPageContent() {
                       item.quantity - 1
                     )
                   }
-                  className="inline-flex h-8 w-8 items-center justify-center rounded-md border border-border bg-background text-foreground"
-                  aria-label="Decrease quantity"
+                  aria-label={item.quantity === 1 ? `Remove ${item.title}` : "Decrease quantity"}
                 >
-                  <Minus className="h-4 w-4" />
-                </button>
-                <span className="w-8 text-center text-sm font-semibold text-foreground">
+                  <Minus />
+                </Button>
+                <span className="w-8 text-center text-sm font-semibold text-foreground" aria-live="polite">
                   {item.quantity}
                 </span>
-                <button
+                <Button
+                  variant="outline"
+                  size="icon"
+                  className="rounded-md"
+                  disabled={item.quantity >= MAX_LINE_QUANTITY}
                   onClick={() =>
                     updateCartQuantity(
                       item.productId,
@@ -90,11 +96,10 @@ export function CartPageContent() {
                       item.quantity + 1
                     )
                   }
-                  className="inline-flex h-8 w-8 items-center justify-center rounded-md border border-border bg-background text-foreground"
                   aria-label="Increase quantity"
                 >
-                  <Plus className="h-4 w-4" />
-                </button>
+                  <Plus />
+                </Button>
               </div>
             </div>
           </article>
@@ -117,18 +122,17 @@ export function CartPageContent() {
         </div>
 
         <div className="mt-5 grid gap-2">
-          <Link
-            href="/checkout"
-            className="inline-flex justify-center rounded-full border border-primary/40 bg-primary/10 px-4 py-2 text-xs font-semibold uppercase tracking-label text-primary-ink transition-colors hover:bg-primary hover:text-primary-foreground"
-          >
+          <Link href="/checkout" className={buttonVariants({ size: "pill" })}>
             Continue To Checkout
           </Link>
-          <button
+          <Button
+            variant="outline"
+            size="pill"
+            className="hover:border-destructive/40 hover:text-destructive"
             onClick={clearCart}
-            className="inline-flex justify-center rounded-full border border-border bg-background px-4 py-2 text-xs font-semibold uppercase tracking-label text-foreground/80 transition-colors hover:border-destructive/40 hover:text-destructive"
           >
             Clear Cart
-          </button>
+          </Button>
         </div>
       </aside>
     </div>
