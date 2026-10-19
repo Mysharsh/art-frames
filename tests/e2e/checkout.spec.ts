@@ -48,18 +48,13 @@ test.describe('Checkout Flow', () => {
         await expect(page).toHaveURL(/\/checkout$/)
         await expect(page.getByText('Online payment (coming soon)')).toBeVisible()
 
-        const fields: Record<string, string> = {
-            'Full Name': 'Harsh Singh',
-            Email: 'harsh@example.com',
-            'Phone (10 digits)': '9876543210',
-            Pincode: '560001',
-            'Address Line 1': '101, Residency Road',
-            City: 'Bengaluru',
-            State: 'Karnataka',
-        }
-        for (const [placeholder, value] of Object.entries(fields)) {
-            await page.getByPlaceholder(placeholder, { exact: true }).fill(value)
-        }
+        await page.getByLabel('Full name').fill('Harsh Singh')
+        await page.getByLabel('Email').fill('harsh@example.com')
+        await page.getByLabel('Mobile number').fill('+91 98765 43210')
+        await page.getByLabel('House number and street').fill('101, Residency Road')
+        await page.getByLabel('City').fill('Bengaluru')
+        await page.getByLabel('Pincode').fill('560001')
+        await page.getByLabel('State').selectOption('Karnataka')
         await page.getByRole('button', { name: 'Place Order' }).click()
 
         await expect(page).toHaveURL(/\/orders\/confirmation\?id=ORD-20261019-ABCDEF12$/)
@@ -71,6 +66,27 @@ test.describe('Checkout Flow', () => {
         expect(requestBody!.cartItems).toEqual([
             { productId: 'p1', size: 'M (12x16)', material: 'Metal Print', quantity: 2 },
         ])
+        // The phone is normalised to bare digits before it is sent.
+        expect((requestBody as unknown as { phone: string }).phone).toBe('9876543210')
+    })
+
+    test('shows field-level errors and focuses the first invalid field', async ({ page }) => {
+        await page.goto('/products/p1')
+        await page.getByRole('button', { name: 'Add To Cart' }).click()
+        await page.goto('/checkout')
+
+        await page.getByRole('button', { name: /Place Order/ }).click()
+
+        await expect(page.getByRole('alert').filter({ hasText: /Please fix \d+ fields below/ })).toBeVisible()
+        const name = page.getByLabel('Full name')
+        await expect(name).toBeFocused()
+        await expect(name).toHaveAttribute('aria-invalid', 'true')
+        await expect(name).toHaveAccessibleDescription('Enter your full name')
+        await expect(page.getByLabel('State')).toHaveAccessibleDescription('Select your state')
+
+        // The error clears as soon as the value is fixed.
+        await name.fill('Harsh Singh')
+        await expect(name).not.toHaveAttribute('aria-invalid')
     })
 
     test('redirects the old /product URL to the canonical /products URL', async ({ page }) => {

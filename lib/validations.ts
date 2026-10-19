@@ -10,7 +10,7 @@ const emailSchema = z
     .string()
     .trim()
     .toLowerCase()
-    .email("Invalid email format")
+    .email("Enter a valid email address")
     .max(254, "Email must be less than 254 characters")
     .refine(
         (email) => {
@@ -80,20 +80,24 @@ const cartItemSchema = z.object({
 const paymentMethodSchema = z.enum(["cod", "stripe"])
 
 export const checkoutOrderSchema = z.object({
-    customerName: z.string().trim().min(2).max(120),
+    customerName: z.string().trim().min(2, "Enter your full name").max(120),
     email: emailSchema,
+    // Accept the ways people type Indian mobiles ("+91 98765 43210", "098765-43210")
+    // and store the bare 10 digits.
     phone: z
         .string()
         .trim()
-        .regex(/^[6-9]\d{9}$/, "Enter a valid 10-digit Indian mobile number"),
-    addressLine1: z.string().trim().min(5).max(180),
+        .transform((value) => value.replace(/[\s-]/g, "").replace(/^(\+?91|0)(?=\d{10}$)/, ""))
+        .pipe(z.string().regex(/^[6-9]\d{9}$/, "Enter a valid 10-digit Indian mobile number")),
+    addressLine1: z.string().trim().min(5, "Enter your house number and street").max(180),
     addressLine2: z.string().trim().max(180).optional().default(""),
-    city: z.string().trim().min(2).max(80),
-    state: z.string().trim().min(2).max(80),
+    city: z.string().trim().min(2, "Enter your city").max(80),
+    state: z.string().trim().min(2, "Select your state").max(80),
     pincode: z
         .string()
         .trim()
-        .regex(/^\d{6}$/, "Enter a valid 6-digit pincode"),
+        .transform((value) => value.replace(/\s/g, ""))
+        .pipe(z.string().regex(/^[1-9]\d{5}$/, "Enter a valid 6-digit pincode")),
     gstNumber: z
         .string()
         .trim()
@@ -107,6 +111,16 @@ export const checkoutOrderSchema = z.object({
 })
 
 export type CheckoutOrderInput = z.infer<typeof checkoutOrderSchema>
+
+/** First error message per top-level field, for showing errors next to inputs. */
+export function getFieldErrors(error: z.ZodError): Record<string, string> {
+    const errors: Record<string, string> = {}
+    for (const issue of error.issues) {
+        const field = String(issue.path[0] ?? "form")
+        errors[field] ??= issue.message
+    }
+    return errors
+}
 
 export async function safeParseCheckoutOrder(json: unknown) {
     return checkoutOrderSchema.safeParse(json)
