@@ -64,7 +64,7 @@ export function WaitlistPageContent() {
                   </p>
                   <p className="mt-0.5 text-xs text-muted-foreground">
                     Signed up as{" "}
-                    <span className="text-primary">{item.email}</span>
+                    <span className="text-primary-ink">{item.email}</span>
                   </p>
                   {product && (
                     <p className="mt-0.5 text-xs text-muted-foreground">
@@ -72,7 +72,7 @@ export function WaitlistPageContent() {
                     </p>
                   )}
                 </div>
-                <div className="shrink-0 rounded-full bg-primary/10 px-3 py-1 text-xs font-semibold text-primary">
+                <div className="shrink-0 rounded-full bg-primary/10 px-3 py-1 text-xs font-semibold text-primary-ink">
                   Joined
                 </div>
               </Link>

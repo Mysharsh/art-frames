@@ -125,7 +125,7 @@ export default function ProfilePage() {
                 <div className="mt-8 text-center">
                     <Link
                         href="/"
-                        className="text-sm text-primary hover:underline"
+                        className="text-sm text-primary-ink hover:underline"
                     >
                         ← Back to home
                     </Link>

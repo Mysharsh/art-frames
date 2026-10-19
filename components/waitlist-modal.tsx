@@ -82,13 +82,13 @@ export function WaitlistModal() {
 
         {isSuccess ? (
           <div className="flex flex-col items-center py-4 text-center">
-            <CheckCircle2 className="h-12 w-12 text-primary" />
+            <CheckCircle2 className="h-12 w-12 text-primary-ink" />
             <h3 className="mt-4 font-display text-xl font-bold text-foreground">
               {"You're on the list!"}
             </h3>
             <p className="mt-2 text-sm text-muted-foreground">
               {"We'll notify you at "}
-              <span className="text-primary">{email}</span>
+              <span className="text-primary-ink">{email}</span>
               {" when "}
               <span className="font-medium text-foreground">
                 {selectedProductTitle}
@@ -104,7 +104,7 @@ export function WaitlistModal() {
           </div>
         ) : (
           <>
-            <div className="mb-1 inline-block rounded-full bg-primary/10 px-3 py-1 text-xs font-semibold text-primary">
+            <div className="mb-1 inline-block rounded-full bg-primary/10 px-3 py-1 text-xs font-semibold text-primary-ink">
               Coming Soon
             </div>
             <h3 className="mt-2 font-display text-xl font-bold text-foreground">

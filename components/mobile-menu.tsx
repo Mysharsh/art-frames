@@ -68,7 +68,7 @@ export function MobileMenu() {
                 onClick={closeMobileMenu}
                 className="flex items-center gap-3 rounded-lg px-3 py-3 text-foreground transition-colors hover:bg-secondary active:bg-secondary/60"
               >
-                <Home className="h-5 w-5 text-primary" />
+                <Home className="h-5 w-5 text-primary-ink" />
                 <span className="text-sm font-medium">Home</span>
               </Link>
               <Link
@@ -76,7 +76,7 @@ export function MobileMenu() {
                 onClick={closeMobileMenu}
                 className="flex items-center gap-3 rounded-lg px-3 py-3 text-foreground transition-colors hover:bg-secondary active:bg-secondary/60"
               >
-                <LayoutTemplate className="h-5 w-5 text-primary" />
+                <LayoutTemplate className="h-5 w-5 text-primary-ink" />
                 <span className="text-sm font-medium">Shop Collections</span>
               </Link>
               <Link
@@ -84,7 +84,7 @@ export function MobileMenu() {
                 onClick={closeMobileMenu}
                 className="flex items-center gap-3 rounded-lg px-3 py-3 text-foreground transition-colors hover:bg-secondary active:bg-secondary/60"
               >
-                <ClipboardList className="h-5 w-5 text-primary" />
+                <ClipboardList className="h-5 w-5 text-primary-ink" />
                 <span className="text-sm font-medium">My Waitlist</span>
               </Link>
               <Link
@@ -92,7 +92,7 @@ export function MobileMenu() {
                 onClick={closeMobileMenu}
                 className="flex items-center gap-3 rounded-lg px-3 py-3 text-foreground transition-colors hover:bg-secondary active:bg-secondary/60"
               >
-                <ShoppingBag className="h-5 w-5 text-primary" />
+                <ShoppingBag className="h-5 w-5 text-primary-ink" />
                 <span className="text-sm font-medium">Cart</span>
               </Link>
               <Link
@@ -100,7 +100,7 @@ export function MobileMenu() {
                 onClick={closeMobileMenu}
                 className="flex items-center gap-3 rounded-lg px-3 py-3 text-foreground transition-colors hover:bg-secondary active:bg-secondary/60"
               >
-                <CreditCard className="h-5 w-5 text-primary" />
+                <CreditCard className="h-5 w-5 text-primary-ink" />
                 <span className="text-sm font-medium">Checkout</span>
               </Link>
             </div>
@@ -108,7 +108,7 @@ export function MobileMenu() {
             {/* Explore Section */}
             <div className="mt-8 pt-6 border-t border-border/40">
               <div className="mb-4 flex items-center gap-2 px-3">
-                <Package className="h-4 w-4 text-primary" />
+                <Package className="h-4 w-4 text-primary-ink" />
                 <p className="text-xs font-bold uppercase tracking-widest text-foreground">
                   Explore
                 </p>
@@ -119,7 +119,7 @@ export function MobileMenu() {
                   onClick={closeMobileMenu}
                   className="flex items-center gap-3 rounded-lg px-3 py-2.5 text-foreground transition-colors hover:bg-secondary active:bg-secondary/60"
                 >
-                  <Grid3X3 className="h-4 w-4 text-primary" />
+                  <Grid3X3 className="h-4 w-4 text-primary-ink" />
                   <span className="text-sm">Gallery Walls</span>
                 </Link>
                 <Link
@@ -127,7 +127,7 @@ export function MobileMenu() {
                   onClick={closeMobileMenu}
                   className="flex items-center gap-3 rounded-lg px-3 py-2.5 text-foreground transition-colors hover:bg-secondary active:bg-secondary/60"
                 >
-                  <Info className="h-4 w-4 text-primary" />
+                  <Info className="h-4 w-4 text-primary-ink" />
                   <span className="text-sm">About Us</span>
                 </Link>
                 <Link
@@ -135,7 +135,7 @@ export function MobileMenu() {
                   onClick={closeMobileMenu}
                   className="flex items-center gap-3 rounded-lg px-3 py-2.5 text-foreground transition-colors hover:bg-secondary active:bg-secondary/60"
                 >
-                  <PhoneCall className="h-4 w-4 text-primary" />
+                  <PhoneCall className="h-4 w-4 text-primary-ink" />
                   <span className="text-sm">Contact</span>
                 </Link>
               </div>
@@ -144,7 +144,7 @@ export function MobileMenu() {
             {/* Categories Section */}
             <div className="mt-8 pt-6 border-t border-border/40">
               <div className="mb-4 flex items-center gap-2 px-3">
-                <Grid3X3 className="h-4 w-4 text-primary" />
+                <Grid3X3 className="h-4 w-4 text-primary-ink" />
                 <p className="text-xs font-bold uppercase tracking-widest text-foreground">
                   Categories
                 </p>

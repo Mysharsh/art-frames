@@ -11,7 +11,7 @@ export function OfferTicker() {
         {repeated.map((message, index) => (
           <span
             key={`${message}-${index}`}
-            className="mx-8 text-[10px] font-semibold uppercase tracking-[0.3em] text-background/85"
+            className="mx-8 text-2xs font-semibold uppercase tracking-kicker text-background/85"
           >
             {message}
           </span>

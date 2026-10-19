@@ -90,7 +90,7 @@ export function AuthMenu() {
                     className="relative h-10 w-10 rounded-full"
                 >
                     <div className="flex h-full w-full items-center justify-center rounded-full bg-primary/10">
-                        <User className="h-4 w-4 text-primary" />
+                        <User className="h-4 w-4 text-primary-ink" />
                     </div>
                 </Button>
             </DropdownMenuTrigger>

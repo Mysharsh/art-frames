@@ -17,7 +17,7 @@ export function ProductGrid({ products, title, hideTitle }: ProductGridProps) {
           <h2 className="font-display text-2xl tracking-wide text-foreground">
             {title}
           </h2>
-          <span className="text-[10px] font-semibold uppercase tracking-[0.3em] text-muted-foreground">
+          <span className="text-2xs font-semibold uppercase tracking-kicker text-muted-foreground">
             Metal Posters
           </span>
         </div>

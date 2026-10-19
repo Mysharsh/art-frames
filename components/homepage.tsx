@@ -36,7 +36,7 @@ export function Homepage() {
 
       <section className="px-4 py-8">
         <div className="mx-auto max-w-5xl rounded-2xl border border-border bg-card/40 p-6 text-center md:p-8">
-          <p className="text-[10px] font-semibold uppercase tracking-[0.24em] text-primary">
+          <p className="text-2xs font-semibold uppercase tracking-label text-primary-ink">
             Community picks
           </p>
           <h2 className="mt-2 font-display text-4xl font-bold tracking-wide text-foreground">
@@ -45,7 +45,7 @@ export function Homepage() {
           <p className="mx-auto mt-2 max-w-2xl text-sm text-muted-foreground">
             Browse top-performing drops loved by collectors. Filter by category, compare styles, and claim your favorite before it sells out.
           </p>
-          <div className="mt-5 flex flex-wrap items-center justify-center gap-2 text-[10px] font-semibold uppercase tracking-[0.2em] text-muted-foreground">
+          <div className="mt-5 flex flex-wrap items-center justify-center gap-2 text-2xs font-semibold uppercase tracking-label text-muted-foreground">
             <span className="rounded-full border border-border bg-background px-3 py-1">Fast shipping</span>
             <span className="rounded-full border border-border bg-background px-3 py-1">Limited editions</span>
             <span className="rounded-full border border-border bg-background px-3 py-1">Artist curated</span>
@@ -61,7 +61,7 @@ export function Homepage() {
       <section id="order" className="border-t border-border bg-card/30 px-4 py-16 scroll-mt-32">
         <div className="mx-auto max-w-4xl">
           <div className="flex items-center gap-3 mb-6">
-            <Package className="h-8 w-8 text-primary" />
+            <Package className="h-8 w-8 text-primary-ink" />
             <h2 className="font-display text-3xl font-bold text-foreground">
               Track Your Order
             </h2>
@@ -113,7 +113,7 @@ export function Homepage() {
       <section id="events" className="border-t border-border bg-card/30 px-4 py-16 scroll-mt-32">
         <div className="mx-auto max-w-4xl">
           <div className="flex items-center gap-3 mb-6">
-            <Calendar className="h-8 w-8 text-primary" />
+            <Calendar className="h-8 w-8 text-primary-ink" />
             <h2 className="font-display text-3xl font-bold text-foreground">
               Upcoming Events
             </h2>
@@ -128,7 +128,7 @@ export function Homepage() {
                   <p className="font-semibold text-foreground">Anime Artist Showcase</p>
                   <p className="mt-1 text-sm text-muted-foreground">Featuring exclusive prints from top anime illustrators</p>
                 </div>
-                <span className="rounded-full bg-primary/10 px-3 py-1 text-xs font-semibold text-primary">Coming Soon</span>
+                <span className="rounded-full bg-primary/10 px-3 py-1 text-xs font-semibold text-primary-ink">Coming Soon</span>
               </div>
             </div>
             <div className="rounded-lg border border-border bg-background p-6">
@@ -137,7 +137,7 @@ export function Homepage() {
                   <p className="font-semibold text-foreground">Limited Drop: Music Legends Series</p>
                   <p className="mt-1 text-sm text-muted-foreground">Iconic musicians immortalized in metal</p>
                 </div>
-                <span className="rounded-full bg-primary/10 px-3 py-1 text-xs font-semibold text-primary">Coming Soon</span>
+                <span className="rounded-full bg-primary/10 px-3 py-1 text-xs font-semibold text-primary-ink">Coming Soon</span>
               </div>
             </div>
           </div>
@@ -148,7 +148,7 @@ export function Homepage() {
       <section id="contact" className="px-4 py-16 scroll-mt-32">
         <div className="mx-auto max-w-4xl">
           <div className="flex items-center gap-3 mb-6">
-            <Mail className="h-8 w-8 text-primary" />
+            <Mail className="h-8 w-8 text-primary-ink" />
             <h2 className="font-display text-3xl font-bold text-foreground">
               Get in Touch
             </h2>
@@ -158,14 +158,14 @@ export function Homepage() {
           </p>
           <div className="grid gap-6 sm:grid-cols-2">
             <div className="rounded-lg border border-border bg-background p-6">
-              <Mail className="h-5 w-5 text-primary mb-3" />
+              <Mail className="h-5 w-5 text-primary-ink mb-3" />
               <p className="font-semibold text-foreground mb-1">Email Us</p>
-              <a href={`mailto:${siteContent.brand.supportEmail}`} className="text-sm text-primary hover:underline">
+              <a href={`mailto:${siteContent.brand.supportEmail}`} className="text-sm text-primary-ink hover:underline">
                 {siteContent.brand.supportEmail}
               </a>
             </div>
             <div className="rounded-lg border border-border bg-background p-6">
-              <MapPin className="h-5 w-5 text-primary mb-3" />
+              <MapPin className="h-5 w-5 text-primary-ink mb-3" />
               <p className="font-semibold text-foreground mb-1">Location</p>
               <p className="text-sm text-muted-foreground">
                 Mumbai, India
@@ -175,7 +175,7 @@ export function Homepage() {
           <div className="mt-8 rounded-lg border border-primary/20 bg-primary/5 p-6">
             <p className="text-sm text-foreground">
               <span className="font-semibold">Business Inquiries:</span> For partnerships, bulk orders, or gallery collaborations, reach out to us at{" "}
-              <a href={`mailto:${siteContent.brand.businessEmail}`} className="text-primary hover:underline">
+              <a href={`mailto:${siteContent.brand.businessEmail}`} className="text-primary-ink hover:underline">
                 {siteContent.brand.businessEmail}
               </a>
             </p>

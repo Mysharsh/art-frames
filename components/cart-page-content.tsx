@@ -22,7 +22,7 @@ export function CartPageContent() {
         <div className="mt-5">
           <Link
             href="/collections/all"
-            className="inline-flex rounded-full border border-primary/40 bg-primary/10 px-4 py-2 text-xs font-semibold uppercase tracking-[0.18em] text-primary transition-colors hover:bg-primary hover:text-primary-foreground"
+            className="inline-flex rounded-full border border-primary/40 bg-primary/10 px-4 py-2 text-xs font-semibold uppercase tracking-label text-primary-ink transition-colors hover:bg-primary hover:text-primary-foreground"
           >
             Browse Collections
           </Link>
@@ -102,7 +102,7 @@ export function CartPageContent() {
       </section>
 
       <aside className="rounded-2xl border border-border/70 bg-card p-5">
-        <h2 className="text-sm font-semibold uppercase tracking-[0.2em] text-foreground/75">
+        <h2 className="text-sm font-semibold uppercase tracking-label text-foreground/75">
           Order Summary
         </h2>
 
@@ -119,13 +119,13 @@ export function CartPageContent() {
         <div className="mt-5 grid gap-2">
           <Link
             href="/checkout"
-            className="inline-flex justify-center rounded-full border border-primary/40 bg-primary/10 px-4 py-2 text-xs font-semibold uppercase tracking-[0.18em] text-primary transition-colors hover:bg-primary hover:text-primary-foreground"
+            className="inline-flex justify-center rounded-full border border-primary/40 bg-primary/10 px-4 py-2 text-xs font-semibold uppercase tracking-label text-primary-ink transition-colors hover:bg-primary hover:text-primary-foreground"
           >
             Continue To Checkout
           </Link>
           <button
             onClick={clearCart}
-            className="inline-flex justify-center rounded-full border border-border bg-background px-4 py-2 text-xs font-semibold uppercase tracking-[0.18em] text-foreground/80 transition-colors hover:border-destructive/40 hover:text-destructive"
+            className="inline-flex justify-center rounded-full border border-border bg-background px-4 py-2 text-xs font-semibold uppercase tracking-label text-foreground/80 transition-colors hover:border-destructive/40 hover:text-destructive"
           >
             Clear Cart
           </button>

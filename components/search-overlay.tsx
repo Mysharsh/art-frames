@@ -93,7 +93,7 @@ export function SearchOverlay() {
                     {product.artist} &middot; {product.category}
                   </p>
                 </div>
-                <span className="text-sm font-semibold text-primary">
+                <span className="text-sm font-semibold text-primary-ink">
                   {formatPrice(product.price)}
                 </span>
               </Link>

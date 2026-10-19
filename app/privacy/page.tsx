@@ -28,7 +28,7 @@ export default function PrivacyPage() {
                         <h2 className="font-semibold text-xl text-foreground mb-3">1. Introduction</h2>
                         <p>
                             Welcome to <span className="font-semibold text-foreground">Posterwaala</span> (&quot;we&quot;, &quot;our&quot;, or &quot;us&quot;). We operate the website{" "}
-                            <a href="https://posterwaala.com" className="text-primary hover:underline">
+                            <a href="https://posterwaala.com" className="text-primary-ink hover:underline">
                                 https://posterwaala.com
                             </a>
                             . This Privacy Policy explains how we collect, use, and safeguard your personal information when you visit or use our service.
@@ -86,7 +86,7 @@ export default function PrivacyPage() {
                                 href="https://policies.google.com/privacy"
                                 target="_blank"
                                 rel="noopener noreferrer"
-                                className="text-primary hover:underline"
+                                className="text-primary-ink hover:underline"
                             >
                                 Privacy Policy
                             </a>{" "}
@@ -145,13 +145,13 @@ export default function PrivacyPage() {
                             <p className="font-semibold text-foreground">Posterwaala</p>
                             <p className="mt-1">
                                 Email:{" "}
-                                <a href="mailto:contact@posterwaala.com" className="text-primary hover:underline">
+                                <a href="mailto:contact@posterwaala.com" className="text-primary-ink hover:underline">
                                     contact@posterwaala.com
                                 </a>
                             </p>
                             <p className="mt-1">
                                 Website:{" "}
-                                <a href="https://posterwaala.com" className="text-primary hover:underline">
+                                <a href="https://posterwaala.com" className="text-primary-ink hover:underline">
                                     https://posterwaala.com
                                 </a>
                             </p>

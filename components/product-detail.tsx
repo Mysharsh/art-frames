@@ -186,10 +186,10 @@ export function ProductDetail({ product }: ProductDetailProps) {
             </Carousel>
 
             <div className="absolute left-3 top-3 flex flex-col gap-2">
-              <span className="rounded-full bg-primary px-3 py-1 text-[11px] font-bold uppercase tracking-widest text-primary-foreground">
+              <span className="rounded-full bg-primary px-3 py-1 text-2xs font-bold uppercase tracking-widest text-primary-foreground">
                 Metal Poster
               </span>
-              <span className="rounded-full bg-background/90 px-3 py-1 text-[10px] font-semibold uppercase tracking-widest text-foreground shadow-sm ring-1 ring-border/60">
+              <span className="rounded-full bg-background/90 px-3 py-1 text-2xs font-semibold uppercase tracking-widest text-foreground shadow-sm ring-1 ring-border/60">
                 Gloss Finish
               </span>
             </div>
@@ -221,7 +221,7 @@ export function ProductDetail({ product }: ProductDetailProps) {
 
         {/* Details */}
         <div className="px-4 pt-5 lg:px-0">
-        <p className="text-xs font-semibold uppercase tracking-[0.3em] text-muted-foreground">
+        <p className="text-xs font-semibold uppercase tracking-kicker text-muted-foreground">
           {product.category} Series
         </p>
         <h1 className="mt-1 font-display text-3xl leading-none text-foreground">
@@ -266,7 +266,7 @@ export function ProductDetail({ product }: ProductDetailProps) {
                 onClick={() => setSelectedSize(size)}
                 className={`rounded-lg border px-3 py-2 text-xs font-medium transition-all ${
                   selectedSize === size
-                    ? "border-primary bg-primary/10 text-primary"
+                    ? "border-primary bg-primary/10 text-primary-ink"
                     : "border-border text-muted-foreground hover:border-foreground hover:text-foreground"
                 }`}
               >
@@ -288,7 +288,7 @@ export function ProductDetail({ product }: ProductDetailProps) {
                 onClick={() => setSelectedMaterial(material)}
                 className={`rounded-lg border px-3 py-2 text-xs font-medium transition-all ${
                   selectedMaterial === material
-                    ? "border-primary bg-primary/10 text-primary"
+                    ? "border-primary bg-primary/10 text-primary-ink"
                     : "border-border text-muted-foreground hover:border-foreground hover:text-foreground"
                 }`}
               >
@@ -308,7 +308,7 @@ export function ProductDetail({ product }: ProductDetailProps) {
 
         <button
           onClick={() => openWaitlistModal(product.id, product.title)}
-          className="mt-3 w-full rounded-xl border border-border bg-background py-3 text-xs font-semibold uppercase tracking-[0.18em] text-foreground/80 transition-colors hover:border-primary/40 hover:text-primary"
+          className="mt-3 w-full rounded-xl border border-border bg-background py-3 text-xs font-semibold uppercase tracking-label text-foreground/80 transition-colors hover:border-primary/40 hover:text-primary-ink"
         >
           Notify Me For Drop
         </button>

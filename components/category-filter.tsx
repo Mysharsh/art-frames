@@ -14,7 +14,7 @@ export function CategoryFilter({ selected, onSelect }: CategoryFilterProps) {
         <button
           key={category}
           onClick={() => onSelect(category)}
-          className={`shrink-0 rounded-full px-4 py-2 text-xs font-bold uppercase tracking-[0.2em] transition-all ${selected === category
+          className={`shrink-0 rounded-full px-4 py-2 text-xs font-bold uppercase tracking-label transition-all ${selected === category
               ? "bg-primary text-primary-foreground"
               : "bg-secondary text-secondary-foreground hover:bg-secondary/80"
             }`}

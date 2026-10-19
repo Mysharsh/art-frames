@@ -17,7 +17,7 @@ export function BottomNav() {
       aria-label="Mobile bottom navigation"
       className="safe-bottom fixed inset-x-3 bottom-3 z-40 md:hidden"
     >
-      <div className="grid grid-cols-5 rounded-[28px] border border-border/80 bg-card/95 px-2 py-2 shadow-[0_18px_40px_rgba(22,13,7,0.18)] backdrop-blur-xl">
+      <div className="grid grid-cols-5 rounded-[28px] border border-border/80 bg-card/95 px-2 py-2 shadow-nav backdrop-blur-xl">
         {siteContent.mobileBottomNav.map((item, index) => {
           const Icon = icons[index]
           const isActive = item.section
@@ -30,7 +30,7 @@ export function BottomNav() {
             <Link
               key={item.label}
               href={item.href}
-              className={`flex flex-col items-center gap-1 rounded-[20px] px-2 py-2 text-[10px] font-semibold uppercase tracking-[0.2em] transition-colors ${
+              className={`flex flex-col items-center gap-1 rounded-[20px] px-2 py-2 text-2xs font-semibold uppercase tracking-label transition-colors ${
                 isActive ? "bg-primary text-primary-foreground" : "text-foreground/62"
               }`}
             >

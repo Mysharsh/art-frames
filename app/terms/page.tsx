@@ -28,7 +28,7 @@ export default function TermsPage() {
                         <h2 className="font-semibold text-xl text-foreground mb-3">1. Acceptance of Terms</h2>
                         <p>
                             By accessing or using <span className="font-semibold text-foreground">Posterwaala</span> at{" "}
-                            <a href="https://posterwaala.com" className="text-primary hover:underline">
+                            <a href="https://posterwaala.com" className="text-primary-ink hover:underline">
                                 https://posterwaala.com
                             </a>
                             , you agree to be bound by these Terms of Service. If you do not agree to these terms, please do not use our service.
@@ -137,13 +137,13 @@ export default function TermsPage() {
                             <p className="font-semibold text-foreground">Posterwaala</p>
                             <p className="mt-1">
                                 Email:{" "}
-                                <a href="mailto:contact@posterwaala.com" className="text-primary hover:underline">
+                                <a href="mailto:contact@posterwaala.com" className="text-primary-ink hover:underline">
                                     contact@posterwaala.com
                                 </a>
                             </p>
                             <p className="mt-1">
                                 Website:{" "}
-                                <a href="https://posterwaala.com" className="text-primary hover:underline">
+                                <a href="https://posterwaala.com" className="text-primary-ink hover:underline">
                                     https://posterwaala.com
                                 </a>
                             </p>

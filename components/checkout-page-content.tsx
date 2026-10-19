@@ -98,7 +98,7 @@ export function CheckoutPageContent() {
   if (placedOrderId) {
     return (
       <section className="flex items-center gap-3 rounded-2xl border border-border/70 bg-card p-5" role="status">
-        <Loader2 className="h-4 w-4 animate-spin text-primary" />
+        <Loader2 className="h-4 w-4 animate-spin text-primary-ink" />
         <p className="text-sm text-muted-foreground">Order {placedOrderId} placed. Loading your confirmation…</p>
       </section>
     )
@@ -113,7 +113,7 @@ export function CheckoutPageContent() {
         <div className="mt-5">
           <Link
             href="/collections/all"
-            className="inline-flex rounded-full border border-primary/40 bg-primary/10 px-4 py-2 text-xs font-semibold uppercase tracking-[0.18em] text-primary transition-colors hover:bg-primary hover:text-primary-foreground"
+            className="inline-flex rounded-full border border-primary/40 bg-primary/10 px-4 py-2 text-xs font-semibold uppercase tracking-label text-primary-ink transition-colors hover:bg-primary hover:text-primary-foreground"
           >
             Browse Collections
           </Link>
@@ -126,7 +126,7 @@ export function CheckoutPageContent() {
     <div className="grid gap-5 lg:grid-cols-[1.1fr_0.9fr]">
       <form onSubmit={handleSubmit} className="space-y-5 rounded-2xl border border-border/70 bg-card p-5">
         <section className="space-y-3">
-          <h2 className="text-sm font-semibold uppercase tracking-[0.2em] text-foreground/75">
+          <h2 className="text-sm font-semibold uppercase tracking-label text-foreground/75">
             Shipping Details
           </h2>
           <div className="grid gap-3 sm:grid-cols-2">
@@ -198,7 +198,7 @@ export function CheckoutPageContent() {
         </section>
 
         <section className="space-y-3">
-          <h2 className="text-sm font-semibold uppercase tracking-[0.2em] text-foreground/75">
+          <h2 className="text-sm font-semibold uppercase tracking-label text-foreground/75">
             Payment Method
           </h2>
           <label className="flex cursor-pointer items-center gap-3 rounded-xl border border-border bg-background px-4 py-3 text-sm">
@@ -221,14 +221,14 @@ export function CheckoutPageContent() {
         <button
           type="submit"
           disabled={isSubmitting}
-          className="inline-flex w-full items-center justify-center rounded-full border border-primary/40 bg-primary/10 px-4 py-3 text-xs font-semibold uppercase tracking-[0.18em] text-primary transition-colors hover:bg-primary hover:text-primary-foreground disabled:opacity-60"
+          className="inline-flex w-full items-center justify-center rounded-full border border-primary/40 bg-primary/10 px-4 py-3 text-xs font-semibold uppercase tracking-label text-primary-ink transition-colors hover:bg-primary hover:text-primary-foreground disabled:opacity-60"
         >
           {isSubmitting ? <Loader2 className="h-4 w-4 animate-spin" /> : "Place Order"}
         </button>
       </form>
 
       <aside className="rounded-2xl border border-border/70 bg-card p-5">
-        <h2 className="text-sm font-semibold uppercase tracking-[0.2em] text-foreground/75">
+        <h2 className="text-sm font-semibold uppercase tracking-label text-foreground/75">
           Order Summary
         </h2>
 
@@ -259,7 +259,7 @@ export function CheckoutPageContent() {
         <div className="mt-5">
           <Link
             href="/cart"
-            className="inline-flex rounded-full border border-border bg-background px-4 py-2 text-xs font-semibold uppercase tracking-[0.18em] text-foreground transition-colors hover:border-primary/40 hover:text-primary"
+            className="inline-flex rounded-full border border-border bg-background px-4 py-2 text-xs font-semibold uppercase tracking-label text-foreground transition-colors hover:border-primary/40 hover:text-primary-ink"
           >
             Back To Cart
           </Link>
