@@ -175,14 +175,10 @@ export function ProductDetail({ product }: ProductDetailProps) {
               </CarouselContent>
             </Carousel>
 
-            <div className="absolute left-3 top-3 flex flex-col gap-2">
-              <span className="rounded-full bg-primary px-3 py-1 text-2xs font-bold uppercase tracking-widest text-primary-foreground">
-                Metal Poster
-              </span>
-              <span className="rounded-full bg-background/90 px-3 py-1 text-2xs font-semibold uppercase tracking-widest text-foreground shadow-sm ring-1 ring-border/60">
-                Gloss Finish
-              </span>
-            </div>
+            {/* Reflects the material actually selected below. */}
+            <span className="absolute left-3 top-3 rounded-full bg-background/90 px-3 py-1 text-2xs font-semibold uppercase tracking-widest text-foreground shadow-sm ring-1 ring-border/60">
+              {selectedMaterial}
+            </span>
 
             {product.onSale && (
               <span className="absolute right-3 top-3 rounded-md bg-destructive px-3 py-1 text-xs font-bold uppercase tracking-wider text-destructive-foreground">
@@ -302,7 +298,7 @@ export function ProductDetail({ product }: ProductDetailProps) {
         </Button>
 
         <p className="mt-3 text-center text-xs text-muted-foreground">
-          Checkout is now active in MVP mode. Waitlist remains available for upcoming drops.
+          Cash on Delivery · Pan-India delivery in 5–7 business days
         </p>
         </div>
       </div>

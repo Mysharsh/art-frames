@@ -6,6 +6,9 @@ import {
     getSaleProducts,
     getRelatedProducts,
     getFirstProductByCategory,
+    getMaterialLabel,
+    hasMetalOption,
+    products,
 } from "@/lib/products"
 
 describe("Products Library", () => {
@@ -118,6 +121,22 @@ describe("Products Library", () => {
             const product = getFirstProductByCategory("All")
             expect(product).toBeDefined()
             expect(product?.id).toBe("p1")
+        })
+    })
+
+    describe("material labels", () => {
+        it("should only label products that offer metal as metal", () => {
+            for (const product of products) {
+                const offersMetal = product.materials.some((m) => m.toLowerCase().includes("metal"))
+                expect(hasMetalOption(product)).toBe(offersMetal)
+                expect(getMaterialLabel(product)).toBe(offersMetal ? "Metal print" : "Paper print")
+            }
+        })
+
+        it("should label paper-only products as paper", () => {
+            const paperOnly = getProductById("p3")!
+            expect(paperOnly.materials).not.toContain("Metal Print")
+            expect(getMaterialLabel(paperOnly)).toBe("Paper print")
         })
     })
 })

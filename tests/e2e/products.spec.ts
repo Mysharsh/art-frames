@@ -13,7 +13,7 @@ test.describe('Product Pages', () => {
         await expect(page.getByRole('button', { name: 'Wishlist' })).toBeVisible()
         await expect(page.getByRole('button', { name: 'Add To Cart' })).toBeVisible()
         await expect(page.getByRole('button', { name: 'Notify Me for Drop' })).toBeVisible()
-        await expect(page.getByText('Metal Print')).toBeVisible()
+        await expect(page.getByRole('button', { name: 'Metal Print' })).toBeVisible()
     })
 
     test('opens and closes the waitlist modal from the product page', async ({ page }) => {
@@ -32,6 +32,18 @@ test.describe('Product Pages', () => {
 
         await expect(page.getByRole('heading', { name: 'You May Also Like' })).toBeVisible()
         await expect(page.getByRole('link', { name: /Cyber Dragon/i }).first()).toBeVisible()
+    })
+
+    test('labels a paper-only product truthfully', async ({ page }) => {
+        await page.goto('/products/p3')
+
+        await expect(page.getByText('Metal Poster', { exact: true })).toHaveCount(0)
+        await expect(page.getByText('Gloss Finish', { exact: true })).toHaveCount(0)
+        await expect(page.getByRole('button', { name: 'Metal Print' })).toHaveCount(0)
+
+        // The image badge follows the selected material.
+        await page.getByRole('button', { name: 'Glossy Paper' }).click()
+        await expect(page.locator('span', { hasText: /^Glossy Paper$/ })).toBeVisible()
     })
 
     test('renders the custom 404 page for unknown products', async ({ page }) => {
