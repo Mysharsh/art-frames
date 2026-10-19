@@ -5,7 +5,7 @@ import Link from "next/link"
 import { useRouter } from "next/navigation"
 import { LogOut, User } from "lucide-react"
 import type { User as SupabaseUser } from "@supabase/supabase-js"
-import { createClient } from "@/lib/supabase/client"
+import { createClient, isSupabaseConfigured } from "@/lib/supabase/client"
 import { signOut } from "@/lib/supabase/auth"
 import { clearUserContext, setUserContext } from "@/lib/sentry"
 import { Button } from "@/components/ui/button"
@@ -21,9 +21,15 @@ import {
 export function AuthMenu() {
     const router = useRouter()
     const [user, setUser] = useState<SupabaseUser | null>(null)
-    const [loading, setLoading] = useState(true)
+    const [loading, setLoading] = useState(isSupabaseConfigured)
 
     useEffect(() => {
+        // Without Supabase env (e.g. local or CI), stay signed out instead of
+        // throwing and taking down the whole page shell.
+        if (!isSupabaseConfigured) {
+            return
+        }
+
         const supabase = createClient()
 
         void supabase.auth.getUser().then(({ data }) => {

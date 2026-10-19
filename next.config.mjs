@@ -18,6 +18,16 @@ const nextConfig = {
       },
     ],
   },
+  async redirects() {
+    return [
+      // /products/:id is the canonical product URL; keep old links working.
+      {
+        source: "/product/:id",
+        destination: "/products/:id",
+        permanent: true,
+      },
+    ]
+  },
   async headers() {
     return [
       {

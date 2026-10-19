@@ -2,7 +2,7 @@ import { Skeleton } from "@/components/ui/skeleton"
 
 export default function ProductLoading() {
     return (
-        <main className="min-h-screen bg-white py-8 sm:py-12">
+        <main className="min-h-screen bg-background py-8 sm:py-12">
             <div className="px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-8 lg:gap-12">
                     {/* Image Skeleton */}

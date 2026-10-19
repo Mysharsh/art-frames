@@ -6,8 +6,8 @@ import { useRouter } from "next/navigation"
 import { Loader2 } from "lucide-react"
 import { useAppStore } from "@/lib/store"
 import { checkoutOrderSchema } from "@/lib/validations"
-import { useToast } from "@/hooks/use-toast"
 import { COD_FEE, formatPrice, getCodFee, getUnitPrice, type PaymentMethod } from "@/lib/pricing"
+import { saveLastOrder, type OrderConfirmation } from "@/lib/orders"
 
 const initialForm = {
   customerName: "",
@@ -24,13 +24,13 @@ const initialForm = {
 
 export function CheckoutPageContent() {
   const router = useRouter()
-  const { toast } = useToast()
   const cartItems = useAppStore((s) => s.cartItems)
   const clearCart = useAppStore((s) => s.clearCart)
   const [form, setForm] = useState(initialForm)
   const [paymentMethod, setPaymentMethod] = useState<PaymentMethod>("cod")
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [submitError, setSubmitError] = useState("")
+  const [placedOrderId, setPlacedOrderId] = useState<string | null>(null)
 
   const subtotal = useMemo(
     () => cartItems.reduce((acc, item) => acc + getUnitPrice(item.productId, item.price) * item.quantity, 0),
@@ -81,18 +81,27 @@ export function CheckoutPageContent() {
         throw new Error(result.error || "Failed to place order")
       }
 
+      const order = result.order as OrderConfirmation
+      saveLastOrder(order)
+      setPlacedOrderId(order.orderId)
+      router.replace(`/orders/confirmation?id=${encodeURIComponent(order.orderId)}`)
       clearCart()
-      toast({
-        title: "Order created",
-        description: `Order ${result.orderId} is now ${result.status.replaceAll("_", " ")}`,
-      })
-
-      router.push("/waitlist")
     } catch (error: unknown) {
       setSubmitError(error instanceof Error ? error.message : "Failed to place order")
     } finally {
       setIsSubmitting(false)
     }
+  }
+
+  // The cart is cleared once the order is placed; keep showing progress until the
+  // confirmation page loads instead of flashing the empty-cart state.
+  if (placedOrderId) {
+    return (
+      <section className="flex items-center gap-3 rounded-2xl border border-border/70 bg-card p-5" role="status">
+        <Loader2 className="h-4 w-4 animate-spin text-primary" />
+        <p className="text-sm text-muted-foreground">Order {placedOrderId} placed. Loading your confirmation…</p>
+      </section>
+    )
   }
 
   if (cartItems.length === 0) {

@@ -49,8 +49,8 @@ export function HeroBanner() {
               <p className="text-[10px] uppercase tracking-[0.18em] text-muted-foreground">Drop windows</p>
             </div>
             <div className="rounded-xl border border-border/80 bg-background/70 px-3 py-2">
-              <p className="font-display text-2xl text-foreground">4.8</p>
-              <p className="text-[10px] uppercase tracking-[0.18em] text-muted-foreground">Avg rating</p>
+              <p className="font-display text-2xl text-foreground">COD</p>
+              <p className="text-[10px] uppercase tracking-[0.18em] text-muted-foreground">Pay on delivery</p>
             </div>
             <div className="rounded-xl border border-border/80 bg-background/70 px-3 py-2">
               <p className="font-display text-2xl text-foreground">5-7d</p>

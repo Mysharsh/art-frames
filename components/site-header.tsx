@@ -1,25 +1,32 @@
 "use client"
 
 import Link from "next/link"
+import { usePathname } from "next/navigation"
 import { Menu, Search, ShoppingBag, X } from "lucide-react"
 import { useAppStore } from "@/lib/store"
+import { siteContent } from "@/lib/site-content"
+import { useHydrated } from "@/hooks/use-hydrated"
 import { SearchOverlay } from "@/components/search-overlay"
 import { MobileMenu } from "@/components/mobile-menu"
 import { AuthMenu } from "@/components/auth-menu"
 
-const primaryNav = [
-  { label: "Order", href: "/#order" },
-  { label: "About", href: "/#about" },
-  { label: "Events", href: "/#events" },
-  { label: "Contact", href: "/#contact" },
-]
-
 export function SiteHeader() {
-  const waitlistItems = useAppStore((s) => s.waitlistItems)
+  const pathname = usePathname()
+  const hydrated = useHydrated()
+  const cartCount = useAppStore((s) =>
+    s.cartItems.reduce((acc, item) => acc + item.quantity, 0)
+  )
   const isMobileMenuOpen = useAppStore((s) => s.isMobileMenuOpen)
   const isSearchOpen = useAppStore((s) => s.isSearchOpen)
   const toggleMobileMenu = useAppStore((s) => s.toggleMobileMenu)
   const toggleSearch = useAppStore((s) => s.toggleSearch)
+
+  // The cart is persisted in localStorage, so its count is only known after hydration.
+  const visibleCartCount = hydrated ? cartCount : 0
+  const cartLabel =
+    visibleCartCount > 0
+      ? `Cart, ${visibleCartCount} item${visibleCartCount === 1 ? "" : "s"}`
+      : "Cart"
 
   return (
     <>
@@ -29,6 +36,7 @@ export function SiteHeader() {
             onClick={toggleMobileMenu}
             className="flex h-10 w-10 items-center justify-center text-foreground transition-colors hover:text-primary md:hidden"
             aria-label={isMobileMenuOpen ? "Close menu" : "Open menu"}
+            aria-expanded={isMobileMenuOpen}
           >
             {isMobileMenuOpen ? (
               <X className="h-5 w-5" />
@@ -39,20 +47,27 @@ export function SiteHeader() {
 
           <Link href="/" className="flex items-center gap-2">
             <span className="font-display text-2xl tracking-wide text-foreground">
-              Posterwaala
+              {siteContent.brand.name}
             </span>
           </Link>
 
-          <nav className="hidden items-center gap-6 text-xs font-semibold uppercase tracking-[0.2em] text-foreground/80 md:flex">
-            {primaryNav.map((item) => (
-              <Link
-                key={item.label}
-                href={item.href}
-                className="transition-colors hover:text-foreground"
-              >
-                {item.label}
-              </Link>
-            ))}
+          <nav
+            aria-label="Main"
+            className="hidden items-center gap-6 text-xs font-semibold uppercase tracking-[0.2em] text-foreground/80 md:flex"
+          >
+            {siteContent.primaryNav.map((item) => {
+              const isActive = pathname === item.href || pathname.startsWith(`${item.href}/`)
+              return (
+                <Link
+                  key={item.label}
+                  href={item.href}
+                  aria-current={isActive ? "page" : undefined}
+                  className={`transition-colors hover:text-foreground ${isActive ? "text-primary" : ""}`}
+                >
+                  {item.label}
+                </Link>
+              )
+            })}
           </nav>
 
           <div className="flex items-center gap-2">
@@ -64,14 +79,17 @@ export function SiteHeader() {
               <Search className="h-5 w-5" />
             </button>
             <Link
-              href="/waitlist"
+              href="/cart"
               className="relative flex h-10 w-10 items-center justify-center text-foreground transition-colors hover:text-primary"
-              aria-label="Waitlist"
+              aria-label={cartLabel}
             >
               <ShoppingBag className="h-5 w-5" />
-              {waitlistItems.length > 0 && (
-                <span className="absolute -right-0.5 -top-0.5 flex h-4 w-4 items-center justify-center rounded-full bg-primary text-[10px] font-bold text-primary-foreground">
-                  {waitlistItems.length}
+              {visibleCartCount > 0 && (
+                <span
+                  aria-hidden="true"
+                  className="absolute -right-0.5 -top-0.5 flex h-4 min-w-4 items-center justify-center rounded-full bg-primary px-1 text-[10px] font-bold text-primary-foreground"
+                >
+                  {visibleCartCount > 99 ? "99+" : visibleCartCount}
                 </span>
               )}
             </Link>

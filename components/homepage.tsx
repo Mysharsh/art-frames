@@ -6,6 +6,7 @@ import { HeroBanner } from "@/components/hero-banner"
 import { CategoryThumbnails } from "@/components/category-thumbnails"
 import { ProductTabs } from "@/components/product-tabs"
 import { type Category } from "@/lib/products"
+import { siteContent } from "@/lib/site-content"
 import { Mail, MapPin, Calendar, Package } from "lucide-react"
 
 export function Homepage() {
@@ -159,8 +160,8 @@ export function Homepage() {
             <div className="rounded-lg border border-border bg-background p-6">
               <Mail className="h-5 w-5 text-primary mb-3" />
               <p className="font-semibold text-foreground mb-1">Email Us</p>
-              <a href="mailto:hello@metalposters.in" className="text-sm text-primary hover:underline">
-                hello@metalposters.in
+              <a href={`mailto:${siteContent.brand.supportEmail}`} className="text-sm text-primary hover:underline">
+                {siteContent.brand.supportEmail}
               </a>
             </div>
             <div className="rounded-lg border border-border bg-background p-6">
@@ -174,8 +175,8 @@ export function Homepage() {
           <div className="mt-8 rounded-lg border border-primary/20 bg-primary/5 p-6">
             <p className="text-sm text-foreground">
               <span className="font-semibold">Business Inquiries:</span> For partnerships, bulk orders, or gallery collaborations, reach out to us at{" "}
-              <a href="mailto:business@metalposters.in" className="text-primary hover:underline">
-                business@metalposters.in
+              <a href={`mailto:${siteContent.brand.businessEmail}`} className="text-primary hover:underline">
+                {siteContent.brand.businessEmail}
               </a>
             </p>
           </div>

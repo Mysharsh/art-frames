@@ -5,6 +5,7 @@ import Link from "next/link"
 import { Home, Grid3X3, ClipboardList, PhoneCall, Info, ShoppingBag, CreditCard, X, Package, LayoutTemplate } from "lucide-react"
 import { useAppStore } from "@/lib/store"
 import { categories, getCategoryHandle } from "@/lib/products"
+import { siteContent } from "@/lib/site-content"
 
 export function MobileMenu() {
   const isMobileMenuOpen = useAppStore((s) => s.isMobileMenuOpen)
@@ -46,14 +47,9 @@ export function MobileMenu() {
           {/* Header: Logo + Close Button */}
           <div className="border-b border-border/40 bg-background/95 px-4 py-4">
             <div className="flex items-center justify-between">
-              <div className="flex items-center gap-2">
-                <span className="font-display text-xl font-bold tracking-wide text-foreground">
-                  Metal
-                </span>
-                <span className="rounded-full bg-primary px-2 py-0.5 text-[10px] font-bold uppercase tracking-widest text-primary-foreground">
-                  Posters
-                </span>
-              </div>
+              <span className="font-display text-xl tracking-wide text-foreground">
+                {siteContent.brand.name}
+              </span>
               <button
                 onClick={closeMobileMenu}
                 className="flex h-9 w-9 items-center justify-center rounded-lg bg-secondary text-foreground transition-colors active:bg-secondary/80"
@@ -135,7 +131,7 @@ export function MobileMenu() {
                   <span className="text-sm">About Us</span>
                 </Link>
                 <Link
-                  href="mailto:contact@posterwaala.com"
+                  href={`mailto:${siteContent.brand.supportEmail}`}
                   onClick={closeMobileMenu}
                   className="flex items-center gap-3 rounded-lg px-3 py-2.5 text-foreground transition-colors hover:bg-secondary active:bg-secondary/60"
                 >

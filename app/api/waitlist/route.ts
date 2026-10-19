@@ -20,24 +20,31 @@ export async function POST(request: Request) {
     )
   }
 
+  // Validate before touching the database so bad input is always a 400,
+  // even when the database is unavailable.
+  let body: unknown
+  try {
+    body = await request.json()
+  } catch {
+    return NextResponse.json({ error: "Invalid JSON body" }, { status: 400 })
+  }
+
+  const parseResult = await safeParseWaitlistEntry(body)
+
+  if (!parseResult.success) {
+    const errors = parseResult.error.errors
+      .map((err) => `${err.path.join(".")}: ${err.message}`)
+      .join("; ")
+    return NextResponse.json(
+      { error: "Validation failed", details: errors },
+      { status: 400 }
+    )
+  }
+
+  const { email, productId, productTitle } = parseResult.data
+
   try {
     const supabase = createAdminClient()
-    const body = await request.json()
-
-    // Validate input using Zod schema
-    const parseResult = await safeParseWaitlistEntry(body)
-
-    if (!parseResult.success) {
-      const errors = parseResult.error.errors
-        .map((err) => `${err.path.join(".")}: ${err.message}`)
-        .join("; ")
-      return NextResponse.json(
-        { error: "Validation failed", details: errors },
-        { status: 400 }
-      )
-    }
-
-    const { email, productId, productTitle } = parseResult.data
 
     // Check if already on waitlist for this product
     const { data: existing, error: existingError } = await supabase

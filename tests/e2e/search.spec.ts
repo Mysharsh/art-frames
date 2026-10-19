@@ -22,7 +22,7 @@ test.describe('Search Functionality', () => {
         await expect(result).toBeVisible()
         await result.click()
 
-        await expect(page).toHaveURL(/\/product\/p1$/)
+        await expect(page).toHaveURL(/\/products\/p1$/)
         await expect(page.getByRole('heading', { name: 'Neon Samurai' })).toBeVisible()
     })
 
