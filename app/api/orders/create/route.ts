@@ -6,6 +6,7 @@ import { createClient as createServerSupabaseClient } from "@/lib/supabase/serve
 import { checkRateLimit, getClientIp } from "@/lib/rate-limit"
 import { calculateTotals, priceOrderLines } from "@/lib/pricing"
 import { captureException } from "@/lib/sentry"
+import type { OrderConfirmation } from "@/lib/orders"
 
 function makeOrderId() {
   return `ORD-${new Date().toISOString().slice(0, 10).replace(/-/g, "")}-${randomUUID().slice(0, 8).toUpperCase()}`
@@ -95,7 +96,7 @@ export async function POST(request: Request) {
     pincode: payload.pincode,
     gst_number: payload.gstNumber || null,
     payment_method: payload.paymentMethod,
-    status: "pending_cod_confirm",
+    status: "pending_cod_confirm" as const,
     currency: "INR",
     subtotal: totals.subtotal,
     cod_fee: totals.codFee,
@@ -128,11 +129,32 @@ export async function POST(request: Request) {
     )
   }
 
+  const confirmation: OrderConfirmation = {
+    orderId,
+    status: "pending_cod_confirm",
+    paymentMethod: payload.paymentMethod,
+    customerName: payload.customerName,
+    city: payload.city,
+    items: priced.items.map(({ productId, title, size, material, quantity, lineTotal }) => ({
+      productId,
+      title,
+      size,
+      material,
+      quantity,
+      lineTotal,
+    })),
+    subtotal: totals.subtotal,
+    codFee: totals.codFee,
+    total: totals.total,
+    createdAt: now,
+  }
+
   return NextResponse.json({
     success: true,
     orderId,
     paymentMethod: payload.paymentMethod,
     amount: totals.total,
     status: orderRecord.status,
+    order: confirmation,
   })
 }

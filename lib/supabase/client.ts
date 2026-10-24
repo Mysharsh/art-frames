@@ -3,6 +3,11 @@ import type { SupabaseClient } from "@supabase/supabase-js"
 
 let browserClient: SupabaseClient | null = null
 
+/** Public env vars are inlined at build time, so this is safe to read during render. */
+export const isSupabaseConfigured = Boolean(
+  process.env.NEXT_PUBLIC_SUPABASE_URL && process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
+)
+
 export function createClient() {
   if (browserClient) {
     return browserClient

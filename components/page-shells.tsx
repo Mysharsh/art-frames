@@ -45,7 +45,7 @@ export function PageFrame({ children, className }: { children: ReactNode; classN
   return (
     <div
       className={cn(
-        "relative isolate overflow-hidden rounded-[32px] border border-border/70 bg-card/85 shadow-[0_24px_80px_rgba(22,13,7,0.12)] backdrop-blur-sm",
+        "relative isolate overflow-hidden rounded-[32px] border border-border/70 bg-card/85 shadow-frame backdrop-blur-sm",
         className
       )}
     >
@@ -95,7 +95,7 @@ export function ContentPageShell({
         <div className="space-y-8">
           <Link
             href={backHref}
-            className="inline-flex items-center gap-2 rounded-full border border-border/70 bg-background/80 px-4 py-2 text-xs font-semibold uppercase tracking-[0.18em] text-foreground/75 transition-colors hover:border-primary/40 hover:text-foreground"
+            className="inline-flex items-center gap-2 rounded-full border border-border/70 bg-background/80 px-4 py-2 text-xs font-semibold uppercase tracking-label text-foreground/75 transition-colors hover:border-primary/40 hover:text-foreground"
           >
             <ArrowLeft className="h-4 w-4" />
             {backLabel}

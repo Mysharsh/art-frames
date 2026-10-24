@@ -1,6 +1,7 @@
 import { create } from "zustand"
 import { persist } from "zustand/middleware"
 import type { Product } from "@/lib/products"
+import { MAX_LINE_QUANTITY } from "@/lib/pricing"
 
 interface WaitlistItem {
   productId: string
@@ -122,7 +123,7 @@ export const useAppStore = create<AppState>()(
             return {
               cartItems: state.cartItems.map((cartItem) =>
                 cartItem === existing
-                  ? { ...cartItem, quantity: cartItem.quantity + 1 }
+                  ? { ...cartItem, quantity: Math.min(cartItem.quantity + 1, MAX_LINE_QUANTITY) }
                   : cartItem
               ),
             }
@@ -152,7 +153,7 @@ export const useAppStore = create<AppState>()(
                 item.size === size &&
                 item.material === material
               ) {
-                return { ...item, quantity }
+                return { ...item, quantity: Math.min(quantity, MAX_LINE_QUANTITY) }
               }
               return item
             })

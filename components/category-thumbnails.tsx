@@ -45,7 +45,7 @@ export function CategoryThumbnails() {
                             )}
                             {/* Category label */}
                             <div className="absolute bottom-0 left-0 right-0 bg-black/60 py-1 text-center">
-                                <p className="text-[9px] font-bold uppercase leading-tight text-white">
+                                <p className="text-2xs font-bold uppercase leading-tight text-white">
                                     {cat.name}
                                 </p>
                             </div>
@@ -53,7 +53,7 @@ export function CategoryThumbnails() {
                         {/* Item count */}
                         <div className="text-center">
                             <p className="text-xs font-bold text-foreground">{cat.count}</p>
-                            <p className="text-[10px] text-muted-foreground">items</p>
+                            <p className="text-2xs text-muted-foreground">items</p>
                         </div>
                     </Link>
                 ))}

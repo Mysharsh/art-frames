@@ -8,7 +8,7 @@ test.describe('Waitlist Functionality', () => {
     })
 
     test('shows the waitlist form for the selected product', async ({ page }) => {
-        await expect(page.getByText('Neon Samurai')).toBeVisible()
+        await expect(page.getByText(/Be the first to know when Neon Samurai/)).toBeVisible()
         await expect(page.getByLabel('Email address')).toBeVisible()
         await expect(page.getByRole('button', { name: 'Join Waitlist for Launch' })).toBeVisible()
     })
@@ -21,6 +21,12 @@ test.describe('Waitlist Functionality', () => {
     })
 
     test('submits successfully and persists the item on the waitlist page', async ({ page }) => {
+        // Stub the API so the UI flow is tested without a live database.
+        await page.route('**/api/waitlist', (route) =>
+            route.request().method() === 'POST'
+                ? route.fulfill({ json: { success: true } })
+                : route.fulfill({ json: { count: 1 } })
+        )
         const email = `playwright-${Date.now()}@example.com`
 
         await page.getByLabel('Email address').fill(email)
@@ -30,7 +36,7 @@ test.describe('Waitlist Functionality', () => {
         await expect(page.getByText(email)).toBeVisible()
 
         await page.getByRole('button', { name: 'Continue Browsing' }).click()
-        await page.getByRole('link', { name: /Waitlist/i }).click()
+        await page.getByRole('navigation', { name: 'Main' }).getByRole('link', { name: 'Waitlist' }).click()
 
         await expect(page).toHaveURL(/\/waitlist$/)
         await expect(page.getByRole('heading', { name: 'My Waitlist' })).toBeVisible()

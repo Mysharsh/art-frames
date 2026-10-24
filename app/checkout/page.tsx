@@ -5,7 +5,7 @@ import { ContentPageShell } from "@/components/page-shells"
 
 export const metadata: Metadata = {
   title: "Checkout",
-  description: "Complete your order using Stripe or Cash on Delivery.",
+  description: "Enter your delivery details and pay with Cash on Delivery.",
 }
 
 export default function CheckoutPage() {
@@ -14,7 +14,7 @@ export default function CheckoutPage() {
       <ContentPageShell
         eyebrow="Checkout"
         title="Payment & Delivery"
-        description="Complete your shipping details and place your order using COD or Stripe."
+        description="Enter your delivery details and pay when your posters arrive."
       >
         <CheckoutPageContent />
       </ContentPageShell>

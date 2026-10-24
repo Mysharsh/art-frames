@@ -470,6 +470,16 @@ export const products: Product[] = [
   },
 ]
 
+/** True when the product can be ordered as a metal print. */
+export function hasMetalOption(product: Product): boolean {
+  return product.materials.some((material) => /metal/i.test(material))
+}
+
+/** Short, accurate material label for cards and badges. */
+export function getMaterialLabel(product: Product): string {
+  return hasMetalOption(product) ? "Metal print" : "Paper print"
+}
+
 export function getProductById(id: string): Product | undefined {
   return products.find((p) => p.id === id)
 }

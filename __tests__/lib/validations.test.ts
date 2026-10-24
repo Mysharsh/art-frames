@@ -1,6 +1,7 @@
 import { describe, it, expect } from "vitest"
 import {
     checkoutOrderSchema,
+    getFieldErrors,
     safeParseWaitlistEntry,
     waitlistEntrySchema,
 } from "@/lib/validations"
@@ -187,6 +188,41 @@ describe("Validations", () => {
             }
             const result = checkoutOrderSchema.safeParse(payload)
             expect(result.success).toBe(false)
+        })
+
+        it("should normalise common Indian phone and pincode formats", () => {
+            for (const phone of ["+91 98765 43210", "098765-43210", "91-9876543210", " 9876543210 "]) {
+                const result = checkoutOrderSchema.safeParse({ ...basePayload, phone, pincode: "560 001" })
+                expect(result.success).toBe(true)
+                if (result.success) {
+                    expect(result.data.phone).toBe("9876543210")
+                    expect(result.data.pincode).toBe("560001")
+                }
+            }
+        })
+
+        it("should reject pincodes starting with 0", () => {
+            const result = checkoutOrderSchema.safeParse({ ...basePayload, pincode: "060001" })
+            expect(result.success).toBe(false)
+        })
+
+        it("should map every invalid field to a friendly message", () => {
+            const result = checkoutOrderSchema.safeParse({
+                ...basePayload,
+                customerName: "",
+                email: "nope",
+                city: "",
+                state: "",
+            })
+            expect(result.success).toBe(false)
+            if (!result.success) {
+                expect(getFieldErrors(result.error)).toMatchObject({
+                    customerName: "Enter your full name",
+                    email: "Enter a valid email address",
+                    city: "Enter your city",
+                    state: "Select your state",
+                })
+            }
         })
 
         it("should reject non-Indian mobile format", () => {

@@ -80,6 +80,22 @@ describe("POST /api/orders/create", () => {
         expect(record.line_items[0].price).toBe(product.price)
     })
 
+    it("should return a confirmation summary without address or phone", async () => {
+        const response = await POST(makeRequest(makePayload()))
+        const { order } = await response.json()
+
+        expect(order.orderId).toMatch(/^ORD-\d{8}-[A-F0-9]{8}$/)
+        expect(order.total).toBe(product.price * 2 + COD_FEE)
+        expect(order.items[0]).toMatchObject({
+            productId: "p1",
+            title: product.title,
+            quantity: 2,
+            lineTotal: product.price * 2,
+        })
+        expect(order).not.toHaveProperty("phone")
+        expect(order).not.toHaveProperty("addressLine1")
+    })
+
     it("should ignore a tampered client price", async () => {
         const payload = makePayload({
             cartItems: [

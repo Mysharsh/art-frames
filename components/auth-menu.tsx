@@ -5,7 +5,7 @@ import Link from "next/link"
 import { useRouter } from "next/navigation"
 import { LogOut, User } from "lucide-react"
 import type { User as SupabaseUser } from "@supabase/supabase-js"
-import { createClient } from "@/lib/supabase/client"
+import { createClient, isSupabaseConfigured } from "@/lib/supabase/client"
 import { signOut } from "@/lib/supabase/auth"
 import { clearUserContext, setUserContext } from "@/lib/sentry"
 import { Button } from "@/components/ui/button"
@@ -21,9 +21,15 @@ import {
 export function AuthMenu() {
     const router = useRouter()
     const [user, setUser] = useState<SupabaseUser | null>(null)
-    const [loading, setLoading] = useState(true)
+    const [loading, setLoading] = useState(isSupabaseConfigured)
 
     useEffect(() => {
+        // Without Supabase env (e.g. local or CI), stay signed out instead of
+        // throwing and taking down the whole page shell.
+        if (!isSupabaseConfigured) {
+            return
+        }
+
         const supabase = createClient()
 
         void supabase.auth.getUser().then(({ data }) => {
@@ -69,7 +75,7 @@ export function AuthMenu() {
     if (!user) {
         return (
             <div className="flex items-center gap-2">
-                <Link href="/auth/login" className="text-xs font-semibold uppercase tracking-widest text-foreground/80 hover:text-foreground transition-colors">
+                <Link href="/auth/login" className="inline-flex h-11 items-center px-1 text-xs font-semibold uppercase tracking-widest text-foreground/80 transition-colors hover:text-foreground">
                     Sign In
                 </Link>
             </div>
@@ -84,7 +90,7 @@ export function AuthMenu() {
                     className="relative h-10 w-10 rounded-full"
                 >
                     <div className="flex h-full w-full items-center justify-center rounded-full bg-primary/10">
-                        <User className="h-4 w-4 text-primary" />
+                        <User className="h-4 w-4 text-primary-ink" />
                     </div>
                 </Button>
             </DropdownMenuTrigger>

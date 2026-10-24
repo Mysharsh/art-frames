@@ -28,6 +28,7 @@ const config: Config = {
         primary: {
           DEFAULT: 'hsl(var(--primary))',
           foreground: 'hsl(var(--primary-foreground))',
+          ink: 'hsl(var(--primary-ink))',
         },
         secondary: {
           DEFAULT: 'hsl(var(--secondary))',
@@ -65,6 +66,20 @@ const config: Config = {
           border: 'hsl(var(--sidebar-border))',
           ring: 'hsl(var(--sidebar-ring))',
         },
+      },
+      fontSize: {
+        // Smallest allowed size (11px); used for uppercase labels and badges.
+        '2xs': ['0.6875rem', { lineHeight: '1rem' }],
+      },
+      letterSpacing: {
+        label: '0.18em',
+        kicker: '0.28em',
+      },
+      boxShadow: {
+        panel: '0 18px 60px hsl(var(--shadow-color) / 0.1)',
+        frame: '0 24px 80px hsl(var(--shadow-color) / 0.12)',
+        nav: '0 18px 40px hsl(var(--shadow-color) / 0.18)',
+        glow: '0 10px 25px hsl(var(--primary) / 0.35)',
       },
       borderRadius: {
         lg: 'var(--radius)',

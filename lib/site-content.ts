@@ -39,7 +39,7 @@ export const siteContent = {
   ),
   heroStats: [
     { value: "24h", label: "Drop windows" },
-    { value: "4.8", label: "Collector rating" },
+    { value: "COD", label: "Pay on delivery" },
     { value: "5-7d", label: "Pan-India delivery" },
   ],
   collectorPillars: [

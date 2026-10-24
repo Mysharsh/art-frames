@@ -14,7 +14,7 @@ export function CategoryChips({ selected, onSelect }: CategoryChipsProps) {
         <button
           key={category}
           onClick={() => onSelect(category)}
-          className={`flex-shrink-0 rounded-full px-4 py-2 text-xs font-bold uppercase tracking-[0.2em] transition-colors ${selected === category
+          className={`flex-shrink-0 rounded-full px-4 py-2 text-xs font-bold uppercase tracking-label transition-colors ${selected === category
               ? "bg-primary text-primary-foreground"
               : "bg-secondary text-secondary-foreground hover:bg-secondary/80"
             }`}

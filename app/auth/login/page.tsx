@@ -1,7 +1,7 @@
 "use client"
 
-import { useSearchParams, useRouter } from "next/navigation"
-import { useState, useEffect } from "react"
+import { useSearchParams } from "next/navigation"
+import { useState } from "react"
 import Link from "next/link"
 import { Mail, Loader2 } from "lucide-react"
 import { signInWithGoogle } from "@/lib/supabase/auth"
@@ -9,17 +9,16 @@ import { Button } from "@/components/ui/button"
 
 export default function LoginPage() {
     const searchParams = useSearchParams()
-    const router = useRouter()
     const [loading, setLoading] = useState(false)
     const [error, setError] = useState<string | null>(null)
 
-    useEffect(() => {
-        const errorParam = searchParams.get("error")
-        if (errorParam === "auth_error") {
-            const errorDescription = searchParams.get("error_description")
-            setError(errorDescription || "Authentication failed. Please try again.")
-        }
-    }, [searchParams])
+    // Errors from /auth/callback arrive as query params; errors from this page's own
+    // sign-in attempt take precedence.
+    const callbackError =
+        searchParams.get("error") === "auth_error"
+            ? searchParams.get("error_description") || "Authentication failed. Please try again."
+            : null
+    const displayError = error ?? callbackError
 
     const handleGoogleSignIn = async () => {
         try {
@@ -27,8 +26,9 @@ export default function LoginPage() {
             setError(null)
 
             const next = searchParams.get("next") || "/"
+            // Supabase redirects the browser to Google and then back via /auth/callback,
+            // which forwards to `next`; keep the spinner up until the page unloads.
             await signInWithGoogle(next)
-            router.push(next)
         } catch (err) {
             let errorMessage = "Authentication failed"
 
@@ -37,7 +37,6 @@ export default function LoginPage() {
             }
 
             setError(errorMessage)
-        } finally {
             setLoading(false)
         }
     }
@@ -58,9 +57,9 @@ export default function LoginPage() {
                 </div>
 
                 {/* Error message */}
-                {error && (
+                {displayError && (
                     <div className="mb-6 rounded-lg border border-destructive/50 bg-destructive/10 p-4">
-                        <p className="text-sm text-destructive">{error}</p>
+                        <p className="text-sm text-destructive">{displayError}</p>
                     </div>
                 )}
 
@@ -102,7 +101,7 @@ export default function LoginPage() {
                         Don&apos;t have an account?{" "}
                         <Link
                             href="/auth/register"
-                            className="text-primary hover:underline font-semibold"
+                            className="text-primary-ink hover:underline font-semibold"
                         >
                             Create one
                         </Link>

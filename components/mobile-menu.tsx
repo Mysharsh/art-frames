@@ -1,66 +1,39 @@
 "use client"
 
-import { useEffect } from "react"
 import Link from "next/link"
 import { Home, Grid3X3, ClipboardList, PhoneCall, Info, ShoppingBag, CreditCard, X, Package, LayoutTemplate } from "lucide-react"
 import { useAppStore } from "@/lib/store"
 import { categories, getCategoryHandle } from "@/lib/products"
+import { siteContent } from "@/lib/site-content"
+import { buttonVariants } from "@/components/ui/button"
+import { Sheet, SheetClose, SheetContent, SheetTitle } from "@/components/ui/sheet"
+import { useReturnFocus } from "@/hooks/use-return-focus"
 
 export function MobileMenu() {
   const isMobileMenuOpen = useAppStore((s) => s.isMobileMenuOpen)
   const closeMobileMenu = useAppStore((s) => s.closeMobileMenu)
+  const returnFocus = useReturnFocus()
 
-  // Close menu on ESC key
-  useEffect(() => {
-    const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.key === "Escape" && isMobileMenuOpen) {
-        closeMobileMenu()
-      }
-    }
-
-    document.addEventListener("keydown", handleKeyDown)
-    return () => document.removeEventListener("keydown", handleKeyDown)
-  }, [isMobileMenuOpen, closeMobileMenu])
-
-  // Lock body scroll when menu is open
-  useEffect(() => {
-    if (isMobileMenuOpen) {
-      document.body.style.overflow = "hidden"
-    } else {
-      document.body.style.overflow = ""
-    }
-
-    return () => {
-      document.body.style.overflow = ""
-    }
-  }, [isMobileMenuOpen])
-
+  // Radix Sheet provides role="dialog", the focus trap, Escape, scroll lock and
+  // focus return to the menu button.
   return (
-    <>
-      {/* Drawer sidebar */}
-      <div
-        className={`fixed inset-0 top-14 z-50 w-full overflow-hidden bg-background transition-transform duration-300 ${isMobileMenuOpen ? "translate-x-0" : "-translate-x-full"
-          }`}
+    <Sheet open={isMobileMenuOpen} onOpenChange={(open) => !open && closeMobileMenu()}>
+      <SheetContent
+        {...returnFocus}
+        side="left"
+        showClose={false}
+        aria-describedby={undefined}
+        className="flex w-full flex-col gap-0 p-0 sm:max-w-sm"
       >
-        <nav className="flex h-full flex-col overflow-y-auto">
-          {/* Header: Logo + Close Button */}
-          <div className="border-b border-border/40 bg-background/95 px-4 py-4">
+        <nav aria-label="Mobile" className="flex h-full flex-col overflow-y-auto">
+          <div className="border-b border-border/40 bg-background/95 px-4 py-2">
             <div className="flex items-center justify-between">
-              <div className="flex items-center gap-2">
-                <span className="font-display text-xl font-bold tracking-wide text-foreground">
-                  Metal
-                </span>
-                <span className="rounded-full bg-primary px-2 py-0.5 text-[10px] font-bold uppercase tracking-widest text-primary-foreground">
-                  Posters
-                </span>
-              </div>
-              <button
-                onClick={closeMobileMenu}
-                className="flex h-9 w-9 items-center justify-center rounded-lg bg-secondary text-foreground transition-colors active:bg-secondary/80"
-                aria-label="Close menu"
-              >
-                <X className="h-5 w-5" />
-              </button>
+              <SheetTitle className="font-display text-xl font-normal tracking-wide text-foreground">
+                {siteContent.brand.name}
+              </SheetTitle>
+              <SheetClose className={buttonVariants({ variant: "secondary", size: "icon", className: "rounded-lg" })} aria-label="Close menu">
+                <X />
+              </SheetClose>
             </div>
           </div>
 
@@ -72,7 +45,7 @@ export function MobileMenu() {
                 onClick={closeMobileMenu}
                 className="flex items-center gap-3 rounded-lg px-3 py-3 text-foreground transition-colors hover:bg-secondary active:bg-secondary/60"
               >
-                <Home className="h-5 w-5 text-primary" />
+                <Home className="h-5 w-5 text-primary-ink" />
                 <span className="text-sm font-medium">Home</span>
               </Link>
               <Link
@@ -80,7 +53,7 @@ export function MobileMenu() {
                 onClick={closeMobileMenu}
                 className="flex items-center gap-3 rounded-lg px-3 py-3 text-foreground transition-colors hover:bg-secondary active:bg-secondary/60"
               >
-                <LayoutTemplate className="h-5 w-5 text-primary" />
+                <LayoutTemplate className="h-5 w-5 text-primary-ink" />
                 <span className="text-sm font-medium">Shop Collections</span>
               </Link>
               <Link
@@ -88,7 +61,7 @@ export function MobileMenu() {
                 onClick={closeMobileMenu}
                 className="flex items-center gap-3 rounded-lg px-3 py-3 text-foreground transition-colors hover:bg-secondary active:bg-secondary/60"
               >
-                <ClipboardList className="h-5 w-5 text-primary" />
+                <ClipboardList className="h-5 w-5 text-primary-ink" />
                 <span className="text-sm font-medium">My Waitlist</span>
               </Link>
               <Link
@@ -96,7 +69,7 @@ export function MobileMenu() {
                 onClick={closeMobileMenu}
                 className="flex items-center gap-3 rounded-lg px-3 py-3 text-foreground transition-colors hover:bg-secondary active:bg-secondary/60"
               >
-                <ShoppingBag className="h-5 w-5 text-primary" />
+                <ShoppingBag className="h-5 w-5 text-primary-ink" />
                 <span className="text-sm font-medium">Cart</span>
               </Link>
               <Link
@@ -104,7 +77,7 @@ export function MobileMenu() {
                 onClick={closeMobileMenu}
                 className="flex items-center gap-3 rounded-lg px-3 py-3 text-foreground transition-colors hover:bg-secondary active:bg-secondary/60"
               >
-                <CreditCard className="h-5 w-5 text-primary" />
+                <CreditCard className="h-5 w-5 text-primary-ink" />
                 <span className="text-sm font-medium">Checkout</span>
               </Link>
             </div>
@@ -112,7 +85,7 @@ export function MobileMenu() {
             {/* Explore Section */}
             <div className="mt-8 pt-6 border-t border-border/40">
               <div className="mb-4 flex items-center gap-2 px-3">
-                <Package className="h-4 w-4 text-primary" />
+                <Package className="h-4 w-4 text-primary-ink" />
                 <p className="text-xs font-bold uppercase tracking-widest text-foreground">
                   Explore
                 </p>
@@ -121,25 +94,25 @@ export function MobileMenu() {
                 <Link
                   href="/gallery-walls"
                   onClick={closeMobileMenu}
-                  className="flex items-center gap-3 rounded-lg px-3 py-2.5 text-foreground transition-colors hover:bg-secondary active:bg-secondary/60"
+                  className="flex min-h-11 items-center gap-3 rounded-lg px-3 py-2.5 text-foreground transition-colors hover:bg-secondary active:bg-secondary/60"
                 >
-                  <Grid3X3 className="h-4 w-4 text-primary" />
+                  <Grid3X3 className="h-4 w-4 text-primary-ink" />
                   <span className="text-sm">Gallery Walls</span>
                 </Link>
                 <Link
                   href="/about"
                   onClick={closeMobileMenu}
-                  className="flex items-center gap-3 rounded-lg px-3 py-2.5 text-foreground transition-colors hover:bg-secondary active:bg-secondary/60"
+                  className="flex min-h-11 items-center gap-3 rounded-lg px-3 py-2.5 text-foreground transition-colors hover:bg-secondary active:bg-secondary/60"
                 >
-                  <Info className="h-4 w-4 text-primary" />
+                  <Info className="h-4 w-4 text-primary-ink" />
                   <span className="text-sm">About Us</span>
                 </Link>
                 <Link
-                  href="mailto:contact@posterwaala.com"
+                  href={`mailto:${siteContent.brand.supportEmail}`}
                   onClick={closeMobileMenu}
-                  className="flex items-center gap-3 rounded-lg px-3 py-2.5 text-foreground transition-colors hover:bg-secondary active:bg-secondary/60"
+                  className="flex min-h-11 items-center gap-3 rounded-lg px-3 py-2.5 text-foreground transition-colors hover:bg-secondary active:bg-secondary/60"
                 >
-                  <PhoneCall className="h-4 w-4 text-primary" />
+                  <PhoneCall className="h-4 w-4 text-primary-ink" />
                   <span className="text-sm">Contact</span>
                 </Link>
               </div>
@@ -148,7 +121,7 @@ export function MobileMenu() {
             {/* Categories Section */}
             <div className="mt-8 pt-6 border-t border-border/40">
               <div className="mb-4 flex items-center gap-2 px-3">
-                <Grid3X3 className="h-4 w-4 text-primary" />
+                <Grid3X3 className="h-4 w-4 text-primary-ink" />
                 <p className="text-xs font-bold uppercase tracking-widest text-foreground">
                   Categories
                 </p>
@@ -161,7 +134,7 @@ export function MobileMenu() {
                       key={category}
                       href={`/collections/${getCategoryHandle(category)}`}
                       onClick={closeMobileMenu}
-                      className="block rounded-lg px-3 py-2 text-sm text-foreground transition-colors hover:bg-secondary active:bg-secondary/60"
+                      className="flex min-h-11 items-center rounded-lg px-3 py-2 text-sm text-foreground transition-colors hover:bg-secondary active:bg-secondary/60"
                     >
                       {category}
                     </Link>
@@ -170,8 +143,8 @@ export function MobileMenu() {
             </div>
           </div>
         </nav>
-      </div>
-    </>
+      </SheetContent>
+    </Sheet>
   )
 }
 

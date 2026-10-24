@@ -3,13 +3,13 @@
 import { useEffect, useState } from "react"
 import Image from "next/image"
 import Link from "next/link"
-import { useRouter } from "next/navigation"
-import { ArrowLeft, Heart, Share2, ShoppingBag } from "lucide-react"
+import { ArrowLeft, Heart, Share2 } from "lucide-react"
 import type { Product } from "@/lib/products"
 import { getRelatedProducts } from "@/lib/products"
 import { formatPrice } from "@/lib/pricing"
 import { useAppStore } from "@/lib/store"
 import { ProductCard } from "@/components/product-card"
+import { Button, buttonVariants } from "@/components/ui/button"
 import { useToast } from "@/hooks/use-toast"
 import {
   Carousel,
@@ -23,7 +23,6 @@ interface ProductDetailProps {
 }
 
 export function ProductDetail({ product }: ProductDetailProps) {
-  const router = useRouter()
   const [selectedSize, setSelectedSize] = useState(product.sizes[0])
   const [selectedMaterial, setSelectedMaterial] = useState(
     product.materials.find((material) =>
@@ -132,33 +131,24 @@ export function ProductDetail({ product }: ProductDetailProps) {
       <div className="flex items-center justify-between px-4 py-3 lg:px-0">
         <Link
           href="/"
-          className="flex h-10 w-10 items-center justify-center rounded-full bg-secondary text-foreground transition-colors hover:bg-secondary/80"
-          aria-label="Go back"
+          className={buttonVariants({ variant: "secondary", size: "icon" })}
+          aria-label="Back to home"
         >
-          <ArrowLeft className="h-5 w-5" />
+          <ArrowLeft />
         </Link>
         <div className="flex items-center gap-2">
-          <button
-            onClick={handleShare}
-            className="flex h-10 w-10 items-center justify-center rounded-full bg-secondary text-foreground transition-colors hover:bg-secondary/80"
-            aria-label="Share"
-          >
-            <Share2 className="h-5 w-5" />
-          </button>
-          <button
+          <Button variant="secondary" size="icon" onClick={handleShare} aria-label="Share">
+            <Share2 />
+          </Button>
+          <Button
+            variant="secondary"
+            size="icon"
             onClick={handleWishlistToggle}
-            className="flex h-10 w-10 items-center justify-center rounded-full bg-secondary text-foreground transition-colors hover:bg-secondary/80"
             aria-label="Wishlist"
+            aria-pressed={inWishlist}
           >
-            <Heart className={`h-5 w-5 ${inWishlist ? "fill-red-500 text-red-500" : ""}`} />
-          </button>
-          <button
-            className="flex h-10 w-10 items-center justify-center rounded-full bg-secondary text-foreground transition-colors hover:bg-secondary/80"
-            aria-label="Bag"
-            onClick={() => router.push("/cart")}
-          >
-            <ShoppingBag className="h-5 w-5" />
-          </button>
+            <Heart className={inWishlist ? "fill-destructive text-destructive" : ""} />
+          </Button>
         </div>
       </div>
 
@@ -185,14 +175,10 @@ export function ProductDetail({ product }: ProductDetailProps) {
               </CarouselContent>
             </Carousel>
 
-            <div className="absolute left-3 top-3 flex flex-col gap-2">
-              <span className="rounded-full bg-primary px-3 py-1 text-[11px] font-bold uppercase tracking-widest text-primary-foreground">
-                Metal Poster
-              </span>
-              <span className="rounded-full bg-background/90 px-3 py-1 text-[10px] font-semibold uppercase tracking-widest text-foreground shadow-sm ring-1 ring-border/60">
-                Gloss Finish
-              </span>
-            </div>
+            {/* Reflects the material actually selected below. */}
+            <span className="absolute left-3 top-3 rounded-full bg-background/90 px-3 py-1 text-2xs font-semibold uppercase tracking-widest text-foreground shadow-sm ring-1 ring-border/60">
+              {selectedMaterial}
+            </span>
 
             {product.onSale && (
               <span className="absolute right-3 top-3 rounded-md bg-destructive px-3 py-1 text-xs font-bold uppercase tracking-wider text-destructive-foreground">
@@ -207,13 +193,16 @@ export function ProductDetail({ product }: ProductDetailProps) {
                 <button
                   key={`${product.id}-dot-${index}`}
                   onClick={() => carouselApi?.scrollTo(index)}
-                  className={`h-2.5 w-2.5 rounded-full transition-all ${
-                    activeSlide === index
-                      ? "bg-foreground"
-                      : "bg-muted-foreground/40"
-                  }`}
+                  className="flex h-6 w-6 items-center justify-center rounded-full focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
                   aria-label={`Go to image ${index + 1}`}
-                />
+                  aria-current={activeSlide === index ? "true" : undefined}
+                >
+                  <span
+                    className={`h-2.5 w-2.5 rounded-full transition-all ${
+                      activeSlide === index ? "bg-foreground" : "bg-muted-foreground/40"
+                    }`}
+                  />
+                </button>
               ))}
             </div>
           )}
@@ -221,7 +210,7 @@ export function ProductDetail({ product }: ProductDetailProps) {
 
         {/* Details */}
         <div className="px-4 pt-5 lg:px-0">
-        <p className="text-xs font-semibold uppercase tracking-[0.3em] text-muted-foreground">
+        <p className="text-xs font-semibold uppercase tracking-kicker text-muted-foreground">
           {product.category} Series
         </p>
         <h1 className="mt-1 font-display text-3xl leading-none text-foreground">
@@ -256,65 +245,60 @@ export function ProductDetail({ product }: ProductDetailProps) {
 
         {/* Size selector */}
         <div className="mt-6">
-          <p className="mb-2 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+          <p id="size-label" className="mb-2 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
             Size
           </p>
-          <div className="flex flex-wrap gap-2">
+          <div className="flex flex-wrap gap-2" role="group" aria-labelledby="size-label">
             {product.sizes.map((size) => (
-              <button
+              <Button
                 key={size}
+                variant="chip"
+                size="chip"
+                aria-pressed={selectedSize === size}
                 onClick={() => setSelectedSize(size)}
-                className={`rounded-lg border px-3 py-2 text-xs font-medium transition-all ${
-                  selectedSize === size
-                    ? "border-primary bg-primary/10 text-primary"
-                    : "border-border text-muted-foreground hover:border-foreground hover:text-foreground"
-                }`}
               >
                 {size}
-              </button>
+              </Button>
             ))}
           </div>
         </div>
 
         {/* Material selector */}
         <div className="mt-5">
-          <p className="mb-2 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+          <p id="material-label" className="mb-2 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
             Material
           </p>
-          <div className="flex flex-wrap gap-2">
+          <div className="flex flex-wrap gap-2" role="group" aria-labelledby="material-label">
             {product.materials.map((material) => (
-              <button
+              <Button
                 key={material}
+                variant="chip"
+                size="chip"
+                aria-pressed={selectedMaterial === material}
                 onClick={() => setSelectedMaterial(material)}
-                className={`rounded-lg border px-3 py-2 text-xs font-medium transition-all ${
-                  selectedMaterial === material
-                    ? "border-primary bg-primary/10 text-primary"
-                    : "border-border text-muted-foreground hover:border-foreground hover:text-foreground"
-                }`}
               >
                 {material}
-              </button>
+              </Button>
             ))}
           </div>
         </div>
 
         {/* CTA */}
-        <button
-          onClick={handleAddToCart}
-          className="mt-6 w-full rounded-xl bg-primary py-4 text-sm font-bold uppercase tracking-widest text-primary-foreground transition-transform hover:scale-[1.02] active:scale-[0.98]"
-        >
+        <Button size="block" className="mt-6" onClick={handleAddToCart}>
           Add To Cart
-        </button>
+        </Button>
 
-        <button
+        <Button
+          variant="outline"
+          size="block"
+          className="mt-3 h-12 text-xs font-semibold tracking-label"
           onClick={() => openWaitlistModal(product.id, product.title)}
-          className="mt-3 w-full rounded-xl border border-border bg-background py-3 text-xs font-semibold uppercase tracking-[0.18em] text-foreground/80 transition-colors hover:border-primary/40 hover:text-primary"
         >
           Notify Me For Drop
-        </button>
+        </Button>
 
         <p className="mt-3 text-center text-xs text-muted-foreground">
-          Checkout is now active in MVP mode. Waitlist remains available for upcoming drops.
+          Cash on Delivery · Pan-India delivery in 5–7 business days
         </p>
         </div>
       </div>

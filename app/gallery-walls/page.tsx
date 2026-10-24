@@ -52,18 +52,18 @@ export default function GalleryWallsPage() {
         <div className="grid gap-4 sm:grid-cols-2">
           {galleryKits.map((kit) => (
             <article key={kit.title} className="rounded-2xl border border-border/70 bg-card p-5">
-              <p className="text-[10px] font-semibold uppercase tracking-[0.18em] text-primary">
+              <p className="text-2xs font-semibold uppercase tracking-label text-primary-ink">
                 {kit.pieces}
               </p>
               <h2 className="mt-2 font-display text-2xl text-foreground">{kit.title}</h2>
               <p className="mt-2 text-sm leading-6 text-muted-foreground">{kit.style}</p>
               <div className="mt-4 flex items-center justify-between">
-                <span className="rounded-full bg-primary/10 px-3 py-1 text-xs font-semibold text-primary">
+                <span className="rounded-full bg-primary/10 px-3 py-1 text-xs font-semibold text-primary-ink">
                   {kit.savings}
                 </span>
                 <Link
                   href="/cart"
-                  className="text-xs font-semibold uppercase tracking-[0.18em] text-foreground transition-colors hover:text-primary"
+                  className="text-xs font-semibold uppercase tracking-label text-foreground transition-colors hover:text-primary-ink"
                 >
                   Add Kit
                 </Link>

@@ -1,8 +1,13 @@
 "use client"
 
 import { useState } from "react"
-import { X, CheckCircle2, Loader2 } from "lucide-react"
+import { CheckCircle2, Loader2 } from "lucide-react"
 import { useAppStore } from "@/lib/store"
+import { Button } from "@/components/ui/button"
+import { Dialog, DialogContent, DialogDescription, DialogTitle } from "@/components/ui/dialog"
+import { Field } from "@/components/ui/field"
+import { Input } from "@/components/ui/input"
+import { useReturnFocus } from "@/hooks/use-return-focus"
 
 export function WaitlistModal() {
   const {
@@ -14,12 +19,11 @@ export function WaitlistModal() {
     addWaitlistItem,
   } = useAppStore()
 
+  const returnFocus = useReturnFocus()
   const [email, setEmail] = useState("")
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [isSuccess, setIsSuccess] = useState(false)
   const [error, setError] = useState("")
-
-  if (!isWaitlistModalOpen) return null
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -65,90 +69,72 @@ export function WaitlistModal() {
     closeWaitlistModal()
   }
 
+  // Radix Dialog provides role="dialog", aria-modal, focus trap, Escape to close,
+  // scroll lock and focus return to the "Notify Me" button.
   return (
-    <div className="fixed inset-0 z-[70] flex items-end justify-center sm:items-center">
-      <div
-        className="absolute inset-0 bg-background/80 backdrop-blur-sm"
-        onClick={handleClose}
-      />
-      <div className="relative w-full max-w-md rounded-t-2xl border border-border bg-card p-6 sm:rounded-2xl">
-        <button
-          onClick={handleClose}
-          className="absolute right-4 top-4 text-muted-foreground transition-colors hover:text-foreground"
-          aria-label="Close modal"
-        >
-          <X className="h-5 w-5" />
-        </button>
-
+    <Dialog open={isWaitlistModalOpen} onOpenChange={(open) => !open && handleClose()}>
+      <DialogContent
+        {...returnFocus}
+        closeLabel="Close modal"
+        className="bottom-0 top-auto max-w-md translate-y-0 rounded-t-2xl sm:bottom-auto sm:top-[50%] sm:translate-y-[-50%]"
+      >
         {isSuccess ? (
           <div className="flex flex-col items-center py-4 text-center">
-            <CheckCircle2 className="h-12 w-12 text-primary" />
-            <h3 className="mt-4 font-display text-xl font-bold text-foreground">
+            <CheckCircle2 className="h-12 w-12 text-primary-ink" aria-hidden="true" />
+            <DialogTitle className="mt-4 font-display text-xl font-bold text-foreground">
               {"You're on the list!"}
-            </h3>
-            <p className="mt-2 text-sm text-muted-foreground">
+            </DialogTitle>
+            <DialogDescription className="mt-2 text-sm text-muted-foreground">
               {"We'll notify you at "}
-              <span className="text-primary">{email}</span>
+              <span className="text-primary-ink">{email}</span>
               {" when "}
-              <span className="font-medium text-foreground">
-                {selectedProductTitle}
-              </span>
+              <span className="font-medium text-foreground">{selectedProductTitle}</span>
               {" launches."}
-            </p>
-            <button
-              onClick={handleClose}
-              className="mt-6 rounded-full bg-primary px-8 py-2.5 text-sm font-semibold text-primary-foreground transition-transform hover:scale-105 active:scale-95"
-            >
+            </DialogDescription>
+            <Button size="pill" className="mt-6" onClick={handleClose}>
               Continue Browsing
-            </button>
+            </Button>
           </div>
         ) : (
-          <>
-            <div className="mb-1 inline-block rounded-full bg-primary/10 px-3 py-1 text-xs font-semibold text-primary">
+          <div>
+            <div className="mb-1 inline-block rounded-full bg-primary/10 px-3 py-1 text-xs font-semibold text-primary-ink">
               Coming Soon
             </div>
-            <h3 className="mt-2 font-display text-xl font-bold text-foreground">
+            <DialogTitle className="mt-2 font-display text-xl font-bold text-foreground">
               Join the Waitlist
-            </h3>
-            <p className="mt-1 text-sm text-muted-foreground">
+            </DialogTitle>
+            <DialogDescription className="mt-1 text-sm text-muted-foreground">
               {"Be the first to know when "}
-              <span className="font-medium text-foreground">
-                {selectedProductTitle}
-              </span>
+              <span className="font-medium text-foreground">{selectedProductTitle}</span>
               {" is available."}
-            </p>
+            </DialogDescription>
 
-            <form onSubmit={handleSubmit} className="mt-5">
-              <label htmlFor="waitlist-email" className="sr-only">
-                Email address
-              </label>
-              <input
-                id="waitlist-email"
-                type="email"
-                required
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                placeholder="Enter your email"
-                className="w-full rounded-lg border border-border bg-secondary px-4 py-3 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary"
-              />
-              {error && (
-                <p className="mt-2 text-xs text-destructive">{error}</p>
-              )}
-              <button
-                type="submit"
-                disabled={isSubmitting}
-                className="mt-3 flex w-full items-center justify-center rounded-lg bg-primary py-3 text-sm font-semibold text-primary-foreground transition-transform hover:scale-[1.02] active:scale-[0.98] disabled:opacity-60"
-              >
+            <form onSubmit={handleSubmit} className="mt-5 space-y-3" noValidate>
+              <Field id="waitlist-email" label="Email address" error={error || undefined}>
+                <Input
+                  type="email"
+                  required
+                  autoComplete="email"
+                  inputMode="email"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  placeholder="you@example.com"
+                />
+              </Field>
+              <Button type="submit" size="block" className="h-12" disabled={isSubmitting} aria-busy={isSubmitting}>
                 {isSubmitting ? (
-                  <Loader2 className="h-4 w-4 animate-spin" />
+                  <>
+                    <Loader2 className="animate-spin" aria-hidden="true" />
+                    Joining…
+                  </>
                 ) : (
                   "Join Waitlist for Launch"
                 )}
-              </button>
+              </Button>
             </form>
-          </>
+          </div>
         )}
-      </div>
-    </div>
+      </DialogContent>
+    </Dialog>
   )
 }
